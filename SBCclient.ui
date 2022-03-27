@@ -29,10 +29,15 @@
    <string notr="true">#SBCclient{
 	background-color:white;
 }
+#centralwidget{
+	background-color:white;
+}
 QLabel{
 	font-size:16px;
 }
-
+Line{
+	background:rgb(173, 173, 173);
+}
 #frame{
 	border-radius:3px;
 	background:rgb(173, 173, 173);
@@ -511,11 +516,17 @@ QLabel{
     <widget class="Line" name="line_2">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>0</y>
-       <width>16</width>
+       <x>40</x>
+       <y>2</y>
+       <width>1</width>
        <height>25</height>
       </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1</width>
+       <height>16777215</height>
+      </size>
      </property>
      <property name="lineWidth">
       <number>1</number>
@@ -540,7 +551,7 @@ QLabel{
     <widget class="QLabel" name="label_12">
      <property name="geometry">
       <rect>
-       <x>19</x>
+       <x>20</x>
        <y>0</y>
        <width>16</width>
        <height>23</height>
@@ -580,10 +591,16 @@ QLabel{
     <property name="geometry">
      <rect>
       <x>161</x>
-      <y>40</y>
+      <y>50</y>
       <width>810</width>
-      <height>16</height>
+      <height>1</height>
      </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>1</height>
+     </size>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
@@ -593,10 +610,16 @@ QLabel{
     <property name="geometry">
      <rect>
       <x>161</x>
-      <y>70</y>
+      <y>80</y>
       <width>810</width>
-      <height>16</height>
+      <height>1</height>
      </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>1</height>
+     </size>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
@@ -661,11 +684,17 @@ QLabel{
         <widget class="Line" name="line_6">
          <property name="geometry">
           <rect>
-           <x>40</x>
+           <x>50</x>
            <y>9</y>
-           <width>16</width>
+           <width>1</width>
            <height>16</height>
           </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>1</width>
+           <height>16777215</height>
+          </size>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -684,19 +713,6 @@ QLabel{
           <string>上传</string>
          </property>
         </widget>
-        <widget class="Line" name="line_7">
-         <property name="geometry">
-          <rect>
-           <x>90</x>
-           <y>9</y>
-           <width>16</width>
-           <height>16</height>
-          </rect>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
         <widget class="QLabel" name="label_16">
          <property name="geometry">
           <rect>
@@ -713,11 +729,17 @@ QLabel{
         <widget class="Line" name="line_8">
          <property name="geometry">
           <rect>
-           <x>150</x>
+           <x>160</x>
            <y>9</y>
-           <width>16</width>
+           <width>2</width>
            <height>16</height>
           </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>2</width>
+           <height>16777215</height>
+          </size>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -741,9 +763,15 @@ QLabel{
           <rect>
            <x>200</x>
            <y>9</y>
-           <width>16</width>
+           <width>2</width>
            <height>16</height>
           </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>2</width>
+           <height>16777215</height>
+          </size>
          </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -760,6 +788,25 @@ QLabel{
          </property>
          <property name="text">
           <string>切换网盘</string>
+         </property>
+        </widget>
+        <widget class="Line" name="line_13">
+         <property name="geometry">
+          <rect>
+           <x>90</x>
+           <y>10</y>
+           <width>2</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>2</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </widget>
@@ -896,10 +943,16 @@ QLabel{
      <property name="geometry">
       <rect>
        <x>470</x>
-       <y>0</y>
-       <width>16</width>
+       <y>1</y>
+       <width>1</width>
        <height>28</height>
       </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1</width>
+       <height>16777215</height>
+      </size>
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -922,10 +975,16 @@ QLabel{
      <property name="geometry">
       <rect>
        <x>650</x>
-       <y>0</y>
-       <width>16</width>
+       <y>1</y>
+       <width>1</width>
        <height>28</height>
       </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1</width>
+       <height>16777215</height>
+      </size>
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -949,10 +1008,16 @@ QLabel{
     <property name="geometry">
      <rect>
       <x>161</x>
-      <y>100</y>
+      <y>110</y>
       <width>821</width>
-      <height>20</height>
+      <height>1</height>
      </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>1</height>
+     </size>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
