@@ -403,9 +403,9 @@ QLabel{
       <widget class="QLabel" name="label_23">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>70</x>
          <y>0</y>
-         <width>451</width>
+         <width>391</width>
          <height>41</height>
         </rect>
        </property>
@@ -437,6 +437,32 @@ QLabel{
        </property>
        <property name="text">
         <string>100MB</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>16</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_26">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>0</y>
+         <width>31</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>con</string>
        </property>
       </widget>
      </widget>
@@ -848,10 +874,10 @@ QLabel{
     <widget class="QLabel" name="label_20">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>40</x>
        <y>0</y>
        <width>51</width>
-       <height>23</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -877,7 +903,7 @@ QLabel{
        <x>480</x>
        <y>0</y>
        <width>71</width>
-       <height>23</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -903,7 +929,7 @@ QLabel{
        <x>660</x>
        <y>0</y>
        <width>51</width>
-       <height>23</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
