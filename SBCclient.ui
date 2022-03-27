@@ -424,7 +424,7 @@ QLabel{
        <x>30</x>
        <y>0</y>
        <width>16</width>
-       <height>21</height>
+       <height>25</height>
       </rect>
      </property>
      <property name="lineWidth">
@@ -438,9 +438,9 @@ QLabel{
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>2</y>
+       <y>0</y>
        <width>31</width>
-       <height>20</height>
+       <height>23</height>
       </rect>
      </property>
      <property name="text">
@@ -450,10 +450,10 @@ QLabel{
     <widget class="QLabel" name="label_12">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>19</x>
        <y>0</y>
        <width>16</width>
-       <height>21</height>
+       <height>23</height>
       </rect>
      </property>
      <property name="font">
@@ -463,6 +463,24 @@ QLabel{
      </property>
      <property name="text">
       <string>&lt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_19">
+     <property name="geometry">
+      <rect>
+       <x>85</x>
+       <y>0</y>
+       <width>16</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>&gt;</string>
      </property>
     </widget>
    </widget>
