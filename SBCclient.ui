@@ -373,6 +373,12 @@ QLabel{
       <height>491</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">#scrollAreaWidgetContents
+{
+	background:white;
+}</string>
+    </property>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
@@ -543,6 +549,8 @@ QLabel{
      <property name="font">
       <font>
        <pointsize>-1</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="text">
@@ -950,6 +958,15 @@ QLabel{
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
+   <zorder>scrollArea</zorder>
+   <zorder>frame</zorder>
+   <zorder>verticalScrollBar</zorder>
+   <zorder>frame_8</zorder>
+   <zorder>line_3</zorder>
+   <zorder>line_4</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>frame_11</zorder>
+   <zorder>line_12</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
