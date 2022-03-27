@@ -388,9 +388,9 @@ QLabel{
     <property name="geometry">
      <rect>
       <x>950</x>
-      <y>120</y>
-      <width>15</width>
-      <height>481</height>
+      <y>110</y>
+      <width>20</width>
+      <height>491</height>
      </rect>
     </property>
     <property name="orientation">
@@ -487,7 +487,7 @@ QLabel{
    <widget class="Line" name="line_3">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>161</x>
       <y>40</y>
       <width>810</width>
       <height>16</height>
@@ -500,7 +500,7 @@ QLabel{
    <widget class="Line" name="line_4">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>161</x>
       <y>70</y>
       <width>810</width>
       <height>16</height>
@@ -543,7 +543,7 @@ QLabel{
         <property name="styleSheet">
          <string notr="true">#frame_Buttons{
 	background:#D1F2EB;
-	border-radius:12px;
+	border-radius:15px;
 	opacity:0.8;
 }</string>
         </property>
@@ -737,6 +737,9 @@ QLabel{
            <height>31</height>
           </rect>
          </property>
+         <property name="placeholderText">
+          <string>搜索网盘文件</string>
+         </property>
         </widget>
         <widget class="Line" name="line_5">
          <property name="geometry">
@@ -768,6 +771,100 @@ QLabel{
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QFrame" name="frame_11">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>80</y>
+      <width>801</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_20">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>0</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>文件名</string>
+     </property>
+    </widget>
+    <widget class="Line" name="line_10">
+     <property name="geometry">
+      <rect>
+       <x>430</x>
+       <y>0</y>
+       <width>16</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_21">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>0</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>修改时间</string>
+     </property>
+    </widget>
+    <widget class="Line" name="line_11">
+     <property name="geometry">
+      <rect>
+       <x>650</x>
+       <y>0</y>
+       <width>16</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_22">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>0</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>大小</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="Line" name="line_12">
+    <property name="geometry">
+     <rect>
+      <x>161</x>
+      <y>100</y>
+      <width>821</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
