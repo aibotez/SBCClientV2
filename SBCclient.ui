@@ -406,13 +406,13 @@ Line{
       <rect>
        <x>40</x>
        <y>2</y>
-       <width>1</width>
+       <width>5</width>
        <height>25</height>
       </rect>
      </property>
      <property name="maximumSize">
       <size>
-       <width>1</width>
+       <width>5</width>
        <height>16777215</height>
       </size>
      </property>
@@ -487,13 +487,13 @@ Line{
       <x>161</x>
       <y>50</y>
       <width>801</width>
-      <height>1</height>
+      <height>5</height>
      </rect>
     </property>
     <property name="maximumSize">
      <size>
       <width>16777215</width>
-      <height>1</height>
+      <height>5</height>
      </size>
     </property>
     <property name="orientation">
@@ -506,13 +506,13 @@ Line{
       <x>161</x>
       <y>80</y>
       <width>801</width>
-      <height>1</height>
+      <height>5</height>
      </rect>
     </property>
     <property name="maximumSize">
      <size>
       <width>16777215</width>
-      <height>1</height>
+      <height>5</height>
      </size>
     </property>
     <property name="orientation">
@@ -866,13 +866,13 @@ Line{
       <rect>
        <x>470</x>
        <y>1</y>
-       <width>1</width>
+       <width>5</width>
        <height>28</height>
       </rect>
      </property>
      <property name="maximumSize">
       <size>
-       <width>1</width>
+       <width>5</width>
        <height>16777215</height>
       </size>
      </property>
@@ -898,13 +898,13 @@ Line{
       <rect>
        <x>650</x>
        <y>1</y>
-       <width>1</width>
+       <width>5</width>
        <height>28</height>
       </rect>
      </property>
      <property name="maximumSize">
       <size>
-       <width>1</width>
+       <width>5</width>
        <height>16777215</height>
       </size>
      </property>
@@ -932,13 +932,13 @@ Line{
       <x>161</x>
       <y>110</y>
       <width>801</width>
-      <height>1</height>
+      <height>5</height>
      </rect>
     </property>
     <property name="maximumSize">
      <size>
       <width>16777215</width>
-      <height>1</height>
+      <height>5</height>
      </size>
     </property>
     <property name="orientation">

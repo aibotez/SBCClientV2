@@ -6,6 +6,38 @@ import time
 
 import os,hashlib
 
+
+
+
+class EventDeals():
+    def __init__(self):
+        pass
+    def DownDeal(self,e):
+        pass
+    def UpDeal(self,e):
+        pass
+    def ReameDeal(self,e):
+        pass
+    def MoreDeal(self,e):
+        pass
+    def ChooseNetDeal(self,e):
+        pass
+    def SearchDeal(self,e):
+        pass
+    def NetBackDeal(self,e):
+        pass
+    def NetRefresh(self,e):
+        pass
+    def FileClickDeal(self, e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            self.FileLeftDeal()
+        elif e.buttons() == QtCore.Qt.RightButton:
+            self.FileRightDeal()
+    def FileLeftDeal(self):
+        print('FileLeft')
+    def FileRightDeal(self):
+        print("右")
+
 def GetFileMd5(filename):
     if not os.path.isfile(filename):
         return
@@ -39,7 +71,7 @@ def print_some(e):
     # 中键按下
     elif e.buttons() == QtCore.Qt.MidButton:
         print("中")
-def test(ui):
+def test(ui,clickdeal):
     for i in range(10):
         ui.frame_12 = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
         ui.frame_12.setGeometry(QtCore.QRect(0, 50*i+100, 791, 41))
@@ -49,14 +81,15 @@ def test(ui):
         ui.label_223 = QtWidgets.QLabel(ui.frame_12)
         ui.label_223.setText(str(i))
         ui.label_223.setGeometry(QtCore.QRect(100, 0, 160, 41))
-        ui.label_223.mousePressEvent = print_some
+        ui.label_223.mousePressEvent = clickdeal.FileClickDeal
 
 if __name__ == '__main__':
+    clickdeal = EventDeals()
     app = QApplication(sys.argv)
     Main = QMainWindow()
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
     ui.label_23.mousePressEvent = print_some
-    test(ui)
+    test(ui,clickdeal)
     Main.show()
     sys.exit(app.exec_())
