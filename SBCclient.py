@@ -72,10 +72,15 @@ def print_some(e):
     elif e.buttons() == QtCore.Qt.MidButton:
         print("中")
 def test(ui,clickdeal):
-    for i in range(10):
+    ui.scrollAreaWidgetContents = QtWidgets.QWidget()
+    ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 772, 571))
+    ui.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
+    ui.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+    ui.formLayout = QtWidgets.QFormLayout(ui.scrollAreaWidgetContents)
+    ui.formLayout.setObjectName("formLayout")
+    for i in range(20):
         ui.frame_13 = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
         ui.frame_13.setMinimumSize(QtCore.QSize(0, 36))
-        ui.frame_13.setGeometry(QtCore.QRect(0, 36, 0,36))
         ui.frame_13.setFrameShape(QtWidgets.QFrame.StyledPanel)
         ui.frame_13.setFrameShadow(QtWidgets.QFrame.Raised)
         ui.frame_13.setObjectName("frame_13")
@@ -139,7 +144,15 @@ def test(ui,clickdeal):
         ui.horizontalLayout_14.setStretch(0, 7)
         ui.horizontalLayout_14.setStretch(1, 2)
         ui.horizontalLayout_14.setStretch(2, 2)
-        ui.formLayout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, ui.frame_13)
+        ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, ui.frame_13)
+        ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
+        ui.horizontalLayout.addWidget(ui.scrollArea)
+
+
+        ui.label_27.setText("con")
+        ui.label_28.setText("File1")
+        ui.label_29.setText("2020-03-02")
+        ui.label_30.setText("100MB")
 
 if __name__ == '__main__':
     clickdeal = EventDeals()

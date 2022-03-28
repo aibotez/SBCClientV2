@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>932</width>
+    <width>957</width>
     <height>720</height>
    </rect>
   </property>
@@ -89,6 +89,9 @@ Line{
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,1">
          <item>
@@ -924,7 +927,7 @@ Line{
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
         <item>
          <widget class="QScrollArea" name="scrollArea">
           <property name="sizePolicy">
@@ -937,6 +940,12 @@ Line{
            <font>
             <kerning>true</kerning>
            </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
           </property>
           <property name="styleSheet">
            <string notr="true">#scrollAreaWidgetContents
@@ -959,21 +968,36 @@ Line{
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
           <widget class="QWidget" name="scrollAreaWidgetContents">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>747</width>
+             <width>795</width>
              <height>571</height>
             </rect>
            </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <layout class="QFormLayout" name="formLayout">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
             <item row="0" column="0" colspan="2">
              <widget class="QFrame" name="frame_13">
               <property name="minimumSize">
                <size>
                 <width>0</width>
+                <height>36</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
                 <height>36</height>
                </size>
               </property>
@@ -1005,6 +1029,9 @@ Line{
                   <number>6</number>
                  </property>
                  <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
                   <number>0</number>
                  </property>
                  <property name="rightMargin">
@@ -1105,13 +1132,6 @@ Line{
           </widget>
          </widget>
         </item>
-        <item>
-         <widget class="QScrollBar" name="verticalScrollBar">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
@@ -1123,7 +1143,7 @@ Line{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>932</width>
+     <width>957</width>
      <height>23</height>
     </rect>
    </property>
