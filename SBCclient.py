@@ -89,7 +89,7 @@ if __name__ == '__main__':
     Main = QMainWindow()
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
-    ui.label_23.mousePressEvent = print_some
+    # ui.label_23.mousePressEvent = print_some
     test(ui,clickdeal)
     Main.show()
     sys.exit(app.exec_())
