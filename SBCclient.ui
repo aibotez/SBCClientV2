@@ -95,7 +95,7 @@ Line{
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="spacing">
-          <number>0</number>
+          <number>9</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -327,6 +327,9 @@ Line{
              <property name="text">
               <string>10.1GB/6.0T</string>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
             </widget>
            </item>
            <item>
@@ -393,6 +396,12 @@ Line{
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <property name="spacing">
+            <number>6</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="bottomMargin">
             <number>6</number>
            </property>
            <item>
