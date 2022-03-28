@@ -61,7 +61,7 @@ def size_format(size):
         return '%.1f' % float(size/(1024*1024*1024)) + 'GB'
     elif 1024*1024*1024*1024 <= size:
         return '%.1f' % float(size/(1024*1024*1024*1024)) + 'TB'
-
+from PyQt5.QtCore import *
 def print_some(e):
     if e.buttons() == QtCore.Qt.LeftButton:
         print("左")
@@ -71,16 +71,20 @@ def print_some(e):
     # 中键按下
     elif e.buttons() == QtCore.Qt.MidButton:
         print("中")
+    pyqtSignal().emit()
 def test(ui,clickdeal):
     ui.scrollAreaWidgetContents = QtWidgets.QWidget()
-    ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 772, 571))
+    ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 737, 583))
     ui.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
     ui.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
     ui.formLayout = QtWidgets.QFormLayout(ui.scrollAreaWidgetContents)
+    ui.formLayout.setContentsMargins(0, 0, 0, 0)
+    ui.formLayout.setVerticalSpacing(0)
     ui.formLayout.setObjectName("formLayout")
     for i in range(20):
         ui.frame_13 = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
         ui.frame_13.setMinimumSize(QtCore.QSize(0, 36))
+        ui.frame_13.setMaximumSize(QtCore.QSize(16777215, 36))
         ui.frame_13.setFrameShape(QtWidgets.QFrame.StyledPanel)
         ui.frame_13.setFrameShadow(QtWidgets.QFrame.Raised)
         ui.frame_13.setObjectName("frame_13")
@@ -89,7 +93,7 @@ def test(ui,clickdeal):
         ui.horizontalLayout_14.setSpacing(0)
         ui.horizontalLayout_14.setObjectName("horizontalLayout_14")
         ui.horizontalLayout_13 = QtWidgets.QHBoxLayout()
-        ui.horizontalLayout_13.setContentsMargins(0, -1, 0, -1)
+        ui.horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
         ui.horizontalLayout_13.setSpacing(6)
         ui.horizontalLayout_13.setObjectName("horizontalLayout_13")
         ui.checkBox_2 = QtWidgets.QCheckBox(ui.frame_13)
@@ -116,6 +120,8 @@ def test(ui,clickdeal):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ui.label_28.sizePolicy().hasHeightForWidth())
         ui.label_28.setSizePolicy(sizePolicy)
+        ui.label_28.setMinimumSize(QtCore.QSize(0, 30))
+        ui.label_28.setMaximumSize(QtCore.QSize(16777215, 36))
         ui.label_28.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         ui.label_28.setObjectName("label_28")
         ui.horizontalLayout_13.addWidget(ui.label_28)
@@ -146,13 +152,14 @@ def test(ui,clickdeal):
         ui.horizontalLayout_14.setStretch(2, 2)
         ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, ui.frame_13)
         ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
-        ui.horizontalLayout.addWidget(ui.scrollArea)
+        ui.verticalLayout_2.addWidget(ui.scrollArea)
 
 
         ui.label_27.setText("con")
         ui.label_28.setText("File1")
         ui.label_29.setText("2020-03-02")
         ui.label_30.setText("100MB")
+        ui.label_28.mousePressEvent = print_some
 
 if __name__ == '__main__':
     clickdeal = EventDeals()
