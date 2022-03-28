@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>966</width>
-    <height>650</height>
+    <width>960</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="font">
@@ -171,6 +171,9 @@ Line{
        <height>41</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="styleSheet">
       <string notr="true">#label_usercon{
 	border-radius:20px;
@@ -191,6 +194,9 @@ Line{
        <width>71</width>
        <height>21</height>
       </rect>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="text">
       <string>用户</string>
@@ -423,8 +429,11 @@ Line{
        <x>50</x>
        <y>0</y>
        <width>31</width>
-       <height>23</height>
+       <height>31</height>
       </rect>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="text">
       <string>Home</string>
@@ -436,7 +445,7 @@ Line{
        <x>20</x>
        <y>0</y>
        <width>16</width>
-       <height>23</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -445,6 +454,9 @@ Line{
        <weight>75</weight>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="text">
       <string>&lt;</string>
@@ -456,7 +468,7 @@ Line{
        <x>85</x>
        <y>0</y>
        <width>16</width>
-       <height>23</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -474,7 +486,7 @@ Line{
      <rect>
       <x>161</x>
       <y>50</y>
-      <width>810</width>
+      <width>801</width>
       <height>1</height>
      </rect>
     </property>
@@ -493,7 +505,7 @@ Line{
      <rect>
       <x>161</x>
       <y>80</y>
-      <width>810</width>
+      <width>801</width>
       <height>1</height>
      </rect>
     </property>
@@ -542,7 +554,10 @@ Line{
 	background:#D1F2EB;
 	border-radius:15px;
 	opacity:0.8;
-}</string>
+}
+#frame_Buttons QLabel:hover{
+	color:blue;
+	}</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -558,6 +573,9 @@ Line{
            <width>32</width>
            <height>16</height>
           </rect>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="text">
           <string>下载</string>
@@ -591,6 +609,9 @@ Line{
            <height>16</height>
           </rect>
          </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="text">
           <string>上传</string>
          </property>
@@ -603,6 +624,9 @@ Line{
            <width>48</width>
            <height>16</height>
           </rect>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="text">
           <string>重命名</string>
@@ -636,6 +660,9 @@ Line{
            <height>16</height>
           </rect>
          </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="text">
           <string>更多</string>
          </property>
@@ -667,6 +694,9 @@ Line{
            <width>64</width>
            <height>16</height>
           </rect>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="text">
           <string>切换网盘</string>
@@ -784,6 +814,9 @@ Line{
            <height>21</height>
           </rect>
          </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
          <property name="text">
           <string>搜索</string>
          </property>
@@ -801,6 +834,13 @@ Line{
       <width>801</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#frame_11 QLabel
+{
+	color:#979A9A;
+	font-size:15px;
+}</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -891,7 +931,7 @@ Line{
      <rect>
       <x>161</x>
       <y>110</y>
-      <width>821</width>
+      <width>801</width>
       <height>1</height>
      </rect>
     </property>
@@ -908,20 +948,43 @@ Line{
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>110</y>
+      <x>161</x>
+      <y>111</y>
       <width>801</width>
       <height>491</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
      <item>
       <widget class="QScrollArea" name="scrollArea">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <kerning>true</kerning>
+        </font>
+       </property>
        <property name="styleSheet">
         <string notr="true">#scrollAreaWidgetContents
 {
 	background:white;
-}</string>
+}
+
+#scrollAreaWidgetContents QFrame:hover{
+	background:#A2D9CE;
+	border-radius:20px;
+	opacity:0.5;
+	}</string>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <property name="lineWidth">
+        <number>-1</number>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -940,7 +1003,7 @@ Line{
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>791</width>
+           <width>771</width>
            <height>41</height>
           </rect>
          </property>
@@ -958,6 +1021,9 @@ Line{
             <width>391</width>
             <height>41</height>
            </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
            <string>File1</string>
@@ -1028,9 +1094,8 @@ Line{
      </item>
     </layout>
    </widget>
-   <zorder>scrollArea</zorder>
+   <zorder>layoutWidget</zorder>
    <zorder>frame</zorder>
-   <zorder>verticalScrollBar</zorder>
    <zorder>frame_8</zorder>
    <zorder>line_3</zorder>
    <zorder>line_4</zorder>
@@ -1043,7 +1108,7 @@ Line{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>966</width>
+     <width>960</width>
      <height>23</height>
     </rect>
    </property>
