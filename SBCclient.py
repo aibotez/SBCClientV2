@@ -62,7 +62,9 @@ def size_format(size):
     elif 1024*1024*1024*1024 <= size:
         return '%.1f' % float(size/(1024*1024*1024*1024)) + 'TB'
 from PyQt5.QtCore import *
-def print_some(e):
+from functools import partial
+def print_some(i,e):
+    print(i)
     if e.buttons() == QtCore.Qt.LeftButton:
         print("左")
     # 右键按下
@@ -71,7 +73,7 @@ def print_some(e):
     # 中键按下
     elif e.buttons() == QtCore.Qt.MidButton:
         print("中")
-    pyqtSignal().emit()
+
 def test(ui,clickdeal):
     ui.scrollAreaWidgetContents = QtWidgets.QWidget()
     ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 737, 583))
@@ -159,7 +161,7 @@ def test(ui,clickdeal):
         ui.label_28.setText("File1")
         ui.label_29.setText("2020-03-02")
         ui.label_30.setText("100MB")
-        ui.label_28.mousePressEvent = print_some
+        ui.label_28.mousePressEvent = partial(print_some, i)
 
 if __name__ == '__main__':
     clickdeal = EventDeals()
