@@ -11,7 +11,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SBCclient(object):
     def setupUi(self, SBCclient):
         SBCclient.setObjectName("SBCclient")
-        SBCclient.resize(879, 740)
+        SBCclient.resize(878, 700)
+        SBCclient.setMinimumSize(QtCore.QSize(800, 700))
         font = QtGui.QFont()
         font.setFamily("宋体")
         font.setPointSize(12)
@@ -50,7 +51,10 @@ class Ui_SBCclient(object):
 "    background:#006000;\n"
 "    Width:60px;\n"
 "}")
+        SBCclient.setAnimated(True)
+        SBCclient.setDocumentMode(False)
         self.centralwidget = QtWidgets.QWidget(SBCclient)
+        self.centralwidget.setMinimumSize(QtCore.QSize(0, 0))
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -60,7 +64,7 @@ class Ui_SBCclient(object):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame = QtWidgets.QFrame(self.centralwidget)
-        self.frame.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.frame.setMaximumSize(QtCore.QSize(150, 16777215))
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
@@ -94,6 +98,7 @@ class Ui_SBCclient(object):
         self.horizontalLayout_6.setStretch(1, 1)
         self.verticalLayout_5.addLayout(self.horizontalLayout_6)
         self.frame_7 = QtWidgets.QFrame(self.frame)
+        self.frame_7.setMaximumSize(QtCore.QSize(16777215, 300))
         self.frame_7.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_7.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_7.setObjectName("frame_7")
@@ -211,6 +216,7 @@ class Ui_SBCclient(object):
         self.horizontalLayout_4.setContentsMargins(10, 5, -1, -1)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.frame_9 = QtWidgets.QFrame(self.centralwidget)
+        self.frame_9.setMaximumSize(QtCore.QSize(300, 16777215))
         self.frame_9.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_9.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_9.setObjectName("frame_9")
@@ -281,6 +287,8 @@ class Ui_SBCclient(object):
         spacerItem2 = QtWidgets.QSpacerItem(308, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem2)
         self.frame_10 = QtWidgets.QFrame(self.centralwidget)
+        self.frame_10.setMinimumSize(QtCore.QSize(0, 0))
+        self.frame_10.setMaximumSize(QtCore.QSize(260, 16777215))
         self.frame_10.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_10.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_10.setObjectName("frame_10")
@@ -378,6 +386,13 @@ class Ui_SBCclient(object):
         spacerItem3 = QtWidgets.QSpacerItem(681, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem3)
         self.label_8 = QtWidgets.QLabel(self.frame_8)
+        font = QtGui.QFont()
+        font.setPointSize(-1)
+        font.setBold(False)
+        font.setWeight(50)
+        self.label_8.setFont(font)
+        self.label_8.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_8.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
         self.label_8.setObjectName("label_8")
         self.horizontalLayout_3.addWidget(self.label_8)
         self.verticalLayout.addWidget(self.frame_8)
@@ -449,17 +464,18 @@ class Ui_SBCclient(object):
 "}\n"
 "\n"
 "#scrollAreaWidgetContents QFrame:hover{\n"
-"    background:#A2D9CE;\n"
+"    background:#D0D3D4;\n"
 "    border-radius:18px;\n"
 "    opacity:0.5;\n"
 "    }")
         self.scrollArea.setFrameShadow(QtWidgets.QFrame.Raised)
         self.scrollArea.setLineWidth(-1)
+        self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 737, 583))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 736, 565))
         self.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.formLayout = QtWidgets.QFormLayout(self.scrollAreaWidgetContents)
@@ -542,12 +558,9 @@ class Ui_SBCclient(object):
         self.horizontalLayout_5.setStretch(0, 1)
         SBCclient.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(SBCclient)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 879, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 878, 23))
         self.menubar.setObjectName("menubar")
         SBCclient.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(SBCclient)
-        self.statusbar.setObjectName("statusbar")
-        SBCclient.setStatusBar(self.statusbar)
 
         self.retranslateUi(SBCclient)
         QtCore.QMetaObject.connectSlotsByName(SBCclient)

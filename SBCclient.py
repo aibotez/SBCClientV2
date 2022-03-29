@@ -6,6 +6,8 @@ import time
 
 import os,hashlib
 
+from pack import SBCRequest
+
 
 
 
@@ -73,8 +75,9 @@ def print_some(i,e):
     # 中键按下
     elif e.buttons() == QtCore.Qt.MidButton:
         print("中")
-
+from PyQt5.QtGui import QFontMetrics
 def test(ui,clickdeal):
+    SBCRe.GetFileList('/home/')
     ui.scrollAreaWidgetContents = QtWidgets.QWidget()
     ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 737, 583))
     ui.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -83,7 +86,8 @@ def test(ui,clickdeal):
     ui.formLayout.setContentsMargins(0, 0, 0, 0)
     ui.formLayout.setVerticalSpacing(0)
     ui.formLayout.setObjectName("formLayout")
-    for i in range(20):
+    for i in range(len(SBCRe.CurFileList)):
+        FileInfo = SBCRe.CurFileList[i]
         ui.frame_13 = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
         ui.frame_13.setMinimumSize(QtCore.QSize(0, 36))
         ui.frame_13.setMaximumSize(QtCore.QSize(16777215, 36))
@@ -156,15 +160,28 @@ def test(ui,clickdeal):
         ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
         ui.verticalLayout_2.addWidget(ui.scrollArea)
 
+        # ui.label_28.setText(FileInfo['filename'])
+        # print(ui.label_28.width())
+        metrics = QFontMetrics(ui.label_28.font())
+        new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 200)
+        ui.label_28.setText(new_file_name)
 
         ui.label_27.setText("con")
-        ui.label_28.setText("File1")
-        ui.label_29.setText("2020-03-02")
-        ui.label_30.setText("100MB")
+        # ui.label_28.setText(FileInfo['filename'])
+        ui.label_29.setText(FileInfo['date'])
+        ui.label_30.setText(FileInfo['big'])
         ui.label_28.mousePressEvent = partial(print_some, i)
+
+# # 加载图片
+# self.label_2.setPixmap(QtGui.QPixmap("./res/tay.jpeg"))
+# # 图片居中
+# self.label_2.setAlignment(Qt.AlignCenter)
+# # 图片自适应控件尺寸
+# self.label_2.setScaledContents(True)
 
 if __name__ == '__main__':
     clickdeal = EventDeals()
+    SBCRe = SBCRequest.SBCRe()
     app = QApplication(sys.argv)
     Main = QMainWindow()
     ui = SBCMainWindow.Ui_SBCclient()
