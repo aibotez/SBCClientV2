@@ -27,9 +27,9 @@ class Thread_LoadImg(QThread):
         px.setPixmap(pixmap)
 
     def run(self):
-        temp = self.func(self.ui.FileCon, 6)
+        temp = self.func(self.ui.FileCon, 60)
         for i in temp:
-            SendList = [{'fepath':j['fepath']} for j in i]
+            SendList = [{'fepath':j['fepath'].encode('utf-8')} for j in i]
             print(SendList)
             ConList = SBCRe.GetFileCon(SendList)
             for num in range(len(ConList['src'])):
@@ -170,7 +170,7 @@ class SBC():
         ui.FileLabel = {}
         ui.FileCon = []
         self.FileList = SBCRe.CurFileList
-        print(SBCRe.imgFiles)
+
         for i in range(len(SBCRe.CurFileList)):
             FileConLabel = {}
             FileInfo = SBCRe.CurFileList[i]
@@ -273,7 +273,10 @@ class SBC():
             # self.Main.resizeEvent = partial(self.MainWindowSizeChange, ui.FileLabel[i])
         self.ui.FileLabel = ui.FileLabel
         print(ui.FileCon)
-        self.Thread_LoadImg.start()
+        try:
+            self.Thread_LoadImg.start()
+        except:
+            pass
 def GetFileMd5(filename):
     if not os.path.isfile(filename):
         return
