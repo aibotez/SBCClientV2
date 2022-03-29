@@ -23,24 +23,30 @@ class Thread_LoadImg(QThread):
     def ShowCon(self,px,base64data):
         # with open(str(num) + '.jpg', 'wb') as f:
         #     f.write(img_b64decode)
-        img_io = io.BytesIO(base64data)
-        img = Image.open(img_io)
-        pix = img.toqpixmap()
-        px.setPixmap(pix)
-        px.setScaledContents(True)
+        # img_io = io.BytesIO(base64data)
+        # img = Image.open(img_io)
+        # pix = img.toqpixmap()
+        # px.setPixmap(pix)
+        # px.setScaledContents(True)
+
+        # print(base64data)
+        ba = QtCore.QByteArray.fromBase64(base64data)
+        ba = base64data
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(ba)
+        px.setPixmap(pixmap)
+
     def run(self):
-        temp = self.func(self.ui.FileCon, 3)
+        temp = self.func(self.ui.FileCon, 6)
         for i in temp:
             SendList = [{'fepath':j['fepath']} for j in i]
-            print('SendList',SendList)
             ConList = SBCRe.GetFileCon(SendList)
             for num in range(len(ConList['src'])):
                 coninfo = ConList['src'][num]
                 ConBase64 = coninfo.split(',')[-1]
                 img_b64decode = base64.b64decode(ConBase64)  # [21:]
-
-                i[num]['label'].setText(str(num))
-                # self.ShowCon(i[num]['label'],img_b64decode)
+                # i[num]['label'].setText(str(num))
+                self.ShowCon(i[num]['label'],img_b64decode)
                 # with open(str(num)+'.jpg','wb') as f:
                 #     f.write(img_b64decode)
                 # img_io = io.BytesIO(img_b64decode)
@@ -49,7 +55,7 @@ class Thread_LoadImg(QThread):
                 # print(i[num]['fepath'])
                 # i[num]['label'].setPixmap(pix)
                 # i[num]['label'].setScaledContents(True)
-            break
+
 
 
 
