@@ -40,6 +40,20 @@ class SBCRe():
         # for i in FileDatas['FileList']:
         #     print(i)
         self.CurFileList = FileDatas['FileList']
+        self.Nav = FileDatas['Nav']
+        self.imgFiles = FileDatas['imgFiles']
+
+    def GetFileCon(self,Files):
+        url = 'http://' + self.host + '/GetImgCon/'
+        data = {
+            'imgdata': Files,
+        }
+        print(json.dumps(data,ensure_ascii=False))
+        print(data)
+        res = requests.post(url, data=json.dumps(data,ensure_ascii=False),headers=self.headers)
+        Datas = json.loads(res.text)
+        print(Datas)
+        return Datas
 
 # def Login():
 #     url = 'http://pi.sbc.plus:800/loginVerify/'

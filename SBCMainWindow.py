@@ -9,10 +9,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_SBCclient(object):
-
     def setupUi(self, SBCclient):
         SBCclient.setObjectName("SBCclient")
-        SBCclient.resize(878, 700)
+        SBCclient.resize(962, 700)
         SBCclient.setMinimumSize(QtCore.QSize(800, 700))
         font = QtGui.QFont()
         font.setFamily("宋体")
@@ -40,8 +39,8 @@ class Ui_SBCclient(object):
 "}\n"
 "#frame_7 QFrame:hover{\n"
 "    background:#A2D9CE;\n"
-"    border-radius:10px;\n"
-"    opacity:0.5;\n"
+"    border-radius:20px;\n"
+"    opacity:0.1;\n"
 "    }\n"
 "#SBCCapacity{\n"
 "    border-radius:5px;\n"
@@ -74,6 +73,7 @@ class Ui_SBCclient(object):
         self.verticalLayout_5.setSpacing(9)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setContentsMargins(6, -1, 6, -1)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.label_10 = QtWidgets.QLabel(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
@@ -81,9 +81,10 @@ class Ui_SBCclient(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
         self.label_10.setSizePolicy(sizePolicy)
-        self.label_10.setMaximumSize(QtCore.QSize(50, 50))
+        self.label_10.setMaximumSize(QtCore.QSize(50, 40))
         self.label_10.setText("")
         self.label_10.setPixmap(QtGui.QPixmap("../SBCv2/static/img/xhy.jpg"))
+        self.label_10.setScaledContents(True)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_6.addWidget(self.label_10)
         self.label = QtWidgets.QLabel(self.frame)
@@ -202,7 +203,8 @@ class Ui_SBCclient(object):
 "    border-radius:20px;\n"
 "}")
         self.label_usercon.setText("")
-        self.label_usercon.setPixmap(QtGui.QPixmap("../SBCv2/static/img/Sure.jpg"))
+        self.label_usercon.setPixmap(QtGui.QPixmap("img/cat0.jpg"))
+        self.label_usercon.setScaledContents(True)
         self.label_usercon.setObjectName("label_usercon")
         self.horizontalLayout_7.addWidget(self.label_usercon)
         self.label_9 = QtWidgets.QLabel(self.frame)
@@ -389,8 +391,6 @@ class Ui_SBCclient(object):
         self.label_8 = QtWidgets.QLabel(self.frame_8)
         font = QtGui.QFont()
         font.setPointSize(-1)
-        font.setBold(False)
-        font.setWeight(50)
         self.label_8.setFont(font)
         self.label_8.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_8.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
@@ -476,7 +476,7 @@ class Ui_SBCclient(object):
         self.scrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 736, 565))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 565))
         self.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.formLayout = QtWidgets.QFormLayout(self.scrollAreaWidgetContents)
@@ -559,7 +559,7 @@ class Ui_SBCclient(object):
         self.horizontalLayout_5.setStretch(0, 1)
         SBCclient.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(SBCclient)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 878, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 962, 23))
         self.menubar.setObjectName("menubar")
         SBCclient.setMenuBar(self.menubar)
 
@@ -595,8 +595,4 @@ class Ui_SBCclient(object):
         self.label_28.setText(_translate("SBCclient", "File1"))
         self.label_29.setText(_translate("SBCclient", "2020-03-02"))
         self.label_30.setText(_translate("SBCclient", "100MB"))
-    # def resizeEvent(self, e: QtGui.QResizeEvent):
-    #     super().resizeEvent(e)
-    #     # height = event.size().height()
-    #     print('56')
 

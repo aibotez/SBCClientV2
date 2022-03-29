@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>878</width>
+    <width>962</width>
     <height>700</height>
    </rect>
   </property>
@@ -50,8 +50,8 @@ Line{
 }
 #frame_7 QFrame:hover{
 	background:#A2D9CE;
-	border-radius:10px;
-	opacity:0.5;
+	border-radius:20px;
+	opacity:0.1;
 	}
 #SBCCapacity{
 	border-radius:5px;
@@ -129,6 +129,12 @@ Line{
          </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,1">
+           <property name="leftMargin">
+            <number>6</number>
+           </property>
+           <property name="rightMargin">
+            <number>6</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_10">
              <property name="sizePolicy">
@@ -140,7 +146,7 @@ Line{
              <property name="maximumSize">
               <size>
                <width>50</width>
-               <height>50</height>
+               <height>40</height>
               </size>
              </property>
              <property name="text">
@@ -148,6 +154,9 @@ Line{
              </property>
              <property name="pixmap">
               <pixmap>../SBCv2/static/img/xhy.jpg</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -448,7 +457,10 @@ Line{
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap>../SBCv2/static/img/Sure.jpg</pixmap>
+              <pixmap>img/cat0.jpg</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -874,8 +886,6 @@ Line{
                <property name="font">
                 <font>
                  <pointsize>-1</pointsize>
-                 <weight>50</weight>
-                 <bold>false</bold>
                 </font>
                </property>
                <property name="cursor">
@@ -1058,7 +1068,7 @@ Line{
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>736</width>
+             <width>806</width>
              <height>565</height>
             </rect>
            </property>
@@ -1249,7 +1259,7 @@ Line{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>878</width>
+     <width>962</width>
      <height>23</height>
     </rect>
    </property>
