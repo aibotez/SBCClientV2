@@ -40,6 +40,137 @@ class EventDeals():
     def FileRightDeal(self):
         print("右")
 
+
+class SBC():
+    def __init__(self,Main,Mui):
+        self.ui = Mui
+        self.Main = Main
+        # self.Main.resizeEvent = self.MainWindowSizeChange
+        self.width0 = 900
+        self.height0 = 700
+        self.FileList = []
+
+    def MainWindowSizeChange(self,e):
+        if self.ui.scrollArea.width() < 500:
+            w = 760
+        else:
+            w = self.ui.scrollArea.width()
+        for i in self.ui.FileLabel:
+            FileInfo = self.FileList[i]
+            Felabel = self.ui.FileLabel[i]
+            # print(Felabel)
+            metrics = QFontMetrics(Felabel.font())
+            # print(metrics)
+            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, w*0.52)
+            Felabel.setText(new_file_name)
+
+    def initdWindow(self):
+        ui = self.ui
+        self.Main.resize(self.width0, self.height0)
+        self.Main.setMinimumSize(QtCore.QSize(800, 700))
+        SBCRe.GetFileList('/home/')
+        ui.scrollAreaWidgetContents = QtWidgets.QWidget()
+        ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 0.839*self.width0, 0.8328*self.height0))
+        ui.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
+        ui.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        ui.formLayout = QtWidgets.QFormLayout(ui.scrollAreaWidgetContents)
+        ui.formLayout.setContentsMargins(0, 0, 0, 0)
+        ui.formLayout.setVerticalSpacing(0)
+        ui.formLayout.setObjectName("formLayout")
+        ui.FileLabel = {}
+        self.FileList = SBCRe.CurFileList
+        for i in range(len(SBCRe.CurFileList)):
+            FileInfo = SBCRe.CurFileList[i]
+            ui.frame_13 = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
+            ui.frame_13.setMinimumSize(QtCore.QSize(0, 36))
+            ui.frame_13.setMaximumSize(QtCore.QSize(16777215, 36))
+            ui.frame_13.setFrameShape(QtWidgets.QFrame.StyledPanel)
+            ui.frame_13.setFrameShadow(QtWidgets.QFrame.Raised)
+            ui.frame_13.setObjectName("frame_13")
+            ui.horizontalLayout_14 = QtWidgets.QHBoxLayout(ui.frame_13)
+            ui.horizontalLayout_14.setContentsMargins(3, 0, 9, 0)
+            ui.horizontalLayout_14.setSpacing(0)
+            ui.horizontalLayout_14.setObjectName("horizontalLayout_14")
+            ui.horizontalLayout_13 = QtWidgets.QHBoxLayout()
+            ui.horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
+            ui.horizontalLayout_13.setSpacing(6)
+            ui.horizontalLayout_13.setObjectName("horizontalLayout_13")
+            ui.checkBox_2 = QtWidgets.QCheckBox(ui.frame_13)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(ui.checkBox_2.sizePolicy().hasHeightForWidth())
+            ui.checkBox_2.setSizePolicy(sizePolicy)
+            ui.checkBox_2.setText("")
+            ui.checkBox_2.setObjectName("checkBox_2")
+            ui.horizontalLayout_13.addWidget(ui.checkBox_2)
+            ui.label_27 = QtWidgets.QLabel(ui.frame_13)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(ui.label_27.sizePolicy().hasHeightForWidth())
+            ui.label_27.setSizePolicy(sizePolicy)
+            ui.label_27.setAlignment(QtCore.Qt.AlignCenter)
+            ui.label_27.setObjectName("label_27")
+            ui.horizontalLayout_13.addWidget(ui.label_27)
+            ui.FileLabel[i] = QtWidgets.QLabel(ui.frame_13)
+            # ui.label_28 = QtWidgets.QLabel(ui.frame_13)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+            sizePolicy.setHorizontalStretch(9)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(ui.FileLabel[i].sizePolicy().hasHeightForWidth())
+            ui.FileLabel[i].setSizePolicy(sizePolicy)
+            ui.FileLabel[i].setMinimumSize(QtCore.QSize(0, 30))
+            ui.FileLabel[i].setMaximumSize(QtCore.QSize(16777215, 36))
+            ui.FileLabel[i].setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
+            ui.FileLabel[i].setObjectName(FileInfo["filelj"])
+            # ui.FileLabel[i].setObjectName("label_28")
+
+            ui.horizontalLayout_13.addWidget(ui.FileLabel[i])
+            ui.horizontalLayout_13.setStretch(0, 1)
+            ui.horizontalLayout_13.setStretch(1, 1)
+            ui.horizontalLayout_13.setStretch(2, 20)
+            ui.horizontalLayout_14.addLayout(ui.horizontalLayout_13)
+            ui.label_29 = QtWidgets.QLabel(ui.frame_13)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+            sizePolicy.setHorizontalStretch(3)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(ui.label_29.sizePolicy().hasHeightForWidth())
+            ui.label_29.setSizePolicy(sizePolicy)
+            ui.label_29.setAlignment(QtCore.Qt.AlignCenter)
+            ui.label_29.setObjectName("label_29")
+            ui.horizontalLayout_14.addWidget(ui.label_29)
+            ui.label_30 = QtWidgets.QLabel(ui.frame_13)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+            sizePolicy.setHorizontalStretch(3)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(ui.label_30.sizePolicy().hasHeightForWidth())
+            ui.label_30.setSizePolicy(sizePolicy)
+            ui.label_30.setAlignment(QtCore.Qt.AlignCenter)
+            ui.label_30.setObjectName("label_30")
+            ui.horizontalLayout_14.addWidget(ui.label_30)
+            ui.horizontalLayout_14.setStretch(0, 7)
+            ui.horizontalLayout_14.setStretch(1, 2)
+            ui.horizontalLayout_14.setStretch(2, 2)
+            ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, ui.frame_13)
+            ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
+            ui.verticalLayout_2.addWidget(ui.scrollArea)
+
+            # ui.FileLabel[i].setText(FileInfo['filename'])
+            # print(ui.FileLabel[i].width())
+            metrics = QFontMetrics(ui.FileLabel[i].font())
+            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 360)
+            ui.FileLabel[i].setText(new_file_name)
+
+            ui.label_27.setText("con")
+            # ui.FileLabel[i].setText(FileInfo['filename'])
+            ui.label_29.setText(FileInfo['date'])
+            ui.label_30.setText(FileInfo['big'])
+            ui.FileLabel[i].mousePressEvent = partial(print_some, i)
+            self.Main.resizeEvent = self.MainWindowSizeChange
+            # self.Main.resizeEvent = partial(self.MainWindowSizeChange, ui.FileLabel[i])
+        self.ui.FileLabel = ui.FileLabel
 def GetFileMd5(filename):
     if not os.path.isfile(filename):
         return
@@ -75,6 +206,11 @@ def print_some(i,e):
     # 中键按下
     elif e.buttons() == QtCore.Qt.MidButton:
         print("中")
+
+# def MainWindowSizeChange(e):
+#     w = e.size().width()
+#     h = e.size().height()
+#     print(w,h)
 from PyQt5.QtGui import QFontMetrics
 def test(ui,clickdeal):
     SBCRe.GetFileList('/home/')
@@ -178,7 +314,8 @@ def test(ui,clickdeal):
 # self.label_2.setAlignment(Qt.AlignCenter)
 # # 图片自适应控件尺寸
 # self.label_2.setScaledContents(True)
-
+def rs(e):
+    print(66)
 if __name__ == '__main__':
     clickdeal = EventDeals()
     SBCRe = SBCRequest.SBCRe()
@@ -186,7 +323,10 @@ if __name__ == '__main__':
     Main = QMainWindow()
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
+    SBCM = SBC(Main,ui)
+    SBCM.initdWindow()
+    # Main.resizeEvent = MainWindowSizeChange
     # ui.label_23.mousePressEvent = print_some
-    test(ui,clickdeal)
+    # test(ui,clickdeal)
     Main.show()
     sys.exit(app.exec_())

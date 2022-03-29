@@ -9,6 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_SBCclient(object):
+
     def setupUi(self, SBCclient):
         SBCclient.setObjectName("SBCclient")
         SBCclient.resize(878, 700)
@@ -594,4 +595,8 @@ class Ui_SBCclient(object):
         self.label_28.setText(_translate("SBCclient", "File1"))
         self.label_29.setText(_translate("SBCclient", "2020-03-02"))
         self.label_30.setText(_translate("SBCclient", "100MB"))
+    # def resizeEvent(self, e: QtGui.QResizeEvent):
+    #     super().resizeEvent(e)
+    #     # height = event.size().height()
+    #     print('56')
 
