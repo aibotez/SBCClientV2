@@ -126,6 +126,7 @@ class ClickEventDeals():
 
     def FileRightDeal(self,FileInfo):
         print("右")
+        SBCM.FileShow('/home/')
 
 
 class SBC(QThread):
@@ -197,22 +198,28 @@ class SBC(QThread):
         Main.resizeEvent = self.MainWindowSizeChange
 
 
-    def ThreadRun(self,path):
-        SBCRe.GetFileList(path)
+    def run(self):
+        SBCRe.GetFileList(self.path)
         self.CurFileListOld = SBCRe.CurFileList
         self.CurFileList = SBCRe.CurFileList
         self.signal.emit()
 
     def FileShow(self,path):
+        self.path = path
 
-        t = threading.Thread(target=self.ThreadRun,args=(path,))
-        t.setDaemon(True)
-        t.start()
+        if self.isRunning():
+            self.deleteLater()
+        self.start()
+        # t = threading.Thread(target=self.ThreadRun,args=(path,))
+        # t.setDaemon(True)
+        # t.start()
 
 
     def Refresh(self):
         global ui, Main
 
+        ui.scrollAreaWidgetContents.deleteLater()
+        ui.formLayout.deleteLater()
         for i in ui.CurSBCFilesDict:
             ui.CurSBCFilesDict[i]['frame'].deleteLater()
             break
@@ -220,7 +227,17 @@ class SBC(QThread):
 
         ui.CurSBCFilesDict = {}
         ui.FileCon = []
+
+        ui.scrollAreaWidgetContents = QtWidgets.QWidget()
+        ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 565))
+        ui.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
+        ui.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        ui.formLayout = QtWidgets.QFormLayout(ui.scrollAreaWidgetContents)
+        ui.formLayout.setContentsMargins(0, 0, 0, 0)
+        ui.formLayout.setVerticalSpacing(0)
+        ui.formLayout.setObjectName("formLayout")
         for i in range(len(self.CurFileList)):
+
             CurSBCFiles = {}
             FileInfo = self.CurFileList[i]
 
@@ -231,14 +248,14 @@ class SBC(QThread):
             CurSBCFiles['frame'].setFrameShape(QtWidgets.QFrame.StyledPanel)
             CurSBCFiles['frame'].setFrameShadow(QtWidgets.QFrame.Raised)
             CurSBCFiles['frame'].setObjectName("frame_13")
-            ui.horizontalLayout_14 = QtWidgets.QHBoxLayout(CurSBCFiles['frame'])
-            ui.horizontalLayout_14.setContentsMargins(3, 0, 9, 0)
-            ui.horizontalLayout_14.setSpacing(0)
-            ui.horizontalLayout_14.setObjectName("horizontalLayout_14")
-            ui.horizontalLayout_13 = QtWidgets.QHBoxLayout()
-            ui.horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
-            ui.horizontalLayout_13.setSpacing(6)
-            ui.horizontalLayout_13.setObjectName("horizontalLayout_13")
+            horizontalLayout_14 = QtWidgets.QHBoxLayout(CurSBCFiles['frame'])
+            horizontalLayout_14.setContentsMargins(3, 0, 9, 0)
+            horizontalLayout_14.setSpacing(0)
+            horizontalLayout_14.setObjectName("horizontalLayout_14")
+            horizontalLayout_13 = QtWidgets.QHBoxLayout()
+            horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
+            horizontalLayout_13.setSpacing(6)
+            horizontalLayout_13.setObjectName("horizontalLayout_13")
             ui.checkBox_2 = QtWidgets.QCheckBox(CurSBCFiles['frame'])
 
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -248,7 +265,7 @@ class SBC(QThread):
             ui.checkBox_2.setSizePolicy(sizePolicy)
             ui.checkBox_2.setText("")
             ui.checkBox_2.setObjectName("checkBox_2")
-            ui.horizontalLayout_13.addWidget(ui.checkBox_2)
+            horizontalLayout_13.addWidget(ui.checkBox_2)
             # ui.label_27 = QtWidgets.QLabel(ui.frame_13)
             CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
             CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
@@ -260,7 +277,7 @@ class SBC(QThread):
             CurSBCFiles['con'].setSizePolicy(sizePolicy)
             CurSBCFiles['con'].setAlignment(QtCore.Qt.AlignCenter)
             CurSBCFiles['con'].setObjectName("label_27")
-            ui.horizontalLayout_13.addWidget(CurSBCFiles['con'])
+            horizontalLayout_13.addWidget(CurSBCFiles['con'])
             CurSBCFiles['FileNameLabel'] = QtWidgets.QLabel(CurSBCFiles['frame'])
             # ui.label_28 = QtWidgets.QLabel(ui.frame_13)
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -275,11 +292,11 @@ class SBC(QThread):
             CurSBCFiles['FileNameLabel'].setObjectName(FileInfo["filelj"])
             # ui.FileLabel[i].setObjectName("label_28")
 
-            ui.horizontalLayout_13.addWidget(CurSBCFiles['FileNameLabel'])
-            ui.horizontalLayout_13.setStretch(0, 1)
-            ui.horizontalLayout_13.setStretch(1, 1)
-            ui.horizontalLayout_13.setStretch(2, 20)
-            ui.horizontalLayout_14.addLayout(ui.horizontalLayout_13)
+            horizontalLayout_13.addWidget(CurSBCFiles['FileNameLabel'])
+            horizontalLayout_13.setStretch(0, 1)
+            horizontalLayout_13.setStretch(1, 1)
+            horizontalLayout_13.setStretch(2, 20)
+            horizontalLayout_14.addLayout(horizontalLayout_13)
             ui.label_29 = QtWidgets.QLabel(CurSBCFiles['frame'])
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             sizePolicy.setHorizontalStretch(3)
@@ -288,7 +305,7 @@ class SBC(QThread):
             ui.label_29.setSizePolicy(sizePolicy)
             ui.label_29.setAlignment(QtCore.Qt.AlignCenter)
             ui.label_29.setObjectName("label_29")
-            ui.horizontalLayout_14.addWidget(ui.label_29)
+            horizontalLayout_14.addWidget(ui.label_29)
             ui.label_30 = QtWidgets.QLabel(CurSBCFiles['frame'])
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             sizePolicy.setHorizontalStretch(3)
@@ -297,10 +314,10 @@ class SBC(QThread):
             ui.label_30.setSizePolicy(sizePolicy)
             ui.label_30.setAlignment(QtCore.Qt.AlignCenter)
             ui.label_30.setObjectName("label_30")
-            ui.horizontalLayout_14.addWidget(ui.label_30)
-            ui.horizontalLayout_14.setStretch(0, 7)
-            ui.horizontalLayout_14.setStretch(1, 2)
-            ui.horizontalLayout_14.setStretch(2, 2)
+            horizontalLayout_14.addWidget(ui.label_30)
+            horizontalLayout_14.setStretch(0, 7)
+            horizontalLayout_14.setStretch(1, 2)
+            horizontalLayout_14.setStretch(2, 2)
             ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
 
             metrics = QFontMetrics(CurSBCFiles['FileNameLabel'].font())
@@ -323,7 +340,11 @@ class SBC(QThread):
 
             ui.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
 
+        ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
         # Main.resizeEvent = self.MainWindowSizeChange
+
+        if self.Thread_LoadImg.isRunning():
+            self.Thread_LoadImg.quit()
         self.Thread_LoadImg.start()
 
 
