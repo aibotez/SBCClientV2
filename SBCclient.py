@@ -54,17 +54,23 @@ class Thread_LoadImg(QThread):
         pixmap.loadFromData(ba)
         px.setPixmap(pixmap)
 
+
+
     def run(self):
-        temp = self.func(self.ui.FileCon, 6)
+        temp = self.func(self.ui.FileCon, 2)
         for i in temp:
             SendList = [{'fepath':j['fepath']} for j in i]
             # print('send',SendList)
             ConList = SBCRe.GetFileCon(SendList)
-            for num in range(len(ConList['src'])):
-                coninfo = ConList['src'][num]
-                ConBase64 = coninfo.split(',')[-1]
-                img_b64decode = base64.b64decode(ConBase64)  # [21:]
-                self.ShowCon(i[num]['con'],img_b64decode)
+            try:
+                for num in range(len(ConList['src'])):
+                    coninfo = ConList['src'][num]
+                    ConBase64 = coninfo.split(',')[-1]
+                    img_b64decode = base64.b64decode(ConBase64)  # [21:]
+                    self.ShowCon(i[num]['con'],img_b64decode)
+            except:
+                print('threderror')
+                break
 
 
 
@@ -344,8 +350,11 @@ class SBC(QThread):
         # Main.resizeEvent = self.MainWindowSizeChange
 
         if self.Thread_LoadImg.isRunning():
-            self.Thread_LoadImg.quit()
+            # self.Thread_LoadImg.quit()
+            self.Thread_LoadImg.wait()
         self.Thread_LoadImg.start()
+        # self.Thread_LoadImg.wait()
+
 
 
 
