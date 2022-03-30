@@ -28,6 +28,10 @@
   <property name="windowTitle">
    <string>小黑云客户端</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>img/favicon.ico</normaloff>img/favicon.ico</iconset>
+  </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
@@ -129,6 +133,9 @@ Line{
          </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,1">
+           <property name="spacing">
+            <number>2</number>
+           </property>
            <property name="leftMargin">
             <number>6</number>
            </property>
@@ -146,14 +153,14 @@ Line{
              <property name="maximumSize">
               <size>
                <width>50</width>
-               <height>40</height>
+               <height>50</height>
               </size>
              </property>
              <property name="text">
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap>../SBCv2/static/img/xhy.jpg</pixmap>
+              <pixmap>img/SBCCon.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
