@@ -1,4 +1,4 @@
-import os,requests,json
+import os,requests,json,base64
 
 class SBCRe():
     def __init__(self):
@@ -47,15 +47,16 @@ class SBCRe():
     def GetFileCon(self,Files):
         url = 'http://' + self.host + '/GetImgCon/'
 
-        data = {
-            'imgdata': Files,
-        }
-        postdata = json.dumps(data,ensure_ascii=False)
 
-        print(postdata)
-        res = requests.post(url, data=postdata,headers=self.headers)
+        postdata = json.dumps(Files,ensure_ascii=False)
+        postdata = base64.encodebytes(postdata.encode('utf8')).decode()
+        data = {
+            'imgdata': postdata,
+        }
+        # print(data)
+        res = requests.post(url, data=json.dumps(data),headers=self.headers)
         Datas = json.loads(res.text)
-        print(Datas)
+        # print(Datas)
         return Datas
 
 # def Login():

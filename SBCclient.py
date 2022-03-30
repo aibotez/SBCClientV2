@@ -27,18 +27,17 @@ class Thread_LoadImg(QThread):
         px.setPixmap(pixmap)
 
     def run(self):
-        temp = self.func(self.ui.FileCon, 2)
+        temp = self.func(self.ui.FileCon, 6)
         for i in temp:
-            print(base64.encodebytes('/home/11据520C02B909A8A0B1D38A97BA96BA37.jpg'.encode('utf8')).decode())
             SendList = [{'fepath':j['fepath']} for j in i]
-            print('send',SendList)
+            # print('send',SendList)
             ConList = SBCRe.GetFileCon(SendList)
             for num in range(len(ConList['src'])):
                 coninfo = ConList['src'][num]
                 ConBase64 = coninfo.split(',')[-1]
                 img_b64decode = base64.b64decode(ConBase64)  # [21:]
                 self.ShowCon(i[num]['label'],img_b64decode)
-            break
+
 
 
 
