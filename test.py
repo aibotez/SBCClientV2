@@ -1,80 +1,62 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, QtMultimedia
 
 
-class myLabel(QtWidgets.QLabel):  # 自定义的QLabel类
+# -*- coding:utf-8 -*-
+import threading
+import time
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.Qt import QThread
 
+
+class CreateThread(QThread):
+    signal_time = QtCore.pyqtSignal(str,int)
     def __init__(self, parent=None):
-        super(myLabel, self).__init__(parent)
+        super(CreateThread,self).__init__(parent)
 
-    def mousePressEvent(self, e):  ##重载一下鼠标点击事件
-        # 左键按下
-        if e.buttons() == QtCore.Qt.LeftButton:
-            self.setText("左")
-        # 右键按下
-        elif e.buttons() == QtCore.Qt.RightButton:
-            self.setText("右")
-        # 中键按下
-        elif e.buttons() == QtCore.Qt.MidButton:
-            self.setText("中")
-        # 左右键同时按下
-        elif e.buttons() == QtCore.Qt.LeftButton | QtCore.Qt.RightButton:
-            self.setText("左右")
-        # 左中键同时按下
-        elif e.buttons() == QtCore.Qt.LeftButton | QtCore.Qt.MidButton:
-            self.setText("左中")
-        # 右中键同时按下
-        elif e.buttons() == QtCore.Qt.MidButton | QtCore.Qt.RightButton:
-            self.setText("右中")
-        # 左中右键同时按下
-        elif e.buttons() == QtCore.Qt.LeftButton | QtCore.Qt.MidButton | QtCore.Qt.RightButton:
-            self.setText("左中右")
+    def start_thread(self):
+        self.start()
 
+    def run(self):
+        print ('start block')
+        print ('new thread :',threading.current_thread())
+        time.sleep(3)    #模拟阻塞
+        self.signal_time.emit("new button","aaa")
+        print ('end block')
 
-class MyWindow(QtWidgets.QWidget):
-    def __init__(self):
-        super(MyWindow, self).__init__()
-        self.label = myLabel("点我")
-        self.gridLayout = QtWidgets.QGridLayout(self)
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+class TestUI(QWidget):
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.instance = self
+        self.setGeometry(100,100,500,400)
+        self.layout = QtGui.QGridLayout()
+        self.btnTest = QtGui.QPushButton()
+        self.btnTest.setText("单击, 异步动态添加控件".decode(encoding='utf-8'))
+        self.btnTest.setGeometry(QtCore.QRect(190, 74, 75, 23))
+        self.layout.addWidget(self.btnTest)
+        self.setLayout(self.layout)
 
+        self.timetool = CreateThread()
+        self.timetool.signal_time.connect(self.add_widget)
 
-if __name__ == "__main__":
+        self.connect(self.btnTest, QtCore.SIGNAL("clicked()"), self.click_start_btn)
+        pass
+
+    def click_start_btn(self):
+        self.timetool.start_thread()
+
+    def add_widget(self, text):
+        btnaaa = QtGui.QPushButton()
+        btnaaa.setText(text)
+        self.layout.addWidget(btnaaa)
+
+    def keyPressEvent(self, e):
+        print (e.key())
+
+if __name__ == '__main__':
+    print (threading.current_thread())
     import sys
-
-    # app = QtWidgets.QApplication(sys.argv)
-    # myshow = MyWindow()
-    # myshow.show()
-    # sys.exit(app.exec_())
-
-    from PyQt5.QtCore import pyqtSignal, QObject
-
-
-    class signal(QObject):
-        # 自定义一个信号
-        my_sighal = pyqtSignal(str)
-
-        # 定义一个发送信号的函数
-        def run(self, text):
-            self.my_sighal.emit(text)
-
-
-    class slot(QObject):
-        # 这个函数将用于绑定信号
-        def action(self, text):
-            print("I received that signal:" + text)
-
-
-    if __name__ == '__main__':
-        # 创建类的对象
-        send = signal()
-        receive = slot()
-
-        # 将信号与动作进行绑定
-        send.my_sighal.connect(receive.action)
-        # 发送信号
-        send.run("hello")
-        #
-        # # 将信号与槽函数解绑
-        # send.my_sighal.disconnect(receive.action)
-        # send.run("hello")
-
+    app = QApplication(sys.argv)
+    form = TestUI()
+    form.show()
+    sys.exit(app.exec_())

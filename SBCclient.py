@@ -1,4 +1,4 @@
-import sys,base64
+import sys,base64,threading
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
@@ -39,9 +39,10 @@ def size_format(size):
     elif 1024*1024*1024*1024 <= size:
         return '%.1f' % float(size/(1024*1024*1024*1024)) + 'TB'
 class Thread_LoadImg(QThread):
-    def __init__(self,ui):
+    def __init__(self):
         super().__init__()
         self.ui = ui
+        # self.Thread_LoadImg = Thread_LoadImg(self.ui)
 
     def func(self,listTemp, n):
         for i in range(0, len(listTemp), n):
@@ -67,10 +68,8 @@ class Thread_LoadImg(QThread):
 
 
 
-
-
 class ClickEventDeals():
-    def __init__(self,ui):
+    def __init__(self):
         self.ui = ui
     def DownDeal(self,e):
         pass
@@ -123,28 +122,35 @@ class ClickEventDeals():
             self.FileRightDeal(FileInfo)
     def FileLeftDeal(self,FileInfo):
         print('FileLeft',FileInfo)
+        SBCM.FileShow(FileInfo['fepath'])
 
     def FileRightDeal(self,FileInfo):
         print("右")
 
 
-class SBC():
-    def __init__(self,Main,Mui):
-        self.ui = Mui
-        self.Main = Main
+class SBC(QThread):
+    signal = pyqtSignal()
+    def __init__(self):
+        super().__init__()
+        # self.ui = ui
+        # self.Main = Main
         # self.Main.resizeEvent = self.MainWindowSizeChange
         self.width0 = 900
         self.height0 = 700
-        self.ClickEventDeals = ClickEventDeals(self.ui)
-        self.Thread_LoadImg = Thread_LoadImg(self.ui)
+        self.ClickEventDeals = ClickEventDeals()
+        self.Thread_LoadImg = Thread_LoadImg()
+
+        self.initdWindow()
+
+        self.signal.connect(self.Refresh)
 
     def MainWindowSizeChange(self,e):
-        if self.ui.scrollArea.width() < 500:
+        if ui.scrollArea.width() < 500:
             w = 760
         else:
-            w = self.ui.scrollArea.width()
-        for i in self.ui.CurSBCFilesDict:
-            FIleinfo = self.ui.CurSBCFilesDict[i]
+            w = ui.scrollArea.width()
+        for i in ui.CurSBCFilesDict:
+            FIleinfo = ui.CurSBCFilesDict[i]
             FileName = FIleinfo['fename']
             Felabel = FIleinfo['FileNameLabel']
             # print(Felabel)
@@ -153,7 +159,7 @@ class SBC():
             new_file_name = metrics.elidedText(FileName, Qt.ElideRight, w*0.5)
             Felabel.setText(new_file_name)
 
-    def FileCon(self,fetype):
+    def FileConChose(self,fetype):
         if fetype == 'folder':
             return 'img/filecon/foldersm.png'
         if fetype == 'zip':
@@ -176,38 +182,56 @@ class SBC():
             return 'img/filecon/wj.jfif'
 
     def initdWindow(self):
-        self.ui.frame_2.mousePressEvent = partial(self.ClickEventDeals.NavChoose,'File')
-        self.ui.frame_3.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Photo')
-        self.ui.frame_4.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Video')
-        self.ui.frame_5.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Share')
-        self.ui.frame_6.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Transmit')
-        self.ui.CurNavChosed = 'File'
-        ui = self.ui
+        global ui,Main
+        ui.CurSBCFilesDict = {}
+        ui.frame_13.deleteLater()
+        ui.frame_2.mousePressEvent = partial(self.ClickEventDeals.NavChoose,'File')
+        ui.frame_3.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Photo')
+        ui.frame_4.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Video')
+        ui.frame_5.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Share')
+        ui.frame_6.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Transmit')
+        ui.CurNavChosed = 'File'
         ui.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
-        self.Main.resize(self.width0, self.height0)
-        self.Main.setMinimumSize(QtCore.QSize(800, 700))
-        SBCRe.GetFileList('/home/')
-        ui.scrollAreaWidgetContents = QtWidgets.QWidget()
-        ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 0.839*self.width0, 0.8328*self.height0))
-        ui.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
-        ui.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        ui.formLayout = QtWidgets.QFormLayout(ui.scrollAreaWidgetContents)
-        ui.formLayout.setContentsMargins(0, 0, 0, 0)
-        ui.formLayout.setVerticalSpacing(0)
-        ui.formLayout.setObjectName("formLayout")
+        Main.resize(self.width0, self.height0)
+        Main.setMinimumSize(QtCore.QSize(800, 700))
+        Main.resizeEvent = self.MainWindowSizeChange
+
+
+    def ThreadRun(self,path):
+        SBCRe.GetFileList(path)
+        self.CurFileListOld = SBCRe.CurFileList
+        self.CurFileList = SBCRe.CurFileList
+        self.signal.emit()
+
+    def FileShow(self,path):
+
+        t = threading.Thread(target=self.ThreadRun,args=(path,))
+        t.setDaemon(True)
+        t.start()
+
+
+    def Refresh(self):
+        global ui, Main
+
+        for i in ui.CurSBCFilesDict:
+            ui.CurSBCFilesDict[i]['frame'].deleteLater()
+            break
+
+
         ui.CurSBCFilesDict = {}
         ui.FileCon = []
-        self.FileList = SBCRe.CurFileList
-        for i in range(len(SBCRe.CurFileList)):
+        for i in range(len(self.CurFileList)):
             CurSBCFiles = {}
-            FileInfo = SBCRe.CurFileList[i]
-            ui.frame_13 = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
-            ui.frame_13.setMinimumSize(QtCore.QSize(0, 36))
-            ui.frame_13.setMaximumSize(QtCore.QSize(16777215, 36))
-            ui.frame_13.setFrameShape(QtWidgets.QFrame.StyledPanel)
-            ui.frame_13.setFrameShadow(QtWidgets.QFrame.Raised)
-            ui.frame_13.setObjectName("frame_13")
-            ui.horizontalLayout_14 = QtWidgets.QHBoxLayout(ui.frame_13)
+            FileInfo = self.CurFileList[i]
+
+            CurSBCFiles['frame'] = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
+
+            CurSBCFiles['frame'].setMinimumSize(QtCore.QSize(0, 36))
+            CurSBCFiles['frame'].setMaximumSize(QtCore.QSize(16777215, 36))
+            CurSBCFiles['frame'].setFrameShape(QtWidgets.QFrame.StyledPanel)
+            CurSBCFiles['frame'].setFrameShadow(QtWidgets.QFrame.Raised)
+            CurSBCFiles['frame'].setObjectName("frame_13")
+            ui.horizontalLayout_14 = QtWidgets.QHBoxLayout(CurSBCFiles['frame'])
             ui.horizontalLayout_14.setContentsMargins(3, 0, 9, 0)
             ui.horizontalLayout_14.setSpacing(0)
             ui.horizontalLayout_14.setObjectName("horizontalLayout_14")
@@ -215,7 +239,8 @@ class SBC():
             ui.horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
             ui.horizontalLayout_13.setSpacing(6)
             ui.horizontalLayout_13.setObjectName("horizontalLayout_13")
-            ui.checkBox_2 = QtWidgets.QCheckBox(ui.frame_13)
+            ui.checkBox_2 = QtWidgets.QCheckBox(CurSBCFiles['frame'])
+
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
             sizePolicy.setHorizontalStretch(0)
             sizePolicy.setVerticalStretch(0)
@@ -225,8 +250,8 @@ class SBC():
             ui.checkBox_2.setObjectName("checkBox_2")
             ui.horizontalLayout_13.addWidget(ui.checkBox_2)
             # ui.label_27 = QtWidgets.QLabel(ui.frame_13)
-            CurSBCFiles['con'] = QtWidgets.QLabel(ui.frame_13)
-            CurSBCFiles['con'] = QtWidgets.QLabel(ui.frame_13)
+            CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
+            CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
             CurSBCFiles['con'].setMaximumSize(QtCore.QSize(36, 36))
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
             sizePolicy.setHorizontalStretch(0)
@@ -236,7 +261,7 @@ class SBC():
             CurSBCFiles['con'].setAlignment(QtCore.Qt.AlignCenter)
             CurSBCFiles['con'].setObjectName("label_27")
             ui.horizontalLayout_13.addWidget(CurSBCFiles['con'])
-            CurSBCFiles['FileNameLabel'] = QtWidgets.QLabel(ui.frame_13)
+            CurSBCFiles['FileNameLabel'] = QtWidgets.QLabel(CurSBCFiles['frame'])
             # ui.label_28 = QtWidgets.QLabel(ui.frame_13)
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             sizePolicy.setHorizontalStretch(9)
@@ -255,7 +280,7 @@ class SBC():
             ui.horizontalLayout_13.setStretch(1, 1)
             ui.horizontalLayout_13.setStretch(2, 20)
             ui.horizontalLayout_14.addLayout(ui.horizontalLayout_13)
-            ui.label_29 = QtWidgets.QLabel(ui.frame_13)
+            ui.label_29 = QtWidgets.QLabel(CurSBCFiles['frame'])
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             sizePolicy.setHorizontalStretch(3)
             sizePolicy.setVerticalStretch(0)
@@ -264,7 +289,7 @@ class SBC():
             ui.label_29.setAlignment(QtCore.Qt.AlignCenter)
             ui.label_29.setObjectName("label_29")
             ui.horizontalLayout_14.addWidget(ui.label_29)
-            ui.label_30 = QtWidgets.QLabel(ui.frame_13)
+            ui.label_30 = QtWidgets.QLabel(CurSBCFiles['frame'])
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             sizePolicy.setHorizontalStretch(3)
             sizePolicy.setVerticalStretch(0)
@@ -276,14 +301,10 @@ class SBC():
             ui.horizontalLayout_14.setStretch(0, 7)
             ui.horizontalLayout_14.setStretch(1, 2)
             ui.horizontalLayout_14.setStretch(2, 2)
-            ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, ui.frame_13)
-            ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
-            ui.verticalLayout_2.addWidget(ui.scrollArea)
+            ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
 
-            # ui.FileLabel[i].setText(FileInfo['filename'])
-            # print(ui.FileLabel[i].width())
             metrics = QFontMetrics(CurSBCFiles['FileNameLabel'].font())
-            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 360)
+            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 300)
             CurSBCFiles['FileNameLabel'].setText(new_file_name)
 
             filepath = base64.decodebytes(FileInfo['filelj'].encode('utf8')).decode()
@@ -293,22 +314,18 @@ class SBC():
             if FileInfo['fetype'] == 'img':
                 ui.FileCon.append(CurSBCFiles)
             CurSBCFiles['con'].setText("")
-            CurSBCFiles['con'].setPixmap(QtGui.QPixmap(self.FileCon(FileInfo['fetype'])))
+            CurSBCFiles['con'].setPixmap(QtGui.QPixmap(self.FileConChose(FileInfo['fetype'])))
             CurSBCFiles['con'].setScaledContents(True)
 
             ui.label_29.setText(FileInfo['date'])
             ui.label_30.setText(FileInfo['big'])
-            CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal,FileInfo)
+            CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
 
             ui.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
-        self.Main.resizeEvent = self.MainWindowSizeChange
-            # self.Main.resizeEvent = partial(self.MainWindowSizeChange, ui.FileLabel[i])
-        # self.ui.FileLabel = ui.FileLabel
-        # print(ui.FileCon)
-        try:
-            self.Thread_LoadImg.start()
-        except:
-            pass
+
+        # Main.resizeEvent = self.MainWindowSizeChange
+        self.Thread_LoadImg.start()
+
 
 
 
@@ -327,10 +344,8 @@ if __name__ == '__main__':
     Main = QMainWindow()
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
-    SBCM = SBC(Main,ui)
-    SBCM.initdWindow()
-    # Main.resizeEvent = MainWindowSizeChange
-    # ui.label_23.mousePressEvent = print_some
-    # test(ui,clickdeal)
+    SBCM = SBC()
+    SBCM.FileShow('/home/')
+
     Main.show()
     sys.exit(app.exec_())

@@ -555,7 +555,7 @@ class Ui_SBCclient(object):
         self.horizontalLayout_14.setStretch(0, 7)
         self.horizontalLayout_14.setStretch(1, 2)
         self.horizontalLayout_14.setStretch(2, 2)
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.frame_13)
+        # self.formLayout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.frame_13)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_2.addWidget(self.scrollArea)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
