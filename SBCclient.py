@@ -9,6 +9,7 @@ import time,io
 from PyQt5.Qt import QThread
 import os,hashlib
 from PIL import Image
+from ui import SubUi
 
 from pack import SBCRequest
 
@@ -107,9 +108,11 @@ class ClickEventDeals():
                 print(WosLabel)
                 if WosLabel == 'Photo':
                     self.ui.CurNavChosed = 'Photo'
+                    SBCM.ChoseNav_Photo()
                     self.ui.frame_3.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
                 if WosLabel == 'File':
                     self.ui.CurNavChosed = 'File'
+                    SBCM.ChoseNav_File()
                     self.ui.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
                 if WosLabel == 'Video':
                     self.ui.CurNavChosed = 'Video'
@@ -191,7 +194,7 @@ class SBC(QThread):
     def initdWindow(self):
         global ui,Main
         ui.CurSBCFilesDict = {}
-        # ui.frame_13.deleteLater()
+        ui.frame_13.deleteLater()
         ui.frame_2.mousePressEvent = partial(self.ClickEventDeals.NavChoose,'File')
         ui.frame_3.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Photo')
         ui.frame_4.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Video')
@@ -223,6 +226,7 @@ class SBC(QThread):
 
     def Refresh(self):
         global ui, Main
+
 
         ui.scrollAreaWidgetContents.deleteLater()
         ui.formLayout.deleteLater()
@@ -325,7 +329,7 @@ class SBC(QThread):
             horizontalLayout_14.setStretch(0, 7)
             horizontalLayout_14.setStretch(1, 2)
             horizontalLayout_14.setStretch(2, 2)
-            ui.formLayout.setWidget(i+1, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
+            ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
 
             metrics = QFontMetrics(CurSBCFiles['FileNameLabel'].font())
             new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 300)
@@ -355,6 +359,14 @@ class SBC(QThread):
             self.Thread_LoadImg.wait()
         self.Thread_LoadImg.start()
 
+    def ChoseNav_Photo(self):
+        ui.frame_12.hide()
+        subui.InitShow()
+    def ChoseNav_File(self):
+        ui.frame_PhotoShow.hide()
+        ui.frame_12.show()
+        # ui.scrollAreaWidgetContents.raise_()
+
 
 
 
@@ -375,6 +387,7 @@ if __name__ == '__main__':
     Main = QMainWindow()
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
+    subui = SubUi.Ui_PhotoShow(ui)
     SBCM = SBC()
     SBCM.FileShow('/home/')
 
