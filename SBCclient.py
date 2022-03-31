@@ -69,7 +69,7 @@ class Thread_LoadImg(QThread):
                     img_b64decode = base64.b64decode(ConBase64)  # [21:]
                     self.ShowCon(i[num]['con'],img_b64decode)
             except:
-                print('threderror')
+                # print('threderror')
                 break
 
 
@@ -191,7 +191,7 @@ class SBC(QThread):
     def initdWindow(self):
         global ui,Main
         ui.CurSBCFilesDict = {}
-        ui.frame_13.deleteLater()
+        # ui.frame_13.deleteLater()
         ui.frame_2.mousePressEvent = partial(self.ClickEventDeals.NavChoose,'File')
         ui.frame_3.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Photo')
         ui.frame_4.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'Video')
@@ -214,7 +214,7 @@ class SBC(QThread):
         self.path = path
 
         if self.isRunning():
-            self.deleteLater()
+            self.wait()
         self.start()
         # t = threading.Thread(target=self.ThreadRun,args=(path,))
         # t.setDaemon(True)
@@ -262,6 +262,7 @@ class SBC(QThread):
             horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
             horizontalLayout_13.setSpacing(6)
             horizontalLayout_13.setObjectName("horizontalLayout_13")
+
             ui.checkBox_2 = QtWidgets.QCheckBox(CurSBCFiles['frame'])
 
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
@@ -272,8 +273,8 @@ class SBC(QThread):
             ui.checkBox_2.setText("")
             ui.checkBox_2.setObjectName("checkBox_2")
             horizontalLayout_13.addWidget(ui.checkBox_2)
-            # ui.label_27 = QtWidgets.QLabel(ui.frame_13)
-            CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
+
+
             CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
             CurSBCFiles['con'].setMaximumSize(QtCore.QSize(36, 36))
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -284,8 +285,9 @@ class SBC(QThread):
             CurSBCFiles['con'].setAlignment(QtCore.Qt.AlignCenter)
             CurSBCFiles['con'].setObjectName("label_27")
             horizontalLayout_13.addWidget(CurSBCFiles['con'])
+
+
             CurSBCFiles['FileNameLabel'] = QtWidgets.QLabel(CurSBCFiles['frame'])
-            # ui.label_28 = QtWidgets.QLabel(ui.frame_13)
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
             sizePolicy.setHorizontalStretch(9)
             sizePolicy.setVerticalStretch(0)
@@ -296,7 +298,6 @@ class SBC(QThread):
             CurSBCFiles['FileNameLabel'].setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
             CurSBCFiles['FileNameLabel'].setObjectName(FileInfo["filelj"])
-            # ui.FileLabel[i].setObjectName("label_28")
 
             horizontalLayout_13.addWidget(CurSBCFiles['FileNameLabel'])
             horizontalLayout_13.setStretch(0, 1)
@@ -324,7 +325,7 @@ class SBC(QThread):
             horizontalLayout_14.setStretch(0, 7)
             horizontalLayout_14.setStretch(1, 2)
             horizontalLayout_14.setStretch(2, 2)
-            ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
+            ui.formLayout.setWidget(i+1, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
 
             metrics = QFontMetrics(CurSBCFiles['FileNameLabel'].font())
             new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 300)
@@ -334,6 +335,7 @@ class SBC(QThread):
             CurSBCFiles['fepath'] = filepath
             CurSBCFiles['fename'] = FileInfo['filename']
             CurSBCFiles['fepath_base64'] = FileInfo['filelj']
+
             if FileInfo['fetype'] == 'img':
                 ui.FileCon.append(CurSBCFiles)
             CurSBCFiles['con'].setText("")
@@ -347,13 +349,12 @@ class SBC(QThread):
             ui.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
 
         ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
-        # Main.resizeEvent = self.MainWindowSizeChange
+
 
         if self.Thread_LoadImg.isRunning():
-            # self.Thread_LoadImg.quit()
             self.Thread_LoadImg.wait()
         self.Thread_LoadImg.start()
-        # self.Thread_LoadImg.wait()
+
 
 
 
