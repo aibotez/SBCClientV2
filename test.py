@@ -9,6 +9,13 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.Qt import QThread
 
 
+class aa():
+    def __init__(self):
+        self.saa = 8
+
+    def a_a(self):
+        print('a_a')
+
 class a():
     def __init__(self):
         self.s = 6
@@ -16,13 +23,14 @@ class a():
     def a_a(self):
         print('a_a')
 
-class b(a):
+class b(a,aa):
     def __init__(self):
-        super().__init__()
-        pass
+        a.__init__(self)
+        aa.__init__(self)
 
     def b_b(self):
-        print(self.s)
+        # self.saa = 8
+        print(self.saa)
 
 class bc(b):
     def __init__(self):
@@ -32,6 +40,6 @@ class bc(b):
     def c_c(self):
         self.b_b()
 
-c = bc()
+c = b()
 
-c.c_c()
+c.b_b()

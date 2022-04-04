@@ -205,6 +205,10 @@ class SBC(QThread):
         Main.resize(self.width0, self.height0)
         Main.setMinimumSize(QtCore.QSize(800, 700))
         Main.resizeEvent = self.MainWindowSizeChange
+        ui.PhotoShowFilesDict = {}
+        ui.VdeoShowFilesDict = {}
+        ui.DocumenttoShowFilesDict = {}
+        ui.SHarehowFilesDict = {}
 
 
     def run(self):
@@ -361,7 +365,7 @@ class SBC(QThread):
 
     def ChoseNav_Photo(self):
         ui.frame_12.hide()
-        subui.InitShow()
+        subui.PhotoShow()
     def ChoseNav_File(self):
         ui.frame_PhotoShow.hide()
         ui.frame_12.show()
@@ -388,6 +392,7 @@ if __name__ == '__main__':
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
     subui = SubUi.Ui_PhotoShow(ui)
+    subui.InitShow()
     SBCM = SBC()
     SBCM.FileShow('/home/')
 

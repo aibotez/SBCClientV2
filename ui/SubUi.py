@@ -1,13 +1,63 @@
 
 import sys
 sys.path.append('..')
+from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.Qt import QThread
 import SBCMainWindow
+from PyQt5.QtGui import QFontMetrics
+from PyQt5.QtCore import *
+import base64
+from pack import SBCRequest
 
-class Ui_PhotoShow():
+
+
+
+
+
+
+class ClickEventDeals():
+    def __init__(self):
+        pass
+    def DownDeal(self,e):
+        pass
+    def UpDeal(self,e):
+        pass
+    def ReameDeal(self,e):
+        pass
+    def MoreDeal(self,e):
+        pass
+    def ChooseNetDeal(self,e):
+        pass
+    def SearchDeal(self,e):
+        pass
+    def NetBackDeal(self,e):
+        pass
+    def NetRefresh(self,e):
+        pass
+
+
+
+    def FileClickDeal(self,FileInfo,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            self.FileLeftDeal(FileInfo)
+        elif e.buttons() == QtCore.Qt.RightButton:
+            self.FileRightDeal(FileInfo)
+    def FileLeftDeal(self,FileInfo):
+        print('FileLeft',FileInfo)
+        # SBCM.FileShow(FileInfo['fepath'])
+
+    def FileRightDeal(self,FileInfo):
+        print("右")
+        # SBCM.FileShow('/home/')
+class Ui_PhotoShow(QThread):
+    signal = pyqtSignal()
     def __init__(self,ui):
-        # super().__init__()
+        super().__init__()
         self.MainWindow= ui
+        self.signal.connect(self.ScrollContentUpdate)
+        self.ClickEventDeals = ClickEventDeals()
+        self.Thread_LoadImg = Thread_LoadImg(Ui_PhotoShow)
 
 
     def InitShow(self):
@@ -221,17 +271,248 @@ class Ui_PhotoShow():
         self.MainWindow.verticalLayout_6.addWidget(self.frame_PhotoShow)
         # self.MainWindow.horizontalLayout.addWidget(self.frame_PhotoShow)
         # self.MainWindow.frame_PhotoShow.raise_()
-
-        self.retranslateUi()
-    def retranslateUi(self):
-        _translate = QtCore.QCoreApplication.translate
-        self.label_11.setText("图片")
         self.label_8.setText("...")
         self.label_20.setText("文件名")
         self.label_21.setText("修改时间")
         self.label_22.setText("大小")
-        self.label_27.setText("con")
-        self.label_28.setText("File1")
-        self.label_29.setText("2020-03-02")
-        self.label_30.setText("100MB")
+        self.MainWindow.frame_PhotoShow.hide()
+
+        # self.retranslateUi()
+
+    def MainWindowSizeChange(self,e):
+        if self.MainWindow.scrollArea.width() < 500:
+            w = 760
+        else:
+            w = self.MainWindow.scrollArea.width()
+        for i in self.MainWindow.CurSBCFilesDict:
+            FIleinfo = self.MainWindow.CurSBCFilesDict[i]
+            FileName = FIleinfo['fename']
+            Felabel = FIleinfo['FileNameLabel']
+            # print(Felabel)
+            metrics = QFontMetrics(Felabel.font())
+            # print(metrics)
+            new_file_name = metrics.elidedText(FileName, Qt.ElideRight, w*0.5)
+            Felabel.setText(new_file_name)
+
+    def FileConChose(self,fetype):
+        if fetype == 'folder':
+            return 'img/filecon/foldersm.png'
+        if fetype == 'zip':
+            return 'img/filecon/zipcon.png'
+        if fetype == 'img':
+            return 'img/filecon/imgcon.jpg'
+        if fetype == 'pdf':
+            return 'img/filecon/pdfcon.jpg'
+        if fetype == 'ppt':
+            return 'img/filecon/pptcon.jpg'
+        if fetype == 'exe':
+            return 'img/filecon/execon.jpg'
+        if fetype == 'excel':
+            return 'img/filecon/excelcon.jpg'
+        if fetype == 'word':
+            return 'img/filecon/wordcon.jpg'
+        if fetype == 'html':
+            return 'img/filecon/htmlcon.jpg'
+        else:
+            return 'img/filecon/wj.jfif'
+
+    def ScrollContentUpdate(self):
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 565))
+        self.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        formLayout = QtWidgets.QFormLayout(self.scrollAreaWidgetContents)
+        formLayout.setContentsMargins(0, 0, 0, 0)
+        formLayout.setVerticalSpacing(0)
+        formLayout.setObjectName("formLayout")
+
+        self.FileCon = []
+        self.CurSBCFilesDict = {}
+        for i in range(len(self.CurFileList)):
+            CurSBCFiles = {}
+            FileInfo = self.CurFileList[i]
+            CurSBCFiles['frame'] = QtWidgets.QFrame(self.scrollAreaWidgetContents)
+            CurSBCFiles['frame'].setMinimumSize(QtCore.QSize(0, 36))
+            CurSBCFiles['frame'].setMaximumSize(QtCore.QSize(16777215, 36))
+            CurSBCFiles['frame'].setFrameShape(QtWidgets.QFrame.StyledPanel)
+            CurSBCFiles['frame'].setFrameShadow(QtWidgets.QFrame.Raised)
+            CurSBCFiles['frame'].setObjectName("frame_13")
+            horizontalLayout_14 = QtWidgets.QHBoxLayout(CurSBCFiles['frame'])
+            horizontalLayout_14.setContentsMargins(3, 0, 9, 0)
+            horizontalLayout_14.setSpacing(0)
+            horizontalLayout_14.setObjectName("horizontalLayout_14")
+            horizontalLayout_13 = QtWidgets.QHBoxLayout()
+            horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
+            horizontalLayout_13.setSpacing(6)
+            horizontalLayout_13.setObjectName("horizontalLayout_13")
+            checkBox_2 = QtWidgets.QCheckBox(CurSBCFiles['frame'])
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(checkBox_2.sizePolicy().hasHeightForWidth())
+            checkBox_2.setSizePolicy(sizePolicy)
+            checkBox_2.setText("")
+            checkBox_2.setObjectName("checkBox_2")
+            horizontalLayout_13.addWidget(checkBox_2)
+            CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
+            CurSBCFiles['con'].setMaximumSize(QtCore.QSize(36, 36))
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(CurSBCFiles['con'].sizePolicy().hasHeightForWidth())
+            CurSBCFiles['con'].setSizePolicy(sizePolicy)
+            CurSBCFiles['con'].setAlignment(QtCore.Qt.AlignCenter)
+            CurSBCFiles['con'].setObjectName("label_27")
+            horizontalLayout_13.addWidget(CurSBCFiles['con'])
+            CurSBCFiles['FileNameLabel'] = QtWidgets.QLabel(CurSBCFiles['frame'])
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+            sizePolicy.setHorizontalStretch(9)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(CurSBCFiles['FileNameLabel'].sizePolicy().hasHeightForWidth())
+            CurSBCFiles['FileNameLabel'].setSizePolicy(sizePolicy)
+            CurSBCFiles['FileNameLabel'].setMinimumSize(QtCore.QSize(0, 30))
+            CurSBCFiles['FileNameLabel'].setMaximumSize(QtCore.QSize(16777215, 36))
+            CurSBCFiles['FileNameLabel'].setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            CurSBCFiles['FileNameLabel'].setObjectName(FileInfo["filelj"])
+            horizontalLayout_13.addWidget(CurSBCFiles['FileNameLabel'])
+            horizontalLayout_13.setStretch(0, 1)
+            horizontalLayout_13.setStretch(1, 1)
+            horizontalLayout_13.setStretch(2, 20)
+            horizontalLayout_14.addLayout(horizontalLayout_13)
+            label_29 = QtWidgets.QLabel(CurSBCFiles['frame'])
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+            sizePolicy.setHorizontalStretch(3)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(label_29.sizePolicy().hasHeightForWidth())
+            label_29.setSizePolicy(sizePolicy)
+            label_29.setAlignment(QtCore.Qt.AlignCenter)
+            label_29.setObjectName("label_29")
+            horizontalLayout_14.addWidget(label_29)
+            label_30 = QtWidgets.QLabel(CurSBCFiles['frame'])
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+            sizePolicy.setHorizontalStretch(3)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(label_30.sizePolicy().hasHeightForWidth())
+            label_30.setSizePolicy(sizePolicy)
+            label_30.setAlignment(QtCore.Qt.AlignCenter)
+            label_30.setObjectName("label_30")
+            horizontalLayout_14.addWidget(label_30)
+            horizontalLayout_14.setStretch(0, 7)
+            horizontalLayout_14.setStretch(1, 2)
+            horizontalLayout_14.setStretch(2, 2)
+            formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
+            metrics = QFontMetrics(CurSBCFiles['FileNameLabel'].font())
+            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 300)
+            CurSBCFiles['FileNameLabel'].setText(new_file_name)
+            filepath = base64.decodebytes(FileInfo['filelj'].encode('utf8')).decode()
+            CurSBCFiles['fepath'] = filepath
+            CurSBCFiles['fename'] = FileInfo['filename']
+            CurSBCFiles['fepath_base64'] = FileInfo['filelj']
+
+            if FileInfo['fetype'] == 'img':
+                self.FileCon.append(CurSBCFiles)
+
+            CurSBCFiles['con'].setText("")
+
+            CurSBCFiles['con'].setPixmap(QtGui.QPixmap(self.FileConChose(FileInfo['fetype'])))
+
+            CurSBCFiles['con'].setScaledContents(True)
+
+            label_29.setText(FileInfo['date'])
+            label_30.setText(FileInfo['big'])
+            CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
+
+            self.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
+
+
+        self.scrollAreaPhotoShow.setWidget(self.scrollAreaWidgetContents)
+        # self.verticalLayout_2.addWidget(self.scrollAreaPhotoShow)
+        # self.MainWindow.verticalLayout_6.addWidget(self.frame_PhotoShow)
+
+
+        # if self.Thread_LoadImg.isRunning():
+        #     self.Thread_LoadImg.wait()
+        # self.Thread_LoadImg.start()
+
+
+    def run(self):
+        self.SBCRe = SBCRequest.SBCRe()
+        # if self.isRunning():
+        #     return
+        if self.CurShow == 'File':
+            pass
+        if self.CurShow == 'Photo':
+            self.SBCRe.GetFileList('/home/')
+            self.CurFileListOld = self.SBCRe.CurFileList
+            self.CurFileList = self.SBCRe.CurFileList
+            self.signal.emit()
+
+    def UpdateShow(self,Show):
+        self.CurShow = Show
+        self.start()
+
+
+    def FileShow(self):
+        self.MainWindow.frame_PhotoShow.hide()
+        self.MainWindow.frame_12.show()
+
+    def PhotoShow(self):
+        self.label_11.setText("图片")
+        self.MainWindow.frame_12.hide()
+        self.MainWindow.frame_PhotoShow.show()
+
+        self.UpdateShow('Photo')
+
+    def VideoShow(self):
+        self.label_11.setText("视频")
+        self.MainWindow.frame_12.hide()
+        self.MainWindow.frame_PhotoShow.show()
+
+
+    # def retranslateUi(self):
+    #     _translate = QtCore.QCoreApplication.translate
+    #     self.label_11.setText("图片")
+    #     self.label_8.setText("...")
+    #     self.label_20.setText("文件名")
+    #     self.label_21.setText("修改时间")
+    #     self.label_22.setText("大小")
+    #     self.label_27.setText("con")
+    #     self.label_28.setText("File1")
+    #     self.label_29.setText("2020-03-02")
+    #     self.label_30.setText("100MB")
+
+
+class Thread_LoadImg(QThread):
+    def __init__(self,Ui_PhotoShow):
+        super().__init__()
+        self.ui = Ui_PhotoShow
+
+        # self.Thread_LoadImg = Thread_LoadImg(self.ui)
+
+    def func(self, listTemp, n):
+        for i in range(0, len(listTemp), n):
+            yield listTemp[i:i + n]
+
+    def ShowCon(self, px, base64data):
+        ba = base64data
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(ba)
+        px.setPixmap(pixmap)
+
+    def run(self):
+        # print(66)
+        temp = self.func(self.ui.FileCon, 2)
+        for i in temp:
+            SendList = [{'fepath': j['fepath']} for j in i]
+            # print('send',SendList)
+            ConList = self.SBCRe.GetFileCon(SendList)
+            try:
+                for num in range(len(ConList['src'])):
+                    coninfo = ConList['src'][num]
+                    ConBase64 = coninfo.split(',')[-1]
+                    img_b64decode = base64.b64decode(ConBase64)  # [21:]
+                    self.ShowCon(i[num]['con'], img_b64decode)
+            except:
+                # print('threderror')
+                break
 

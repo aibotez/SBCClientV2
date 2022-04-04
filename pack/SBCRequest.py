@@ -35,7 +35,9 @@ class SBCRe():
         data = {
             'path': path,
         }
+        # print(self.headers)
         res = requests.post(url, data=data,headers=self.headers)
+        # print(res)
         FileDatas = json.loads(res.text)
         # print(FileDatas['FileList'])
         # for i in FileDatas['FileList']:
