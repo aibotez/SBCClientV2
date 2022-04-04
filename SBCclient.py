@@ -117,6 +117,7 @@ class ClickEventDeals():
                 if WosLabel == 'Video':
                     self.ui.CurNavChosed = 'Video'
                     self.ui.frame_4.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
+                    SBCM.ChoseNav_Video()
                 if WosLabel == 'Share':
                     self.ui.CurNavChosed = 'Share'
                     self.ui.frame_5.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
@@ -370,6 +371,9 @@ class SBC(QThread):
         ui.frame_PhotoShow.hide()
         ui.frame_12.show()
         # ui.scrollAreaWidgetContents.raise_()
+    def ChoseNav_Video(self):
+        ui.frame_12.hide()
+        subui.VideoShow()
 
 
 

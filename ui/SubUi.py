@@ -408,14 +408,10 @@ class Ui_PhotoShow(QThread):
             CurSBCFiles['fepath'] = filepath
             CurSBCFiles['fename'] = FileInfo['filename']
             CurSBCFiles['fepath_base64'] = FileInfo['filelj']
-
             if FileInfo['fetype'] == 'img':
                 self.FileCon.append(CurSBCFiles)
-
             CurSBCFiles['con'].setText("")
-
             CurSBCFiles['con'].setPixmap(QtGui.QPixmap(self.FileConChose(FileInfo['fetype'])))
-
             CurSBCFiles['con'].setScaledContents(True)
 
             label_29.setText(FileInfo['date'])
@@ -423,7 +419,6 @@ class Ui_PhotoShow(QThread):
             CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
 
             self.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
-
 
         self.scrollAreaPhotoShow.setWidget(self.scrollAreaWidgetContents)
         # self.verticalLayout_2.addWidget(self.scrollAreaPhotoShow)
@@ -446,6 +441,11 @@ class Ui_PhotoShow(QThread):
             self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
             self.signal.emit()
+        if self.CurShow == 'Video':
+            self.SBCRe.GetFileList('/home/BaiduNet/')
+            self.CurFileListOld = self.SBCRe.CurFileList
+            self.CurFileList = self.SBCRe.CurFileList
+            self.signal.emit()
 
     def UpdateShow(self,Show):
         self.CurShow = Show
@@ -458,15 +458,16 @@ class Ui_PhotoShow(QThread):
 
     def PhotoShow(self):
         self.label_11.setText("图片")
-        self.MainWindow.frame_12.hide()
+        # self.MainWindow.frame_12.hide()
         self.MainWindow.frame_PhotoShow.show()
 
         self.UpdateShow('Photo')
 
     def VideoShow(self):
         self.label_11.setText("视频")
-        self.MainWindow.frame_12.hide()
+        # self.MainWindow.frame_12.hide()
         self.MainWindow.frame_PhotoShow.show()
+        self.UpdateShow('Video')
 
 
     # def retranslateUi(self):
