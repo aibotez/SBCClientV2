@@ -58,7 +58,27 @@ class Ui_PhotoShow(QThread):
         self.signal.connect(self.ScrollContentUpdate)
         self.ClickEventDeals = ClickEventDeals()
         self.Thread_LoadImg = Thread_LoadImg(Ui_PhotoShow)
+        self.path = '/home/'
 
+    def FileClickDeal(self,FileInfo,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            self.FileLeftDeal(FileInfo)
+        elif e.buttons() == QtCore.Qt.RightButton:
+            self.FileRightDeal(FileInfo)
+    def FileLeftDeal(self,FileInfo):
+        print('FileLeft',FileInfo)
+        self.FileShow1(FileInfo['fepath'])
+
+    def FileRightDeal(self,FileInfo):
+        print("右")
+        # SBCM.FileShow('/home/')
+
+    def FileShow1(self,path):
+        self.path = path
+
+        if self.isRunning():
+            self.wait()
+        self.start()
 
     def InitShow(self):
         # self.centralwidget = self.MainWindow.centralwidget
@@ -277,9 +297,11 @@ class Ui_PhotoShow(QThread):
         self.label_22.setText("大小")
         self.MainWindow.frame_PhotoShow.hide()
 
+
         # self.retranslateUi()
 
-    def MainWindowSizeChange(self,e):
+    def MainWindowSizeChange1(self,e):
+
         if self.MainWindow.scrollArea.width() < 500:
             w = 760
         else:
@@ -317,6 +339,9 @@ class Ui_PhotoShow(QThread):
             return 'img/filecon/wj.jfif'
 
     def ScrollContentUpdate(self):
+        if self.MainWindow.CurNavChosed in self.MainWindow.SBCFilesDict:
+            self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'].deleteLater()
+
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 565))
         self.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -328,6 +353,7 @@ class Ui_PhotoShow(QThread):
 
         self.FileCon = []
         self.CurSBCFilesDict = {}
+        self.CurSBCFilesDict['scrollAreaWidgetContents'] = self.scrollAreaWidgetContents
         for i in range(len(self.CurFileList)):
             CurSBCFiles = {}
             FileInfo = self.CurFileList[i]
@@ -416,13 +442,14 @@ class Ui_PhotoShow(QThread):
 
             label_29.setText(FileInfo['date'])
             label_30.setText(FileInfo['big'])
-            CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
-
+            # CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
+            CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.FileClickDeal, CurSBCFiles)
             self.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
 
         self.scrollAreaPhotoShow.setWidget(self.scrollAreaWidgetContents)
         # self.verticalLayout_2.addWidget(self.scrollAreaPhotoShow)
         # self.MainWindow.verticalLayout_6.addWidget(self.frame_PhotoShow)
+        self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed] = self.CurSBCFilesDict
 
 
         # if self.Thread_LoadImg.isRunning():
@@ -437,7 +464,8 @@ class Ui_PhotoShow(QThread):
         if self.CurShow == 'File':
             pass
         if self.CurShow == 'Photo':
-            self.SBCRe.GetFileList('/home/')
+
+            self.SBCRe.GetFileList(self.path)
             self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
             self.signal.emit()
@@ -460,7 +488,7 @@ class Ui_PhotoShow(QThread):
         self.label_11.setText("图片")
         # self.MainWindow.frame_12.hide()
         self.MainWindow.frame_PhotoShow.show()
-
+        self.MainWindow.frame_PhotoShow.resizeEvent = self.MainWindowSizeChange1
         self.UpdateShow('Photo')
 
     def VideoShow(self):

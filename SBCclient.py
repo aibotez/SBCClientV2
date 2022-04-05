@@ -155,7 +155,31 @@ class SBC(QThread):
 
         self.signal.connect(self.Refresh)
 
+
+    def WindowReSize(self):
+        # if ui.scrollArea.width() < 500:
+        #     w = 760
+        # else:
+        #     w = ui.scrollArea.width()
+        w = Main.width() - 150
+
+        if ui.CurNavChosed in ui.SBCFilesDict:
+            CurSBCFilesDict = ui.SBCFilesDict[ui.CurNavChosed]
+            print(CurSBCFilesDict)
+            for i in CurSBCFilesDict:
+                FIleinfo = CurSBCFilesDict[i]
+                FileName = FIleinfo['fename']
+                Felabel = FIleinfo['FileNameLabel']
+                # print(Felabel)
+                metrics = QFontMetrics(Felabel.font())
+                # print(metrics)
+                new_file_name = metrics.elidedText(FileName, Qt.ElideRight, w*0.5)
+                Felabel.setText(new_file_name)
+
     def MainWindowSizeChange(self,e):
+        self.WindowReSize()
+
+    def MainWindowSizeChange0(self,e):
         if ui.scrollArea.width() < 500:
             w = 760
         else:
@@ -205,17 +229,23 @@ class SBC(QThread):
         ui.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
         Main.resize(self.width0, self.height0)
         Main.setMinimumSize(QtCore.QSize(800, 700))
-        Main.resizeEvent = self.MainWindowSizeChange
+        # Main.resizeEvent = self.MainWindowSizeChange
         ui.PhotoShowFilesDict = {}
         ui.VdeoShowFilesDict = {}
         ui.DocumenttoShowFilesDict = {}
-        ui.SHarehowFilesDict = {}
+        ui.SharehowFilesDict = {}
+        ui.SBCFilesDict = {}
+        ui.CurShow = ''
+        Main.resizeEvent = self.MainWindowSizeChange
+        # ui.frame_12.resizeEvent = self.MainWindowSizeChange
 
 
     def run(self):
+
         SBCRe.GetFileList(self.path)
         self.CurFileListOld = SBCRe.CurFileList
         self.CurFileList = SBCRe.CurFileList
+
         self.signal.emit()
 
     def FileShow(self,path):
@@ -232,16 +262,16 @@ class SBC(QThread):
     def Refresh(self):
         global ui, Main
 
-
         ui.scrollAreaWidgetContents.deleteLater()
-        ui.formLayout.deleteLater()
-        for i in ui.CurSBCFilesDict:
-            ui.CurSBCFilesDict[i]['frame'].deleteLater()
-            break
+
+        # for i in ui.CurSBCFilesDict:
+        #     ui.CurSBCFilesDict[i]['frame'].deleteLater()
+        #     break
 
 
         ui.CurSBCFilesDict = {}
         ui.FileCon = []
+        ui.SBCFilesDict[ui.CurNavChosed] = {}
 
         ui.scrollAreaWidgetContents = QtWidgets.QWidget()
         ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 565))
@@ -251,6 +281,7 @@ class SBC(QThread):
         ui.formLayout.setContentsMargins(0, 0, 0, 0)
         ui.formLayout.setVerticalSpacing(0)
         ui.formLayout.setObjectName("formLayout")
+
         for i in range(len(self.CurFileList)):
 
             CurSBCFiles = {}
@@ -360,16 +391,24 @@ class SBC(QThread):
         ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
 
 
+        ui.SBCFilesDict[ui.CurNavChosed] = ui.CurSBCFilesDict
         if self.Thread_LoadImg.isRunning():
             self.Thread_LoadImg.wait()
         self.Thread_LoadImg.start()
 
+    def MainWindowSizeChange1(self,e):
+        print(1)
+
     def ChoseNav_Photo(self):
         ui.frame_12.hide()
+        ui.CurShow = 'Photo'
         subui.PhotoShow()
+        # subui.frame_PhotoShow.resizeEvent = self.MainWindowSizeChange1
+
     def ChoseNav_File(self):
         ui.frame_PhotoShow.hide()
         ui.frame_12.show()
+
         # ui.scrollAreaWidgetContents.raise_()
     def ChoseNav_Video(self):
         ui.frame_12.hide()
@@ -400,5 +439,6 @@ if __name__ == '__main__':
     SBCM = SBC()
     SBCM.FileShow('/home/')
 
+    print(Main.width())
     Main.show()
     sys.exit(app.exec_())
