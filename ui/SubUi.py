@@ -297,6 +297,9 @@ class Ui_PhotoShow(QThread):
         self.label_22.setText("大小")
         self.MainWindow.frame_PhotoShow.hide()
 
+        frame = {'frame':self.frame_PhotoShow,'scrollArea':self.scrollAreaPhotoShow,'label':self.label_11}
+        return frame
+
 
         # self.retranslateUi()
 
@@ -339,9 +342,13 @@ class Ui_PhotoShow(QThread):
             return 'img/filecon/wj.jfif'
 
     def ScrollContentUpdate(self):
+        # print('CurNavChosed',self.MainWindow.CurNavChosed)
         if self.MainWindow.CurNavChosed in self.MainWindow.SBCFilesDict:
+            print('pr',self.MainWindow.SBCFilesDict)
+            print(self.MainWindow.SBCFilesDict)
+            print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'])
             self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'].deleteLater()
-
+        self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed] = {}
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 565))
         self.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -353,7 +360,9 @@ class Ui_PhotoShow(QThread):
 
         self.FileCon = []
         self.CurSBCFilesDict = {}
+        SBCFile = {}
         self.CurSBCFilesDict['scrollAreaWidgetContents'] = self.scrollAreaWidgetContents
+
         for i in range(len(self.CurFileList)):
             CurSBCFiles = {}
             FileInfo = self.CurFileList[i]
@@ -444,12 +453,20 @@ class Ui_PhotoShow(QThread):
             label_30.setText(FileInfo['big'])
             # CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
             CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.FileClickDeal, CurSBCFiles)
-            self.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
 
-        self.scrollAreaPhotoShow.setWidget(self.scrollAreaWidgetContents)
+            # self.CurSBCFilesDict['File'] = {FileInfo['filelj']:CurSBCFiles}
+            # self.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
+            SBCFile[FileInfo['filelj']] = CurSBCFiles
+
+        self.MainWindow.frameandscroll[self.MainWindow.CurNavChosed]['scrollArea'].setWidget(self.scrollAreaWidgetContents)
+        # self.scrollAreaPhotoShow.setWidget(self.scrollAreaWidgetContents)
         # self.verticalLayout_2.addWidget(self.scrollAreaPhotoShow)
         # self.MainWindow.verticalLayout_6.addWidget(self.frame_PhotoShow)
-        self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed] = self.CurSBCFilesDict
+        # self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed] = self.CurSBCFilesDict
+        self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'] = self.scrollAreaWidgetContents
+        self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['File'] = SBCFile
+        # print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'])
+
 
 
         # if self.Thread_LoadImg.isRunning():
@@ -485,16 +502,21 @@ class Ui_PhotoShow(QThread):
         self.MainWindow.frame_12.show()
 
     def PhotoShow(self):
-        self.label_11.setText("图片")
+        # self.label_11.setText("图片")
+        self.MainWindow.frameandscroll[self.MainWindow.CurNavChosed]['label'].setText("图片")
         # self.MainWindow.frame_12.hide()
-        self.MainWindow.frame_PhotoShow.show()
-        self.MainWindow.frame_PhotoShow.resizeEvent = self.MainWindowSizeChange1
+        self.MainWindow.frameandscroll[self.MainWindow.CurNavChosed]['frame'].show()
+        # self.MainWindow.frameandscroll['frame'].show()
+        # self.MainWindow.frame_PhotoShow.show()
+        # self.MainWindow.frame_PhotoShow.resizeEvent = self.MainWindowSizeChange1
         self.UpdateShow('Photo')
 
     def VideoShow(self):
-        self.label_11.setText("视频")
+        # self.label_11.setText("视频")
+        self.MainWindow.frameandscroll[self.MainWindow.CurNavChosed]['label'].setText("视频")
         # self.MainWindow.frame_12.hide()
-        self.MainWindow.frame_PhotoShow.show()
+        self.MainWindow.frameandscroll[self.MainWindow.CurNavChosed]['frame'].show()
+        # self.MainWindow.frame_PhotoShow.show()
         self.UpdateShow('Video')
 
 

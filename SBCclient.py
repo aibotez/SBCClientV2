@@ -164,8 +164,8 @@ class SBC(QThread):
         w = Main.width() - 150
 
         if ui.CurNavChosed in ui.SBCFilesDict:
-            CurSBCFilesDict = ui.SBCFilesDict[ui.CurNavChosed]
-            print(CurSBCFilesDict)
+            CurSBCFilesDict = ui.SBCFilesDict[ui.CurNavChosed]['File']
+            # print(CurSBCFilesDict)
             for i in CurSBCFilesDict:
                 FIleinfo = CurSBCFilesDict[i]
                 FileName = FIleinfo['fename']
@@ -396,11 +396,18 @@ class SBC(QThread):
             self.Thread_LoadImg.wait()
         self.Thread_LoadImg.start()
 
+
+    def HideFrames(self):
+        ui.frame_12.hide()
+        ui.frameandscroll['Photo']['frame'].hide()
+        ui.frameandscroll['Video']['frame'].hide()
+
     def MainWindowSizeChange1(self,e):
         print(1)
 
     def ChoseNav_Photo(self):
-        ui.frame_12.hide()
+        self.HideFrames()
+        # ui.frame_12.hide()
         ui.CurShow = 'Photo'
         subui.PhotoShow()
         # subui.frame_PhotoShow.resizeEvent = self.MainWindowSizeChange1
@@ -411,7 +418,8 @@ class SBC(QThread):
 
         # ui.scrollAreaWidgetContents.raise_()
     def ChoseNav_Video(self):
-        ui.frame_12.hide()
+        self.HideFrames()
+        # ui.frame_12.hide()
         subui.VideoShow()
 
 
@@ -435,7 +443,10 @@ if __name__ == '__main__':
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
     subui = SubUi.Ui_PhotoShow(ui)
-    subui.InitShow()
+    ui.frameandscroll = {}
+    ui.frameandscroll['Photo'] = subui.InitShow()
+    ui.frameandscroll['Video'] = subui.InitShow()
+
     SBCM = SBC()
     SBCM.FileShow('/home/')
 
