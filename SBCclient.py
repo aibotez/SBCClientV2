@@ -414,8 +414,10 @@ class SBC(QThread):
         # subui.frame_PhotoShow.resizeEvent = self.MainWindowSizeChange1
 
     def ChoseNav_File(self):
-        ui.frame_PhotoShow.hide()
-        ui.frame_12.show()
+        self.HideFrames()
+        subui.FileShow()
+        # ui.frame_PhotoShow.hide()
+        # ui.frame_12.show()
 
         # ui.scrollAreaWidgetContents.raise_()
     def ChoseNav_Video(self):
@@ -447,9 +449,10 @@ if __name__ == '__main__':
     ui.frameandscroll = {}
     ui.frameandscroll['Photo'] = subui.InitShow()
     ui.frameandscroll['Video'] = subui.InitShow()
+    ui.frameandscroll['File'] = subui.InitFileShow()
 
     SBCM = SBC()
-    SBCM.FileShow('/home/')
+    # SBCM.FileShow('/home/')
 
     print(Main.width())
     Main.show()

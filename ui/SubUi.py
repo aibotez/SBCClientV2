@@ -80,6 +80,10 @@ class Ui_PhotoShow(QThread):
             self.wait()
         self.start()
 
+    def InitFileShow(self):
+        frame = {'frame':self.MainWindow.frame_12,'scrollArea':self.MainWindow.scrollArea}
+        return frame
+
     def InitShow(self):
         # self.centralwidget = self.MainWindow.centralwidget
         self.frame_PhotoShow = QtWidgets.QFrame(self.MainWindow.frame_14)
@@ -481,28 +485,31 @@ class Ui_PhotoShow(QThread):
         self.SBCRe = SBCRequest.SBCRe()
         # if self.isRunning():
         #     return
-        if self.CurShow == 'File':
-            pass
-        if self.CurShow == 'Photo':
-
+        if self.MainWindow.CurNavChosed == 'File':
             self.SBCRe.GetFileList(self.path)
             self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
             self.signal.emit()
-        if self.CurShow == 'Video':
+        if self.MainWindow.CurNavChosed == 'Photo':
+            self.SBCRe.GetFileList(self.path)
+            self.CurFileListOld = self.SBCRe.CurFileList
+            self.CurFileList = self.SBCRe.CurFileList
+            self.signal.emit()
+        if self.MainWindow.CurNavChosed == 'Video':
             self.SBCRe.GetFileList('/home/BaiduNet/')
             self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
             self.signal.emit()
 
     def UpdateShow(self,Show):
-        self.CurShow = Show
+        # self.CurShow = Show
         self.start()
 
 
     def FileShow(self):
-        self.MainWindow.frame_PhotoShow.hide()
+        # self.MainWindow.frame_PhotoShow.hide()
         self.MainWindow.frame_12.show()
+        self.UpdateShow('File')
 
     def PhotoShow(self):
         # self.label_11.setText("图片")
