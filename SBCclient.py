@@ -235,6 +235,7 @@ class SBC(QThread):
         ui.DocumenttoShowFilesDict = {}
         ui.SharehowFilesDict = {}
         ui.SBCFilesDict = {}
+        ui.FileCons = {}
         ui.CurShow = ''
         Main.resizeEvent = self.MainWindowSizeChange
         # ui.frame_12.resizeEvent = self.MainWindowSizeChange

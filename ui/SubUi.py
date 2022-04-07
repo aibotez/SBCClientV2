@@ -57,7 +57,7 @@ class Ui_PhotoShow(QThread):
         self.MainWindow= ui
         self.signal.connect(self.ScrollContentUpdate)
         self.ClickEventDeals = ClickEventDeals()
-        self.Thread_LoadImg = Thread_LoadImg(Ui_PhotoShow)
+        self.Thread_LoadImg = Thread_LoadImg()
         self.path = '/home/'
 
     def FileClickDeal(self,FileInfo,e):
@@ -358,7 +358,9 @@ class Ui_PhotoShow(QThread):
         formLayout.setVerticalSpacing(0)
         formLayout.setObjectName("formLayout")
 
-        self.FileCon = []
+        # print(self.MainWindow.FileCons)
+        self.MainWindow.FileCons[self.MainWindow.CurNavChosed] = {}
+        Filecon = []
         self.CurSBCFilesDict = {}
         SBCFile = {}
         self.CurSBCFilesDict['scrollAreaWidgetContents'] = self.scrollAreaWidgetContents
@@ -444,7 +446,7 @@ class Ui_PhotoShow(QThread):
             CurSBCFiles['fename'] = FileInfo['filename']
             CurSBCFiles['fepath_base64'] = FileInfo['filelj']
             if FileInfo['fetype'] == 'img':
-                self.FileCon.append(CurSBCFiles)
+                Filecon.append(CurSBCFiles)
             CurSBCFiles['con'].setText("")
             CurSBCFiles['con'].setPixmap(QtGui.QPixmap(self.FileConChose(FileInfo['fetype'])))
             CurSBCFiles['con'].setScaledContents(True)
@@ -458,6 +460,7 @@ class Ui_PhotoShow(QThread):
             # self.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
             SBCFile[FileInfo['filelj']] = CurSBCFiles
 
+        self.MainWindow.FileCons[self.MainWindow.CurNavChosed] = Filecon
         self.MainWindow.frameandscroll[self.MainWindow.CurNavChosed]['scrollArea'].setWidget(self.scrollAreaWidgetContents)
         # self.scrollAreaPhotoShow.setWidget(self.scrollAreaWidgetContents)
         # self.verticalLayout_2.addWidget(self.scrollAreaPhotoShow)
@@ -469,9 +472,9 @@ class Ui_PhotoShow(QThread):
 
 
 
-        # if self.Thread_LoadImg.isRunning():
-        #     self.Thread_LoadImg.wait()
-        # self.Thread_LoadImg.start()
+        if self.Thread_LoadImg.isRunning():
+            self.Thread_LoadImg.wait()
+        self.Thread_LoadImg.runthread(self.MainWindow)
 
 
     def run(self):
@@ -520,6 +523,7 @@ class Ui_PhotoShow(QThread):
         self.UpdateShow('Video')
 
 
+
     # def retranslateUi(self):
     #     _translate = QtCore.QCoreApplication.translate
     #     self.label_11.setText("图片")
@@ -534,9 +538,9 @@ class Ui_PhotoShow(QThread):
 
 
 class Thread_LoadImg(QThread):
-    def __init__(self,Ui_PhotoShow):
+    def __init__(self):
         super().__init__()
-        self.ui = Ui_PhotoShow
+        self.SBCRe = SBCRequest.SBCRe()
 
         # self.Thread_LoadImg = Thread_LoadImg(self.ui)
 
@@ -550,9 +554,15 @@ class Thread_LoadImg(QThread):
         pixmap.loadFromData(ba)
         px.setPixmap(pixmap)
 
+    def runthread(self,MainWindow):
+        self.MainWindow = MainWindow
+        # print(self.FileCons)
+        self.start()
+
     def run(self):
-        # print(66)
-        temp = self.func(self.ui.FileCon, 2)
+
+        FileCon = self.MainWindow.FileCons[self.MainWindow.CurNavChosed]
+        temp = self.func(FileCon, 2)
         for i in temp:
             SendList = [{'fepath': j['fepath']} for j in i]
             # print('send',SendList)
