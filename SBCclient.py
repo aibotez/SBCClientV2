@@ -138,6 +138,14 @@ class ClickEventDeals():
         print("右")
         SBCM.FileShow('/home/')
 
+    def ChoseNet(self,WosLabel,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            if self.ui.CurNetChosed != WosLabel:
+                if WosLabel == 'SBC':
+                    pass
+                if WosLabel == 'BDC':
+                    pass
+
 class ChoseNetNav():
     def __init__(self):
         pass
@@ -182,6 +190,9 @@ class ChoseNetNav():
         self.label_2.setText("百度云")
         self.label_3.setText("阿里云")
         ui.frame_ChoseNet = self.frame_ChoseNet
+        ui.choseSBCLabel = self.label
+        ui.choseBDCLabel = self.label_2
+        ui.choseALCLabel = self.label_3
         ui.frame_ChoseNet.hide()
 
 class SBC(QThread):
@@ -194,13 +205,10 @@ class SBC(QThread):
         self.width0 = 900
         self.height0 = 700
         self.ClickEventDeals = ClickEventDeals()
-        self.Thread_LoadImg = Thread_LoadImg()
-
         self.frame_ChoseNetshow = 0
-
         self.initdWindow()
 
-        self.signal.connect(self.Refresh)
+        # self.signal.connect(self.Refresh)
 
 
     def WindowReSize(self):
@@ -226,45 +234,23 @@ class SBC(QThread):
     def MainWindowSizeChange(self,e):
         self.WindowReSize()
 
-    def MainWindowSizeChange0(self,e):
-        if ui.scrollArea.width() < 500:
-            w = 760
-        else:
-            w = ui.scrollArea.width()
-        for i in ui.CurSBCFilesDict:
-            FIleinfo = ui.CurSBCFilesDict[i]
-            FileName = FIleinfo['fename']
-            Felabel = FIleinfo['FileNameLabel']
-            # print(Felabel)
-            metrics = QFontMetrics(Felabel.font())
-            # print(metrics)
-            new_file_name = metrics.elidedText(FileName, Qt.ElideRight, w*0.5)
-            Felabel.setText(new_file_name)
 
-    def FileConChose(self,fetype):
-        if fetype == 'folder':
-            return 'img/filecon/foldersm.png'
-        if fetype == 'zip':
-            return 'img/filecon/zipcon.png'
-        if fetype == 'img':
-            return 'img/filecon/imgcon.jpg'
-        if fetype == 'pdf':
-            return 'img/filecon/pdfcon.jpg'
-        if fetype == 'ppt':
-            return 'img/filecon/pptcon.jpg'
-        if fetype == 'exe':
-            return 'img/filecon/execon.jpg'
-        if fetype == 'excel':
-            return 'img/filecon/excelcon.jpg'
-        if fetype == 'word':
-            return 'img/filecon/wordcon.jpg'
-        if fetype == 'html':
-            return 'img/filecon/htmlcon.jpg'
-        else:
-            return 'img/filecon/wj.jfif'
+    def initFrame(self):
+        ui.frameandscroll = {}
+        ui.frameandscroll['SBC'] = {}
+        ui.frameandscroll['BDC'] = {}
+        ui.frameandscroll['ALC'] = {}
+        for i in ui.frameandscroll:
+            ui.frameandscroll[i]['Photo'] = subui.InitShow()
+            ui.frameandscroll[i]['Video'] = subui.InitShow()
+            ui.frameandscroll[i]['File'] = subui.InitShow()
+        ui.frameandscroll['Photo'] = subui.InitShow()
+        ui.frameandscroll['Video'] = subui.InitShow()
+        ui.frameandscroll['File'] = subui.InitFileShow()
 
     def initdWindow(self):
         global ui,Main
+        ui.CurNetChosed = 'SBC'
         ui.CurSBCFilesDict = {}
         ui.frame_13.deleteLater()
         ui.frame_2.mousePressEvent = partial(self.ClickEventDeals.NavChoose,'File')
@@ -289,9 +275,12 @@ class SBC(QThread):
 
         chosenetnav = ChoseNetNav()
         chosenetnav.CreatFrame()
+        ui.choseBDCLabel.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'File')
 
         ui.label_18.mousePressEvent = self.ChoseNet
         ui.frame_ChoseNet.leaveEvent = self.ChoseNetHide
+
+        self.initFrame()
 
     def ChoseNetHide(self,e):
         ui.frame_ChoseNet.hide()
@@ -305,170 +294,16 @@ class SBC(QThread):
             ui.frame_ChoseNet.show()
             self.frame_ChoseNetshow = 1
 
-    def run(self):
 
-        SBCRe.GetFileList(self.path)
-        self.CurFileListOld = SBCRe.CurFileList
-        self.CurFileList = SBCRe.CurFileList
-
-        self.signal.emit()
-
-    def FileShow(self,path):
-        self.path = path
-
-        if self.isRunning():
-            self.wait()
-        self.start()
         # t = threading.Thread(target=self.ThreadRun,args=(path,))
         # t.setDaemon(True)
         # t.start()
-
-
-    def Refresh(self):
-        global ui, Main
-
-        ui.scrollAreaWidgetContents.deleteLater()
-
-        # for i in ui.CurSBCFilesDict:
-        #     ui.CurSBCFilesDict[i]['frame'].deleteLater()
-        #     break
-
-
-        ui.CurSBCFilesDict = {}
-        ui.FileCon = []
-        ui.SBCFilesDict[ui.CurNavChosed] = {}
-
-        ui.scrollAreaWidgetContents = QtWidgets.QWidget()
-        ui.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 565))
-        ui.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
-        ui.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        ui.formLayout = QtWidgets.QFormLayout(ui.scrollAreaWidgetContents)
-        ui.formLayout.setContentsMargins(0, 0, 0, 0)
-        ui.formLayout.setVerticalSpacing(0)
-        ui.formLayout.setObjectName("formLayout")
-
-        for i in range(len(self.CurFileList)):
-
-            CurSBCFiles = {}
-            FileInfo = self.CurFileList[i]
-
-            CurSBCFiles['frame'] = QtWidgets.QFrame(ui.scrollAreaWidgetContents)
-
-            CurSBCFiles['frame'].setMinimumSize(QtCore.QSize(0, 36))
-            CurSBCFiles['frame'].setMaximumSize(QtCore.QSize(16777215, 36))
-            CurSBCFiles['frame'].setFrameShape(QtWidgets.QFrame.StyledPanel)
-            CurSBCFiles['frame'].setFrameShadow(QtWidgets.QFrame.Raised)
-            CurSBCFiles['frame'].setObjectName("frame_13")
-            horizontalLayout_14 = QtWidgets.QHBoxLayout(CurSBCFiles['frame'])
-            horizontalLayout_14.setContentsMargins(3, 0, 9, 0)
-            horizontalLayout_14.setSpacing(0)
-            horizontalLayout_14.setObjectName("horizontalLayout_14")
-            horizontalLayout_13 = QtWidgets.QHBoxLayout()
-            horizontalLayout_13.setContentsMargins(0, 0, 0, -1)
-            horizontalLayout_13.setSpacing(6)
-            horizontalLayout_13.setObjectName("horizontalLayout_13")
-
-            ui.checkBox_2 = QtWidgets.QCheckBox(CurSBCFiles['frame'])
-
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(ui.checkBox_2.sizePolicy().hasHeightForWidth())
-            ui.checkBox_2.setSizePolicy(sizePolicy)
-            ui.checkBox_2.setText("")
-            ui.checkBox_2.setObjectName("checkBox_2")
-            horizontalLayout_13.addWidget(ui.checkBox_2)
-
-
-            CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
-            CurSBCFiles['con'].setMaximumSize(QtCore.QSize(36, 36))
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(CurSBCFiles['con'].sizePolicy().hasHeightForWidth())
-            CurSBCFiles['con'].setSizePolicy(sizePolicy)
-            CurSBCFiles['con'].setAlignment(QtCore.Qt.AlignCenter)
-            CurSBCFiles['con'].setObjectName("label_27")
-            horizontalLayout_13.addWidget(CurSBCFiles['con'])
-
-
-            CurSBCFiles['FileNameLabel'] = QtWidgets.QLabel(CurSBCFiles['frame'])
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-            sizePolicy.setHorizontalStretch(9)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(CurSBCFiles['FileNameLabel'].sizePolicy().hasHeightForWidth())
-            CurSBCFiles['FileNameLabel'].setSizePolicy(sizePolicy)
-            CurSBCFiles['FileNameLabel'].setMinimumSize(QtCore.QSize(0, 30))
-            CurSBCFiles['FileNameLabel'].setMaximumSize(QtCore.QSize(16777215, 36))
-            CurSBCFiles['FileNameLabel'].setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-
-            CurSBCFiles['FileNameLabel'].setObjectName(FileInfo["filelj"])
-
-            horizontalLayout_13.addWidget(CurSBCFiles['FileNameLabel'])
-            horizontalLayout_13.setStretch(0, 1)
-            horizontalLayout_13.setStretch(1, 1)
-            horizontalLayout_13.setStretch(2, 20)
-            horizontalLayout_14.addLayout(horizontalLayout_13)
-            ui.label_29 = QtWidgets.QLabel(CurSBCFiles['frame'])
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-            sizePolicy.setHorizontalStretch(3)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(ui.label_29.sizePolicy().hasHeightForWidth())
-            ui.label_29.setSizePolicy(sizePolicy)
-            ui.label_29.setAlignment(QtCore.Qt.AlignCenter)
-            ui.label_29.setObjectName("label_29")
-            horizontalLayout_14.addWidget(ui.label_29)
-            ui.label_30 = QtWidgets.QLabel(CurSBCFiles['frame'])
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-            sizePolicy.setHorizontalStretch(3)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(ui.label_30.sizePolicy().hasHeightForWidth())
-            ui.label_30.setSizePolicy(sizePolicy)
-            ui.label_30.setAlignment(QtCore.Qt.AlignCenter)
-            ui.label_30.setObjectName("label_30")
-            horizontalLayout_14.addWidget(ui.label_30)
-            horizontalLayout_14.setStretch(0, 7)
-            horizontalLayout_14.setStretch(1, 2)
-            horizontalLayout_14.setStretch(2, 2)
-            ui.formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
-
-            metrics = QFontMetrics(CurSBCFiles['FileNameLabel'].font())
-            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 300)
-            CurSBCFiles['FileNameLabel'].setText(new_file_name)
-
-            filepath = base64.decodebytes(FileInfo['filelj'].encode('utf8')).decode()
-            CurSBCFiles['fepath'] = filepath
-            CurSBCFiles['fename'] = FileInfo['filename']
-            CurSBCFiles['fepath_base64'] = FileInfo['filelj']
-
-            if FileInfo['fetype'] == 'img':
-                ui.FileCon.append(CurSBCFiles)
-            CurSBCFiles['con'].setText("")
-            CurSBCFiles['con'].setPixmap(QtGui.QPixmap(self.FileConChose(FileInfo['fetype'])))
-            CurSBCFiles['con'].setScaledContents(True)
-
-            ui.label_29.setText(FileInfo['date'])
-            ui.label_30.setText(FileInfo['big'])
-            CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
-
-            ui.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
-
-        ui.scrollArea.setWidget(ui.scrollAreaWidgetContents)
-
-
-        ui.SBCFilesDict[ui.CurNavChosed] = ui.CurSBCFilesDict
-        if self.Thread_LoadImg.isRunning():
-            self.Thread_LoadImg.wait()
-        self.Thread_LoadImg.start()
 
 
     def HideFrames(self):
         ui.frame_12.hide()
         ui.frameandscroll['Photo']['frame'].hide()
         ui.frameandscroll['Video']['frame'].hide()
-
-    def MainWindowSizeChange1(self,e):
-        print(1)
 
     def ChoseNav_Photo(self):
         self.HideFrames()
@@ -510,10 +345,10 @@ if __name__ == '__main__':
     ui = SBCMainWindow.Ui_SBCclient()
     ui.setupUi(Main)
     subui = SubUi.Ui_PhotoShow(ui)
-    ui.frameandscroll = {}
-    ui.frameandscroll['Photo'] = subui.InitShow()
-    ui.frameandscroll['Video'] = subui.InitShow()
-    ui.frameandscroll['File'] = subui.InitFileShow()
+    # ui.frameandscroll = {}
+    # ui.frameandscroll['Photo'] = subui.InitShow()
+    # ui.frameandscroll['Video'] = subui.InitShow()
+    # ui.frameandscroll['File'] = subui.InitFileShow()
 
     SBCM = SBC()
     # SBCM.FileShow('/home/')
