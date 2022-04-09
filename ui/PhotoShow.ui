@@ -67,9 +67,9 @@ Line{
    <widget class="QFrame" name="frame_PhotoShow">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>135</x>
       <y>0</y>
-      <width>756</width>
+      <width>721</width>
       <height>677</height>
      </rect>
     </property>
@@ -350,7 +350,7 @@ Line{
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>752</width>
+          <width>717</width>
           <height>623</height>
          </rect>
         </property>

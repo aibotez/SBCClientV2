@@ -138,6 +138,51 @@ class ClickEventDeals():
         print("右")
         SBCM.FileShow('/home/')
 
+class ChoseNetNav():
+    def __init__(self):
+        pass
+    def CreatFrame(self):
+        self.frame_ChoseNet = QtWidgets.QFrame(ui.frame_14)
+        self.frame_ChoseNet.setGeometry(QtCore.QRect(220, 25, 101, 171))
+        self.frame_ChoseNet.setStyleSheet("#frame_ChoseNet\n"
+                                          "{\n"
+                                          "    background:#D0D3D4;\n"
+                                          "}\n"
+                                          "\n"
+                                          "#frame_ChoseNet QLabel:hover{\n"
+                                          "    background:#A2D9CE;\n"
+                                          "    \n"
+                                          "    opacity:0.5;\n"
+                                          "    }")
+        self.frame_ChoseNet.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_ChoseNet.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_ChoseNet.setObjectName("frame_ChoseNet")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.frame_ChoseNet)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setSpacing(0)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.label = QtWidgets.QLabel(self.frame_ChoseNet)
+        self.label.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
+        self.verticalLayout_3.addWidget(self.label)
+        self.label_2 = QtWidgets.QLabel(self.frame_ChoseNet)
+        self.label_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout_3.addWidget(self.label_2)
+        self.label_3 = QtWidgets.QLabel(self.frame_ChoseNet)
+        self.label_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_3.setObjectName("label_3")
+        self.verticalLayout_3.addWidget(self.label_3)
+        # self.retranslateUi(Form)
+        # QtCore.QMetaObject.connectSlotsByName(Form)
+        self.label.setText("小黑云")
+        self.label_2.setText("百度云")
+        self.label_3.setText("阿里云")
+        ui.frame_ChoseNet = self.frame_ChoseNet
+        ui.frame_ChoseNet.hide()
 
 class SBC(QThread):
     signal = pyqtSignal()
@@ -150,6 +195,8 @@ class SBC(QThread):
         self.height0 = 700
         self.ClickEventDeals = ClickEventDeals()
         self.Thread_LoadImg = Thread_LoadImg()
+
+        self.frame_ChoseNetshow = 0
 
         self.initdWindow()
 
@@ -240,6 +287,23 @@ class SBC(QThread):
         Main.resizeEvent = self.MainWindowSizeChange
         # ui.frame_12.resizeEvent = self.MainWindowSizeChange
 
+        chosenetnav = ChoseNetNav()
+        chosenetnav.CreatFrame()
+
+        ui.label_18.mousePressEvent = self.ChoseNet
+        ui.frame_ChoseNet.leaveEvent = self.ChoseNetHide
+
+    def ChoseNetHide(self,e):
+        ui.frame_ChoseNet.hide()
+        self.frame_ChoseNetshow = 0
+
+    def ChoseNet(self,e):
+        if self.frame_ChoseNetshow:
+            ui.frame_ChoseNet.hide()
+            self.frame_ChoseNetshow = 0
+        else:
+            ui.frame_ChoseNet.show()
+            self.frame_ChoseNetshow = 1
 
     def run(self):
 
