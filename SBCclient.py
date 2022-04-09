@@ -218,8 +218,8 @@ class SBC(QThread):
         #     w = ui.scrollArea.width()
         w = Main.width() - 150
 
-        if ui.CurNavChosed in ui.SBCFilesDict:
-            CurSBCFilesDict = ui.SBCFilesDict[ui.CurNavChosed]['File']
+        if ui.CurNavChosed in ui.SBCFilesDict[ui.CurNetChosed]:
+            CurSBCFilesDict = ui.SBCFilesDict[ui.CurNetChosed][ui.CurNavChosed]['File']
             # print(CurSBCFilesDict)
             for i in CurSBCFilesDict:
                 FIleinfo = CurSBCFilesDict[i]
@@ -240,13 +240,21 @@ class SBC(QThread):
         ui.frameandscroll['SBC'] = {}
         ui.frameandscroll['BDC'] = {}
         ui.frameandscroll['ALC'] = {}
+        ui.SBCFilesDict = {}
+        ui.SBCFilesDict['SBC'] = {}
+        ui.SBCFilesDict['BDC'] = {}
+        ui.SBCFilesDict['ALC'] = {}
+        ui.FileCons = {}
+        ui.FileCons['SBC'] = {}
+        ui.FileCons['BDC'] = {}
+        ui.FileCons['ALC'] = {}
         for i in ui.frameandscroll:
             ui.frameandscroll[i]['Photo'] = subui.InitShow()
             ui.frameandscroll[i]['Video'] = subui.InitShow()
-            ui.frameandscroll[i]['File'] = subui.InitShow()
-        ui.frameandscroll['Photo'] = subui.InitShow()
-        ui.frameandscroll['Video'] = subui.InitShow()
-        ui.frameandscroll['File'] = subui.InitFileShow()
+            ui.frameandscroll[i]['File'] = subui.InitFileShow()
+        # ui.frameandscroll['Photo'] = subui.InitShow()
+        # ui.frameandscroll['Video'] = subui.InitShow()
+        # ui.frameandscroll['File'] = subui.InitFileShow()
 
     def initdWindow(self):
         global ui,Main
@@ -267,8 +275,8 @@ class SBC(QThread):
         ui.VdeoShowFilesDict = {}
         ui.DocumenttoShowFilesDict = {}
         ui.SharehowFilesDict = {}
-        ui.SBCFilesDict = {}
-        ui.FileCons = {}
+        # ui.SBCFilesDict = {}
+        # ui.FileCons = {}
         ui.CurShow = ''
         Main.resizeEvent = self.MainWindowSizeChange
         # ui.frame_12.resizeEvent = self.MainWindowSizeChange
@@ -301,9 +309,15 @@ class SBC(QThread):
 
 
     def HideFrames(self):
-        ui.frame_12.hide()
-        ui.frameandscroll['Photo']['frame'].hide()
-        ui.frameandscroll['Video']['frame'].hide()
+        # ui.frame_12.hide()
+        for i in ui.frameandscroll:
+            # print(i)
+            ui.frameandscroll[i]['Photo']['frame'].hide()
+            ui.frameandscroll[i]['Video']['frame'].hide()
+            ui.frameandscroll[i]['File']['frame'].hide()
+
+        # ui.frameandscroll['Photo']['frame'].hide()
+        # ui.frameandscroll['Video']['frame'].hide()
 
     def ChoseNav_Photo(self):
         self.HideFrames()
