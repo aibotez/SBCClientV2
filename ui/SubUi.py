@@ -477,9 +477,9 @@ class Ui_PhotoShow(QThread):
 
 
 
-        # if self.Thread_LoadImg.isRunning():
-        #     self.Thread_LoadImg.wait()
-        # self.Thread_LoadImg.runthread(self.MainWindow)
+        if self.Thread_LoadImg.isRunning():
+            self.Thread_LoadImg.wait()
+        self.Thread_LoadImg.runthread(self.MainWindow)
 
 
     def run(self):
@@ -570,7 +570,7 @@ class Thread_LoadImg(QThread):
 
     def run(self):
 
-        FileCon = self.MainWindow.FileCons[self.MainWindow.CurNavChosed]
+        FileCon = self.MainWindow.FileCons[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]
         temp = self.func(FileCon, 2)
         for i in temp:
             SendList = [{'fepath': j['fepath']} for j in i]

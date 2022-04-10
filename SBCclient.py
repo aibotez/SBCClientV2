@@ -290,6 +290,9 @@ class SBC(QThread):
 
         self.initFrame()
 
+        self.HideFrames()
+        subui.FileShow()
+
     def ChoseNetHide(self,e):
         ui.frame_ChoseNet.hide()
         self.frame_ChoseNetshow = 0
