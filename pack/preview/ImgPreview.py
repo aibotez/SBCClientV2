@@ -42,9 +42,9 @@ class ImageViewer(QGraphicsView):
         self.displayedImageSize = QSize(0, 0)
         # self.__initWidget(graphicsScene)
         # self.show()
-
-        self.graphicsScene.addItem(self.pixmapItem)
-        self.setScene(self.graphicsScene)
+        self.__initWidget()
+        # self.graphicsScene.addItem(self.pixmapItem)
+        # self.setScene(self.graphicsScene)
 
     def __initWidget(self):
         """ 初始化小部件 """
@@ -65,6 +65,7 @@ class ImageViewer(QGraphicsView):
         # 设置场景
         self.graphicsScene.addItem(self.pixmapItem)
         self.setScene(self.graphicsScene)
+        self.resize0()
 
 
     def wheelEvent(self, e: QWheelEvent):
@@ -73,6 +74,18 @@ class ImageViewer(QGraphicsView):
             self.zoomIn()
         else:
             self.zoomOut()
+
+
+    def resize0(self):
+        if self.zoomInTimes > 0:
+            return
+        # 调整图片大小
+        ratio = self.__getScaleRatio()
+        self.displayedImageSize = self.pixmap.size()*ratio
+        if ratio < 1:
+            self.fitInView(self.pixmapItem, Qt.KeepAspectRatio)
+        else:
+            self.resetTransform()
 
     def resizeEvent(self, e):
         """ 缩放图片 """
@@ -89,20 +102,20 @@ class ImageViewer(QGraphicsView):
         else:
             self.resetTransform()
 
-    def setImage(self, imagePath: str):
-        """ 设置显示的图片 """
-        self.resetTransform()
-
-        # 刷新图片
-        self.pixmap = QPixmap(imagePath)
-        self.pixmapItem.setPixmap(self.pixmap)
-
-        # 调整图片大小
-        self.setSceneRect(QRectF(self.pixmap.rect()))
-        ratio = self.__getScaleRatio()
-        self.displayedImageSize = self.pixmap.size()*ratio
-        if ratio < 1:
-            self.fitInView(self.pixmapItem, Qt.KeepAspectRatio)
+    # def setImage(self, imagePath: str):
+    #     """ 设置显示的图片 """
+    #     self.resetTransform()
+    #
+    #     # 刷新图片
+    #     self.pixmap = QPixmap(imagePath)
+    #     self.pixmapItem.setPixmap(self.pixmap)
+    #
+    #     # 调整图片大小
+    #     self.setSceneRect(QRectF(self.pixmap.rect()))
+    #     ratio = self.__getScaleRatio()
+    #     self.displayedImageSize = self.pixmap.size()*ratio
+    #     if ratio < 1:
+    #         self.fitInView(self.pixmapItem, Qt.KeepAspectRatio)
 
     def resetTransform(self):
         """ 重置变换 """
