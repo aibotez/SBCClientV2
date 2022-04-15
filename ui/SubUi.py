@@ -490,11 +490,14 @@ class Ui_PhotoShow(QThread):
             self.SBCRe.GetFileList(self.path)
             self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
+            print(self.CurFileList)
             self.signal.emit()
         if self.MainWindow.CurNavChosed == 'Photo':
-            self.SBCRe.GetFileList(self.path)
+            # self.SBCRe.GetFileList(self.path)
+            self.SBCRe.SearchFile()
             self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
+            print(self.CurFileList)
             self.signal.emit()
         if self.MainWindow.CurNavChosed == 'Video':
             self.SBCRe.GetFileList('/home/BaiduNet/')

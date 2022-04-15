@@ -195,6 +195,9 @@ class ChoseNetNav():
         ui.choseALCLabel = self.label_3
         ui.frame_ChoseNet.hide()
 
+
+
+
 class SBC(QThread):
     signal = pyqtSignal()
     def __init__(self):
@@ -285,19 +288,24 @@ class SBC(QThread):
         chosenetnav.CreatFrame()
         ui.choseBDCLabel.mousePressEvent = partial(self.ClickEventDeals.NavChoose, 'File')
 
-        ui.label_18.mousePressEvent = self.ChoseNet
+        ui.label_18.mousePressEvent = self.ChoseNetShow
         ui.frame_ChoseNet.leaveEvent = self.ChoseNetHide
+
+        ui.choseBDCLabel.mousePressEvent = partial(self.ChoseNet, 'BDC')
 
         self.initFrame()
 
         self.HideFrames()
         subui.FileShow()
 
+    def ChoseNet(self,chose,e):
+        print(chose)
+
     def ChoseNetHide(self,e):
         ui.frame_ChoseNet.hide()
         self.frame_ChoseNetshow = 0
 
-    def ChoseNet(self,e):
+    def ChoseNetShow(self,e):
         if self.frame_ChoseNetshow:
             ui.frame_ChoseNet.hide()
             self.frame_ChoseNetshow = 0
