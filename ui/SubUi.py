@@ -9,6 +9,7 @@ from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
+from pack.preview import ImgPreview
 
 
 
@@ -61,6 +62,8 @@ class Ui_PhotoShow(QThread):
         self.path = '/home/'
         self.CurFileListOld = {}
 
+        # self.ImgPreviews = ImgPreview.ImageViewer()
+
     def FileClickDeal(self,FileInfo,e):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.FileLeftDeal(FileInfo)
@@ -68,7 +71,17 @@ class Ui_PhotoShow(QThread):
             self.FileRightDeal(FileInfo)
     def FileLeftDeal(self,FileInfo):
         print('FileLeft',FileInfo)
-        self.FileShow1(FileInfo['fepath'])
+        # ImgPreviews = ImgPreview.ImageViewer()
+        # self.FileShow1(FileInfo['fepath'])
+        if FileInfo['fetype'] == 'img':
+            imfdata = self.SBCRe.getImgdata(FileInfo['fepath'])
+            self.ImgPreviews = ImgPreview.ImageViewer()
+            self.ImgPreviews.Previewact(base64.b64decode(imfdata))
+            return
+        if FileInfo['fetype'] == 'folder':
+            self.FileShow1(FileInfo['fepath'])
+            return
+
 
     def FileRightDeal(self,FileInfo):
         print("右")
@@ -461,6 +474,7 @@ class Ui_PhotoShow(QThread):
             CurSBCFiles['fepath'] = filepath
             CurSBCFiles['fename'] = FileInfo['filename']
             CurSBCFiles['fepath_base64'] = FileInfo['filelj']
+            CurSBCFiles['fetype'] = FileInfo['fetype']
             if FileInfo['fetype'] == 'img':
                 Filecon.append(CurSBCFiles)
             CurSBCFiles['con'].setText("")
@@ -605,6 +619,8 @@ class Thread_LoadImg(QThread):
                     coninfo = ConList['src'][num]
                     ConBase64 = coninfo.split(',')[-1]
                     img_b64decode = base64.b64decode(ConBase64)  # [21:]
+                    # print(ConBase64)
+                    # print(img_b64decode)
                     self.ShowCon(i[num]['con'], img_b64decode)
             except:
                 # print('threderror')

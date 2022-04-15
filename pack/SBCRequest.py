@@ -99,6 +99,17 @@ class SBCRe():
         self.CurFileList = feinfos
         # return feinfos
 
+    def getImgdata(self,path):
+        url = 'http://' + self.host + '/preview/'
+        data = {
+            'filepath':path,
+            'client':'windows'
+        }
+        res = requests.post(url, data=json.dumps(data),headers=self.headers)
+        # print(res.text)
+        return res.text
+
+
 # def Login():
 #     url = 'http://pi.sbc.plus:800/loginVerify/'
 #
