@@ -61,6 +61,7 @@ class Ui_PhotoShow(QThread):
         self.Thread_LoadImg = Thread_LoadImg()
         self.path = '/home/'
         self.CurFileListOld = {}
+        self.ImgPreviews = ImgPreview.ImageViewer()
 
         # self.ImgPreviews = ImgPreview.ImageViewer()
 
@@ -75,7 +76,7 @@ class Ui_PhotoShow(QThread):
         # self.FileShow1(FileInfo['fepath'])
         if FileInfo['fetype'] == 'img':
             imfdata = self.SBCRe.getImgdata(FileInfo['fepath'])
-            self.ImgPreviews = ImgPreview.ImageViewer()
+            # self.ImgPreviews = ImgPreview.ImageViewer()
             self.ImgPreviews.Previewact(base64.b64decode(imfdata))
             return
         if FileInfo['fetype'] == 'folder':

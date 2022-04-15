@@ -19,28 +19,34 @@ class ImageViewer(QGraphicsView):
         self.maxZoomInTimes = 22
 
         # 创建场景
-        # self.graphicsScene = QGraphicsScene()
+        self.graphicsScene = QGraphicsScene()
 
         # # 图片
-        # self.pixmap = QPixmap(r'C:\Users\zz\Pictures\20191203150409589.png')
-        # self.pixmapItem = QGraphicsPixmapItem(self.pixmap)
-        # self.displayedImageSize = QSize(0, 0)
+        self.pixmap = QPixmap(r'C:\Users\zz\Pictures\20191203150409589.png')
+        self.pixmapItem = QGraphicsPixmapItem(self.pixmap)
+        self.displayedImageSize = QSize(0, 0)
 
         # 初始化小部件
-        # self.__initWidget()
+        self.__initWidget()
+
 
     def Previewact(self,imgbase64):
         # self.close()
-        graphicsScene = QGraphicsScene()
-        # self.pixmap = QPixmap(r'C:\Users\zz\Pictures\20191203150409589.png')
+        # graphicsScene = QGraphicsScene()
+        self.show()
+        self.graphicsScene.deleteLater()
+        self.graphicsScene = QGraphicsScene()
         self.pixmap = QPixmap()
         self.pixmap.loadFromData(imgbase64)
         self.pixmapItem = QGraphicsPixmapItem(self.pixmap)
         self.displayedImageSize = QSize(0, 0)
-        self.__initWidget(graphicsScene)
-        self.show()
+        # self.__initWidget(graphicsScene)
+        # self.show()
 
-    def __initWidget(self,graphicsScene):
+        self.graphicsScene.addItem(self.pixmapItem)
+        self.setScene(self.graphicsScene)
+
+    def __initWidget(self):
         """ 初始化小部件 """
         self.resize(700, 500)
 
@@ -57,8 +63,8 @@ class ImageViewer(QGraphicsView):
                             QPainter.SmoothPixmapTransform)
 
         # 设置场景
-        graphicsScene.addItem(self.pixmapItem)
-        self.setScene(graphicsScene)
+        self.graphicsScene.addItem(self.pixmapItem)
+        self.setScene(self.graphicsScene)
 
 
     def wheelEvent(self, e: QWheelEvent):
