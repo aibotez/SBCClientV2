@@ -59,6 +59,7 @@ class Ui_PhotoShow(QThread):
         self.ClickEventDeals = ClickEventDeals()
         self.Thread_LoadImg = Thread_LoadImg()
         self.path = '/home/'
+        self.CurFileListOld = {}
 
     def FileClickDeal(self,FileInfo,e):
         if e.buttons() == QtCore.Qt.LeftButton:
@@ -301,11 +302,22 @@ class Ui_PhotoShow(QThread):
         self.label_22.setText("大小")
         self.MainWindow.frame_PhotoShow.hide()
 
+        self.initSBCCurFile()
+
         frame = {'frame':self.frame_PhotoShow,'scrollArea':self.scrollAreaPhotoShow,'label':self.label_11}
         return frame
 
 
         # self.retranslateUi()
+
+    def initSBCCurFile(self):
+        Nets = ['SBC','BDC','ALC']
+        for i in Nets:
+            self.CurFileListOld[i] = {}
+            self.CurFileListOld[i]['Photo'] = []
+            self.CurFileListOld[i]['Video'] = []
+            self.CurFileListOld[i]['File'] = []
+
 
     def MainWindowSizeChange1(self,e):
 
@@ -348,8 +360,8 @@ class Ui_PhotoShow(QThread):
     def ScrollContentUpdate(self):
         # print('CurNavChosed',self.MainWindow.CurNavChosed)
         if self.MainWindow.CurNavChosed in self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed]:
-            print('pr',self.MainWindow.SBCFilesDict)
-            print(self.MainWindow.SBCFilesDict)
+            # print('pr',self.MainWindow.SBCFilesDict)
+            # print(self.MainWindow.SBCFilesDict)
             # print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'])
             self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'].deleteLater()
         self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] = {}
@@ -488,20 +500,29 @@ class Ui_PhotoShow(QThread):
         #     return
         if self.MainWindow.CurNavChosed == 'File':
             self.SBCRe.GetFileList(self.path)
-            self.CurFileListOld = self.SBCRe.CurFileList
-            self.CurFileList = self.SBCRe.CurFileList
-            print(self.CurFileList)
-            self.signal.emit()
+            if self.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
+                self.CurFileList = self.SBCRe.CurFileList
+                # self.signal.emit()
+                self.CurFileListOld[self.MainWindow.CurNetChosed][
+                    self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
+                self.signal.emit()
+
+
+            # self.CurFileListOld = self.SBCRe.CurFileList
+            # self.CurFileList = self.SBCRe.CurFileList
+            # print(self.CurFileList)
+            # self.signal.emit()
         if self.MainWindow.CurNavChosed == 'Photo':
             # self.SBCRe.GetFileList(self.path)
-            self.SBCRe.SearchFile()
-            self.CurFileListOld = self.SBCRe.CurFileList
+            self.SBCRe.SearchFile('','image')
+            # self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
-            print(self.CurFileList)
+            # print(self.CurFileList)
             self.signal.emit()
         if self.MainWindow.CurNavChosed == 'Video':
-            self.SBCRe.GetFileList('/home/BaiduNet/')
-            self.CurFileListOld = self.SBCRe.CurFileList
+            # self.SBCRe.GetFileList('/home/BaiduNet/')
+            self.SBCRe.SearchFile('', 'video')
+            # self.CurFileListOld = self.SBCRe.CurFileList
             self.CurFileList = self.SBCRe.CurFileList
             self.signal.emit()
 

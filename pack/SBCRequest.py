@@ -73,25 +73,28 @@ class SBCRe():
         elif 1024 * 1024 * 1024 * 1024 <= size:
             return '%.1f' % float(size / (1024 * 1024 * 1024 * 1024)) + 'TB'
 
-    def SearchFile(self):
+    def SearchFile(self,SearchContent,SearchFileType):
         url = 'http://' + self.host + '/SearchFile/'
         data = {
-            'SearchContent':'',
-            'SearchFileType':'image'
+            'SearchContent':SearchContent,
+            'SearchFileType':SearchFileType
         }
         res = requests.post(url, data=json.dumps(data),headers=self.headers)
         Datas = json.loads(res.text)['data']
         Datas = json.loads(Datas)
 
         feinfos = []
+        FileMd5List = []
         for i in Datas:
-            feinfo = i['fields']
-            feinfo['fetype'] = feinfo['FileType'].replace('image','img')
-            feinfo['filelj'] = base64.encodebytes(feinfo['FilePath'].encode('utf8')).decode().replace('\n','')
-            feinfo['filename'] = feinfo['FilePath'].split('/')[-1]
-            feinfo['big'] =self.size_format(int(feinfo['FileSize']))
-            feinfo['date'] = feinfo['FileModTime']
-            feinfos.append(feinfo)
+            if i['fields']['FileMd5'] not in FileMd5List:
+                feinfo = i['fields']
+                feinfo['fetype'] = feinfo['FileType'].replace('image','img')
+                feinfo['filelj'] = base64.encodebytes(feinfo['FilePath'].encode('utf8')).decode().replace('\n','')
+                feinfo['filename'] = feinfo['FilePath'].split('/')[-1]
+                feinfo['big'] =self.size_format(int(feinfo['FileSize']))
+                feinfo['date'] = feinfo['FileModTime']
+                feinfos.append(feinfo)
+                FileMd5List.append(feinfo['FileMd5'])
             # print(feinfo)
         self.CurFileList = feinfos
         # return feinfos
