@@ -65,6 +65,10 @@ class Ui_PhotoShow(QThread):
 
         # self.ImgPreviews = ImgPreview.ImageViewer()
 
+
+    def navClick(self,FilePath,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            self.FileShow1(FilePath)
     def FileClickDeal(self,FileInfo,e):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.FileLeftDeal(FileInfo)
@@ -681,6 +685,7 @@ class Ui_PhotoShow(QThread):
             horizontalLayout_.setObjectName("horizontalLayout_3")
 
             for i in range(len(self.nav)):
+                print(self.nav[i])
                 label_11 = QtWidgets.QLabel(frame_9_)
 
                 label_11.setObjectName("label_11")
@@ -689,6 +694,7 @@ class Ui_PhotoShow(QThread):
                 if i == len(self.nav)-1:
                     label_11.setStyleSheet("color:#A6ACAF")
                 if i < len(self.nav)-1:
+                    label_11.mousePressEvent = partial(self.navClick, self.nav[i]['path'])
                     label_11.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
                     label_11 = QtWidgets.QLabel(frame_9_)
                     # label_11.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
