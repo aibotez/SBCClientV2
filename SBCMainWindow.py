@@ -409,7 +409,7 @@ class Ui_SBCclient(object):
         self.label_19.setObjectName("label_19")
         self.horizontalLayout_3.addWidget(self.label_19)
         spacerItem3 = QtWidgets.QSpacerItem(681, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem3)
+        # self.horizontalLayout_3.addItem(spacerItem3)
         self.label_8 = QtWidgets.QLabel(self.frame_8)
         font = QtGui.QFont()
         font.setPointSize(-1)

@@ -254,7 +254,8 @@ class SBC(QThread):
         for i in ui.frameandscroll:
             ui.frameandscroll[i]['Photo'] = subui.InitShow()
             ui.frameandscroll[i]['Video'] = subui.InitShow()
-            ui.frameandscroll[i]['File'] = subui.InitFileShow()
+            # ui.frameandscroll[i]['File'] = subui.InitFileShow()
+            ui.frameandscroll[i]['File'] = subui.initfileshow()
         # ui.frameandscroll['Photo'] = subui.InitShow()
         # ui.frameandscroll['Video'] = subui.InitShow()
         # ui.frameandscroll['File'] = subui.InitFileShow()
