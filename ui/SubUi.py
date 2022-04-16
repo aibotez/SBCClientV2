@@ -361,7 +361,8 @@ class Ui_PhotoShow(QThread):
         # label_11.setText("Home66")
         # horizontalLayout_.addWidget(label_11)
 
-        frame_9_.deleteLater()
+        # frame_9_.deleteLater()
+
         # frame_9_ = QtWidgets.QFrame(frame_9)
         # horizontalLayout_1.addWidget(frame_9_)
         # horizontalLayout_ = QtWidgets.QHBoxLayout(frame_9_)
@@ -379,7 +380,7 @@ class Ui_PhotoShow(QThread):
         #     label_11.setText(">")
         #     horizontalLayout_.addWidget(label_11)
 
-        frame = {'frame': frame_12, 'scrollArea': self.scrollArea,'frame_nav':frame_9_,'horizontalLayout_nav':horizontalLayout_1}
+        frame = {'frame': frame_12, 'scrollArea': self.scrollArea,'frame_navF':frame_9,'frame_nav':frame_9_,'horizontalLayout_nav':horizontalLayout_1}
         return frame
 
     def InitFileShow(self):
@@ -667,10 +668,41 @@ class Ui_PhotoShow(QThread):
             return 'img/filecon/wj.jfif'
 
     def NavUpdate(self):
-        self.label_11.setText("Home")
-        self.label_19.setText(">")
+        if self.MainWindow.CurNavChosed == 'File':
+            frame_9_ = self.MainWindow.frameandscroll[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed][
+                'frame_nav'].deleteLater()
+            self.MainWindow.frameandscroll[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['frame_nav'] = QtWidgets.QFrame(self.MainWindow.frameandscroll[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['frame_navF'])
+            frame_9_ = self.MainWindow.frameandscroll[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed][
+                'frame_nav']
+            horizontalLayout_1 = self.MainWindow.frameandscroll[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['horizontalLayout_nav']
+            horizontalLayout_1.addWidget(frame_9_)
+            horizontalLayout_ = QtWidgets.QHBoxLayout(frame_9_)
+            horizontalLayout_.setContentsMargins(0, 0, 0, 0)
+            horizontalLayout_.setObjectName("horizontalLayout_3")
+
+            for i in range(len(self.nav)):
+                label_11 = QtWidgets.QLabel(frame_9_)
+
+                label_11.setObjectName("label_11")
+                label_11.setText(self.nav[i]['navname'])
+                horizontalLayout_.addWidget(label_11)
+                if i == len(self.nav)-1:
+                    label_11.setStyleSheet("color:#A6ACAF")
+                if i < len(self.nav)-1:
+                    label_11.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+                    label_11 = QtWidgets.QLabel(frame_9_)
+                    # label_11.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+                    label_11.setObjectName("label_11")
+                    label_11.setText(">")
+                    horizontalLayout_.addWidget(label_11)
+
+
+            # frame = {'frame': frame_12, 'scrollArea': self.scrollArea, 'frame_nav': frame_9_,
+            #          'horizontalLayout_nav': horizontalLayout_1}
+
 
     def ScrollContentUpdate(self):
+        self.NavUpdate()
         # print('CurNavChosed',self.MainWindow.CurNavChosed)
         if self.MainWindow.CurNavChosed in self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed]:
             # print('pr',self.MainWindow.SBCFilesDict)
@@ -816,7 +848,7 @@ class Ui_PhotoShow(QThread):
             self.SBCRe.GetFileList(self.path)
             if self.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
                 self.CurFileList = self.SBCRe.CurFileList
-                # self.SBC.Nav = self.SBCRe.Nav
+                self.nav = self.SBCRe.Nav
                 # self.signal.emit()
                 self.CurFileListOld[self.MainWindow.CurNetChosed][
                     self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
