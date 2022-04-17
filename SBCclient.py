@@ -151,7 +151,7 @@ class ChoseNetNav():
         pass
     def CreatFrame(self):
         self.frame_ChoseNet = QtWidgets.QFrame(ui.frame_14)
-        self.frame_ChoseNet.setGeometry(QtCore.QRect(220, 25, 101, 171))
+        self.frame_ChoseNet.setGeometry(QtCore.QRect(220, 35, 101, 171))
         self.frame_ChoseNet.setStyleSheet("#frame_ChoseNet\n"
                                           "{\n"
                                           "    background:#D0D3D4;\n"
@@ -193,6 +193,7 @@ class ChoseNetNav():
         ui.choseSBCLabel = self.label
         ui.choseBDCLabel = self.label_2
         ui.choseALCLabel = self.label_3
+        ui.frame_ChoseNet.raise_()
         ui.frame_ChoseNet.hide()
 
 
@@ -315,6 +316,7 @@ class SBC(QThread):
             ui.frame_ChoseNet.hide()
             self.frame_ChoseNetshow = 0
         else:
+            ui.frame_ChoseNet.raise_()
             ui.frame_ChoseNet.show()
             self.frame_ChoseNetshow = 1
 
