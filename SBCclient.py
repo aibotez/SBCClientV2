@@ -239,6 +239,10 @@ class SBC(QThread):
 
 
     def initFrame(self):
+        ui.nav = {}
+        # ui.nav['SBC'] = {}
+        # ui.nav['BDC'] = {}
+        # ui.nav['ALC'] = {}
         ui.frameandscroll = {}
         ui.frameandscroll['SBC'] = {}
         ui.frameandscroll['BDC'] = {}

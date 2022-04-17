@@ -65,7 +65,19 @@ class Ui_PhotoShow(QThread):
 
         # self.ImgPreviews = ImgPreview.ImageViewer()
 
+    def Refresh(self,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            nav = self.MainWindow.nav[self.MainWindow.CurNetChosed]
+            print(nav[-1]['path'])
+            self.FileShow1(nav[-1]['path'])
 
+    def navBackClick(self,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            nav = self.MainWindow.nav[self.MainWindow.CurNetChosed]
+            idx = len(nav) - 2
+            if idx <0:
+                return
+            self.FileShow1(nav[idx]['path'])
     def navClick(self,FilePath,e):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.FileShow1(FilePath)
@@ -137,8 +149,11 @@ class Ui_PhotoShow(QThread):
         self.label_12.setObjectName("label_12")
         self.horizontalLayout_3.addWidget(self.label_12)
         self.label_12.setText("<")
+        # print(self.MainWindow.nav)
+        self.label_12.mousePressEvent = partial(self.navBackClick)
 
         label_12 = QtWidgets.QLabel(self.frame_8)
+        label_12.setMaximumSize(QtCore.QSize(16, 16))
         font = QtGui.QFont()
         font.setPointSize(-1)
         label_12.setFont(font)
@@ -146,6 +161,9 @@ class Ui_PhotoShow(QThread):
         label_12.setObjectName("label_12")
         self.horizontalLayout_3.addWidget(label_12)
         label_12.setText("O")
+        label_12.setPixmap(QtGui.QPixmap("img/Clientcon/refresh.jpg"))
+        label_12.setScaledContents(True)
+        label_12.mousePressEvent = partial(self.Refresh)
 
         self.line_2 = QtWidgets.QFrame(self.frame_8)
         self.line_2.setMaximumSize(QtCore.QSize(5, 16777215))
@@ -684,17 +702,19 @@ class Ui_PhotoShow(QThread):
             horizontalLayout_.setContentsMargins(0, 0, 0, 0)
             horizontalLayout_.setObjectName("horizontalLayout_3")
 
-            for i in range(len(self.nav)):
-                print(self.nav[i])
+            nav = self.MainWindow.nav[self.MainWindow.CurNetChosed]
+            print(nav)
+            for i in range(len(nav)):
+                # print(self.nav[i])
                 label_11 = QtWidgets.QLabel(frame_9_)
 
                 label_11.setObjectName("label_11")
-                label_11.setText(self.nav[i]['navname'])
+                label_11.setText(nav[i]['navname'])
                 horizontalLayout_.addWidget(label_11)
-                if i == len(self.nav)-1:
+                if i == len(nav)-1:
                     label_11.setStyleSheet("color:#A6ACAF")
-                if i < len(self.nav)-1:
-                    label_11.mousePressEvent = partial(self.navClick, self.nav[i]['path'])
+                if i < len(nav)-1:
+                    label_11.mousePressEvent = partial(self.navClick, nav[i]['path'])
                     label_11.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
                     label_11 = QtWidgets.QLabel(frame_9_)
                     # label_11.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -851,14 +871,15 @@ class Ui_PhotoShow(QThread):
         # if self.isRunning():
         #     return
         if self.MainWindow.CurNavChosed == 'File':
-            self.SBCRe.GetFileList(self.path)
-            if self.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
-                self.CurFileList = self.SBCRe.CurFileList
-                self.nav = self.SBCRe.Nav
-                # self.signal.emit()
-                self.CurFileListOld[self.MainWindow.CurNetChosed][
-                    self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
-                self.signal.emit()
+            if self.MainWindow.CurNetChosed == 'SBC':
+                self.SBCRe.GetFileList(self.path)
+                if self.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
+                    self.CurFileList = self.SBCRe.CurFileList
+                    self.MainWindow.nav[self.MainWindow.CurNetChosed] = self.SBCRe.Nav
+                    # self.signal.emit()
+                    self.CurFileListOld[self.MainWindow.CurNetChosed][
+                        self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
+                    self.signal.emit()
 
 
             # self.CurFileListOld = self.SBCRe.CurFileList
