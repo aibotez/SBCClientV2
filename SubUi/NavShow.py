@@ -58,7 +58,9 @@ class Ui_PhotoShow(QThread):
         self.horizontalLayout_3.addWidget(self.label_12)
         self.label_12.setText("<")
         # print(self.MainWindow.nav)
-        self.label_12.mousePressEvent = partial(self.navBackClick)
+
+        self.MainWindow.NetOper[self.MainWindow.CurNetChosed]['backbutton'] = self.label_12
+        # self.label_12.mousePressEvent = partial(self.navBackClick) #back
 
         label_12 = QtWidgets.QLabel(self.frame_8)
         label_12.setMaximumSize(QtCore.QSize(16, 16))
@@ -68,10 +70,12 @@ class Ui_PhotoShow(QThread):
         label_12.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         label_12.setObjectName("label_12")
         self.horizontalLayout_3.addWidget(label_12)
-        label_12.setText("O")
-        label_12.setPixmap(QtGui.QPixmap("img/Clientcon/refresh.jpg"))
+        # label_12.setText("O")
+        label_12.setPixmap(QtGui.QPixmap("img/Clientcon/refresh.jpg")) #refresh
         label_12.setScaledContents(True)
-        label_12.mousePressEvent = partial(self.Refresh)
+
+        self.MainWindow.NetOper[self.MainWindow.CurNetChosed]['refreshbutton'] = label_12
+        # label_12.mousePressEvent = partial(self.Refresh)
 
         self.line_2 = QtWidgets.QFrame(self.frame_8)
         self.line_2.setMaximumSize(QtCore.QSize(5, 16777215))

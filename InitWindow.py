@@ -26,6 +26,9 @@ class initWindow():
         self.SBCMain.SBCFilesDict = {}
         self.SBCMain.FileCons = {}
         self.SBCMain.CurFileListOld = {}
+        self.SBCMain.NetOper = {}
+        self.SBCMain.CurNetChosed = 'SBC'
+        self.SBCMain.CurNavChosed = 'File'
 
     def initFrame(self):
         self.initparameter()
@@ -34,6 +37,7 @@ class initWindow():
             self.SBCMain.frameandscroll[i] = {}
             self.SBCMain.SBCFilesDict[i] = {}
             self.SBCMain.FileCons[i] = {}
+            self.SBCMain.NetOper[i] = {}
 
             self.SBCMain.frameandscroll[i]['Photo'] = self.Navshows.InitShow()
             self.SBCMain.frameandscroll[i]['Video'] = self.Navshows.InitShow()
