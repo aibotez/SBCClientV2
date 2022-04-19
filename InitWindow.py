@@ -13,12 +13,15 @@ from pack.preview import ImgPreview
 
 from SubUi import SBCMainWindow
 from SubUi import NavShow
+from UpdateUi import FileUpdate
 
 class initWindow():
     def __init__(self,Main):
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.setupUi(Main)
-        self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
+        self.SBCMain = self.initFrame()
+        # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
+        self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
 
     def initparameter(self):
         self.SBCMain.nav = {}
@@ -32,6 +35,7 @@ class initWindow():
 
     def initFrame(self):
         self.initparameter()
+        self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
         Nets = ['SBC', 'BDC', 'ALC']
         for i in Nets:
             self.SBCMain.frameandscroll[i] = {}
@@ -43,6 +47,10 @@ class initWindow():
             self.SBCMain.frameandscroll[i]['Video'] = self.Navshows.InitShow()
             self.SBCMain.frameandscroll[i]['File'] = self.Navshows.initfileshow()
         return self.SBCMain
+
+    def initBindSignal(self):
+        self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['backbutton'].mousePressEvent = partial(self.FileUpdates.navBackClick)  # back
+        self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['refreshbutton'].mousePressEvent = partial(self.FileUpdates.Refresh)
 
 
 
