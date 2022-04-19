@@ -10,6 +10,6 @@ if __name__ == '__main__':
     Main.show()
 
     SBCMain = initWindow(Main)
-    SBCMain = SBCMain.initFrame()
+    # SBCMain = SBCMain.initFrame()
 
     sys.exit(app.exec_())

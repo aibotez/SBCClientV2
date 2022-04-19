@@ -313,7 +313,7 @@ class Ui_PhotoShow(QThread):
         #     label_11.setObjectName("label_11")
         #     label_11.setText(">")
         #     horizontalLayout_.addWidget(label_11)
-
+        frame_12.hide()
         frame = {'frame': frame_12, 'scrollArea': self.scrollArea,'frame_navF':frame_9,'frame_nav':frame_9_,'horizontalLayout_nav':horizontalLayout_1}
         return frame
 

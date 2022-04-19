@@ -18,6 +18,7 @@ class FileUpdate(QThread):
         super().__init__()
         self.MainWindow = ui
         self.signal.connect(self.ScrollContentUpdate)
+        self.path = '/home/'
 
     def FileConChose(self,fetype):
         if fetype == 'folder':
@@ -41,11 +42,29 @@ class FileUpdate(QThread):
         else:
             return 'img/filecon/wj.jfif'
 
+    def FileClickDeal(self,FileInfo,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            self.FileLeftDeal(FileInfo)
+        elif e.buttons() == QtCore.Qt.RightButton:
+            self.FileRightDeal(FileInfo)
+    def FileLeftDeal(self,FileInfo):
+        print('FileLeft',FileInfo)
+        # ImgPreviews = ImgPreview.ImageViewer()
+        # self.FileShow1(FileInfo['fepath'])
+        if FileInfo['fetype'] == 'img':
+            imfdata = self.SBCRe.getImgdata(FileInfo['fepath'])
+            # self.ImgPreviews = ImgPreview.ImageViewer()
+            self.ImgPreviews.Previewact(base64.b64decode(imfdata))
+            return
+        if FileInfo['fetype'] == 'folder':
+            self.FileShow1(FileInfo['fepath'])
+            return
+
     def Refresh(self,e):
         if e.buttons() == QtCore.Qt.LeftButton:
             nav = self.MainWindow.nav[self.MainWindow.CurNetChosed]
-            print(nav[-1]['path'])
-            self.FileShow(nav[-1]['path'])
+            # print(nav[-1]['path'])
+            self.FileShow1(nav[-1]['path'])
 
     def navBackClick(self,e):
         if e.buttons() == QtCore.Qt.LeftButton:
@@ -53,47 +72,17 @@ class FileUpdate(QThread):
             idx = len(nav) - 2
             if idx <0:
                 return
-            self.FileShow(nav[idx]['path'])
-    def FileShow(self,path):
+            self.FileShow1(nav[idx]['path'])
+    def FileShow1(self,path):
         self.path = path
         if self.isRunning():
             self.wait()
         self.start()
 
-    def run(self):
-        self.SBCRe = SBCRequest.SBCRe()
-        # if self.isRunning():
-        #     return
-        if self.MainWindow.CurNavChosed == 'File':
-            if self.MainWindow.CurNetChosed == 'SBC':
-                self.SBCRe.GetFileList(self.path)
-                if self.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
-                    self.CurFileList = self.SBCRe.CurFileList
-                    self.MainWindow.nav[self.MainWindow.CurNetChosed] = self.SBCRe.Nav
-                    # self.signal.emit()
-                    self.CurFileListOld[self.MainWindow.CurNetChosed][
-                        self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
-                    self.signal.emit()
 
-
-            # self.CurFileListOld = self.SBCRe.CurFileList
-            # self.CurFileList = self.SBCRe.CurFileList
-            # print(self.CurFileList)
-            # self.signal.emit()
-        if self.MainWindow.CurNavChosed == 'Photo':
-            # self.SBCRe.GetFileList(self.path)
-            self.SBCRe.SearchFile('','image')
-            # self.CurFileListOld = self.SBCRe.CurFileList
-            self.CurFileList = self.SBCRe.CurFileList
-            # print(self.CurFileList)
-            self.signal.emit()
-        if self.MainWindow.CurNavChosed == 'Video':
-            # self.SBCRe.GetFileList('/home/BaiduNet/')
-            self.SBCRe.SearchFile('', 'video')
-            # self.CurFileListOld = self.SBCRe.CurFileList
-            self.CurFileList = self.SBCRe.CurFileList
-            self.signal.emit()
-
+    def navClick(self,FilePath,e):
+        if e.buttons() == QtCore.Qt.LeftButton:
+            self.FileShow1(FilePath)
     def NavUpdate(self):
         if self.MainWindow.CurNavChosed == 'File':
             frame_9_ = self.MainWindow.frameandscroll[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed][
@@ -108,7 +97,7 @@ class FileUpdate(QThread):
             horizontalLayout_.setObjectName("horizontalLayout_3")
 
             nav = self.MainWindow.nav[self.MainWindow.CurNetChosed]
-            print(nav)
+            # print(nav)
             for i in range(len(nav)):
                 # print(self.nav[i])
                 label_11 = QtWidgets.QLabel(frame_9_)
@@ -116,6 +105,7 @@ class FileUpdate(QThread):
                 label_11.setObjectName("label_11")
                 label_11.setText(nav[i]['navname'])
                 horizontalLayout_.addWidget(label_11)
+
                 if i == len(nav)-1:
                     label_11.setStyleSheet("color:#A6ACAF")
                 if i < len(nav)-1:
@@ -128,13 +118,14 @@ class FileUpdate(QThread):
                     horizontalLayout_.addWidget(label_11)
 
 
+
             # frame = {'frame': frame_12, 'scrollArea': self.scrollArea, 'frame_nav': frame_9_,
             #          'horizontalLayout_nav': horizontalLayout_1}
 
 
     def ScrollContentUpdate(self):
         self.NavUpdate()
-        # print('CurNavChosed',self.MainWindow.CurNavChosed)
+        print('CurNavChosed',self.MainWindow.CurNavChosed)
         if self.MainWindow.CurNavChosed in self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed]:
             # print('pr',self.MainWindow.SBCFilesDict)
             # print(self.MainWindow.SBCFilesDict)
@@ -158,6 +149,7 @@ class FileUpdate(QThread):
         self.CurSBCFilesDict['scrollAreaWidgetContents'] = self.scrollAreaWidgetContents
 
         for i in range(len(self.CurFileList)):
+
             CurSBCFiles = {}
             FileInfo = self.CurFileList[i]
             CurSBCFiles['frame'] = QtWidgets.QFrame(self.scrollAreaWidgetContents)
@@ -248,7 +240,7 @@ class FileUpdate(QThread):
             label_30.setText(FileInfo['big'])
             # CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
             CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.FileClickDeal, CurSBCFiles)
-
+            # print(6)
             # self.CurSBCFilesDict['File'] = {FileInfo['filelj']:CurSBCFiles}
             # self.CurSBCFilesDict[FileInfo['filelj']] = CurSBCFiles
             SBCFile[FileInfo['filelj']] = CurSBCFiles
@@ -264,11 +256,10 @@ class FileUpdate(QThread):
         self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File'] = SBCFile
         # print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'])
 
-
-
-        if self.Thread_LoadImg.isRunning():
-            self.Thread_LoadImg.wait()
-        self.Thread_LoadImg.runthread(self.MainWindow)
+        #
+        # if self.Thread_LoadImg.isRunning():
+        #     self.Thread_LoadImg.wait()
+        # self.Thread_LoadImg.runthread(self.MainWindow)
 
 
     def run(self):
@@ -276,15 +267,21 @@ class FileUpdate(QThread):
         # if self.isRunning():
         #     return
         if self.MainWindow.CurNavChosed == 'File':
+
             if self.MainWindow.CurNetChosed == 'SBC':
+
                 self.SBCRe.GetFileList(self.path)
-                if self.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
+                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
+
                     self.CurFileList = self.SBCRe.CurFileList
                     self.MainWindow.nav[self.MainWindow.CurNetChosed] = self.SBCRe.Nav
                     # self.signal.emit()
-                    self.CurFileListOld[self.MainWindow.CurNetChosed][
+
+                    self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
                         self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
+
+
 
 
             # self.CurFileListOld = self.SBCRe.CurFileList
