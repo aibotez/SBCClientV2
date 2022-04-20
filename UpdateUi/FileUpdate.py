@@ -309,50 +309,50 @@ class FileUpdate(QThread):
         self.SBCRe = SBCRequest.SBCRe()
         # if self.isRunning():
         #     return
-        if self.MainWindow.CurNavChosed == 'File':
-
-            if self.MainWindow.CurNetChosed == 'SBC':
+        CurNavChosed = self.MainWindow.CurNavChosed
+        CurNetChosed = self.MainWindow.CurNetChosed
+        if CurNavChosed == 'File':
+            if CurNetChosed == 'SBC':
                 self.SBCRe.GetFileList(self.path)
-                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
-                    self.SBCRe.GetFileList(self.path)
+                if self.MainWindow.CurFileListOld[CurNetChosed][CurNavChosed] != self.SBCRe.CurFileList:
                     self.CurFileList = self.SBCRe.CurFileList
-                    self.MainWindow.nav[self.MainWindow.CurNetChosed] = self.SBCRe.Nav
+                    self.MainWindow.nav[CurNetChosed] = self.SBCRe.Nav
                     # self.signal.emit()
-
-                    self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
-                        self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
+                    self.MainWindow.CurFileListOld[CurNetChosed][
+                        CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
 
             # self.CurFileListOld = self.SBCRe.CurFileList
             # self.CurFileList = self.SBCRe.CurFileList
             # print(self.CurFileList)
             # self.signal.emit()
-        if self.MainWindow.CurNavChosed == 'Photo':
-            if self.MainWindow.CurNetChosed == 'SBC':
+        if CurNavChosed == 'Photo':
+            if CurNetChosed == 'SBC':
                 # print(self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
                 #     self.MainWindow.CurNavChosed])
                 # print(self.CurFileList)
-                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
-                    self.MainWindow.CurNavChosed] == []:
+                if self.MainWindow.CurFileListOld[CurNetChosed][
+                    CurNavChosed] == []:
+                    # print('PhotoTe')
                     # print(6)
                     # self.SBCRe.GetFileList(self.path)
                     self.SBCRe.SearchFile('','image')
                     # self.CurFileListOld = self.SBCRe.CurFileList
                     self.CurFileList = self.SBCRe.CurFileList
                     # print(self.CurFileList)
-                    self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
-                        self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
+                    self.MainWindow.CurFileListOld[CurNetChosed][
+                        CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
-        if self.MainWindow.CurNavChosed == 'Video':
-            if self.MainWindow.CurNetChosed == 'SBC':
-                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
-                    self.MainWindow.CurNavChosed] == []:
+        if CurNavChosed == 'Video':
+            if CurNetChosed == 'SBC':
+                if self.MainWindow.CurFileListOld[CurNetChosed][
+                    CurNavChosed] == []:
                     # self.SBCRe.GetFileList('/home/BaiduNet/')
                     self.SBCRe.SearchFile('', 'video')
                     # self.CurFileListOld = self.SBCRe.CurFileList
                     self.CurFileList = self.SBCRe.CurFileList
-                    self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
-                        self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
+                    self.MainWindow.CurFileListOld[CurNetChosed][
+                        CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
 
     def UpdateShow(self,Show):

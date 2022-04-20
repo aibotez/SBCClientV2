@@ -320,8 +320,9 @@ class Ui_PhotoShow(QThread):
 
     def InitShow(self):
         # self.centralwidget = self.MainWindow.centralwidget
+
         self.frame_PhotoShow = QtWidgets.QFrame(self.MainWindow.frame_14)
-        self.frame_PhotoShow.setGeometry(QtCore.QRect(100, 0, 756, 677))
+        # self.frame_PhotoShow.setGeometry(QtCore.QRect(100, 0, 756, 677))
         self.frame_PhotoShow.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_PhotoShow.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_PhotoShow.setObjectName("frame_PhotoShow")

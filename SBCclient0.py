@@ -7,9 +7,9 @@ from InitWindow import initWindow
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     Main = QMainWindow()
-    Main.show()
+
 
     SBCMain = initWindow(Main)
     # SBCMain = SBCMain.initFrame()
-
+    Main.show()
     sys.exit(app.exec_())
