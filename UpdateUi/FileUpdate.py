@@ -223,7 +223,8 @@ class FileUpdate(QThread):
             horizontalLayout_14.setStretch(2, 2)
             formLayout.setWidget(i, QtWidgets.QFormLayout.SpanningRole, CurSBCFiles['frame'])
             metrics = QFontMetrics(CurSBCFiles['FileNameLabel'].font())
-            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 300)
+            new_file_name = metrics.elidedText(FileInfo['filename'], Qt.ElideRight, 260)
+
             CurSBCFiles['FileNameLabel'].setText(new_file_name)
             filepath = base64.decodebytes(FileInfo['filelj'].encode('utf8')).decode()
             CurSBCFiles['fepath'] = filepath

@@ -39,7 +39,7 @@ class ClickEventDeals():
             if self.ui.CurNavChosed != WosLabel:
                 self.HideFrames()
                 self.ClearNavStyle()
-                print(WosLabel)
+                # print(WosLabel)
                 if WosLabel == 'Photo':
                     self.ui.CurNavChosed = 'Photo'
                     self.filepdate.PhotoShow()
@@ -63,12 +63,36 @@ class ClickEventDeals():
                     self.ui.frame_6.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 class initWindow():
     def __init__(self,Main):
+        self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.setupUi(Main)
         self.SBCMain = self.initFrame()
         # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
         self.init()
+
+    def WindowReSize(self):
+        # if ui.scrollArea.width() < 500:
+        #     w = 760
+        # else:
+        #     w = ui.scrollArea.width()
+        w = self.Main.width() - 150
+
+        if self.SBCMain.CurNavChosed in self.SBCMain.SBCFilesDict[self.SBCMain.CurNetChosed]:
+            CurSBCFilesDict = self.SBCMain.SBCFilesDict[self.SBCMain.CurNetChosed][self.SBCMain.CurNavChosed]['File']
+            # print(CurSBCFilesDict)
+            for i in CurSBCFilesDict:
+                FIleinfo = CurSBCFilesDict[i]
+                FileName = FIleinfo['fename']
+                Felabel = FIleinfo['FileNameLabel']
+                # print(Felabel)
+                metrics = QFontMetrics(Felabel.font())
+                # print(metrics)
+                new_file_name = metrics.elidedText(FileName, Qt.ElideRight, w*0.5)
+                Felabel.setText(new_file_name)
+
+    def MainWindowSizeChange(self,e):
+        self.WindowReSize()
 
     def initparameter(self):
         self.SBCMain.nav = {}
@@ -96,9 +120,14 @@ class initWindow():
             self.SBCMain.FileCons[i] = {}
             self.SBCMain.NetOper[i] = {}
             self.SBCMain.frameandscroll[i]['Photo'] = self.Navshows.InitShow()
+            self.SBCMain.frameandscroll[i]['Photo']['frame'].resizeEvent = self.MainWindowSizeChange
             self.SBCMain.frameandscroll[i]['Video'] = self.Navshows.InitShow()
+            self.SBCMain.frameandscroll[i]['Video']['frame'].resizeEvent = self.MainWindowSizeChange
             self.SBCMain.frameandscroll[i]['File'] = self.Navshows.initfileshow()
+            self.SBCMain.frameandscroll[i]['File']['frame'].resizeEvent = self.MainWindowSizeChange
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
+
+        # self.Main.resizeEvent = self.MainWindowSizeChange
         return self.SBCMain
 
     def initBindSignal(self):
@@ -115,6 +144,7 @@ class initWindow():
         self.SBCMain.frame_6.mousePressEvent = partial(CED.NavChoose, 'Transmit')
         # print(self.SBCMain.CurFileListOld)
         self.FileUpdates.FileShow()
+        self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
 
 
