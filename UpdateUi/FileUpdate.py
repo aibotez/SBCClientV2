@@ -11,7 +11,47 @@ from pack import SBCRequest
 from pack.preview import ImgPreview
 
 
+class Thread_LoadImg(QThread):
+    def __init__(self):
+        super().__init__()
+        self.SBCRe = SBCRequest.SBCRe()
 
+        # self.Thread_LoadImg = Thread_LoadImg(self.ui)
+
+    def func(self, listTemp, n):
+        for i in range(0, len(listTemp), n):
+            yield listTemp[i:i + n]
+
+    def ShowCon(self, px, base64data):
+        ba = base64data
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(ba)
+        px.setPixmap(pixmap)
+
+    def runthread(self,MainWindow):
+        self.MainWindow = MainWindow
+        # print(self.FileCons)
+        self.start()
+
+    def run(self):
+
+        FileCon = self.MainWindow.FileCons[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]
+        temp = self.func(FileCon, 2)
+        for i in temp:
+            SendList = [{'fepath': j['fepath']} for j in i]
+            # print('send',SendList)
+            ConList = self.SBCRe.GetFileCon(SendList)
+            try:
+                for num in range(len(ConList['src'])):
+                    coninfo = ConList['src'][num]
+                    ConBase64 = coninfo.split(',')[-1]
+                    img_b64decode = base64.b64decode(ConBase64)  # [21:]
+                    # print(ConBase64)
+                    # print(img_b64decode)
+                    self.ShowCon(i[num]['con'], img_b64decode)
+            except:
+                # print('threderror')
+                break
 class FileUpdate(QThread):
     signal = pyqtSignal()
     def __init__(self,ui):
@@ -19,6 +59,8 @@ class FileUpdate(QThread):
         self.MainWindow = ui
         self.signal.connect(self.ScrollContentUpdate)
         self.path = '/home/'
+        self.CurFileList = []
+        self.Thread_LoadImgs = Thread_LoadImg()
 
     def FileConChose(self,fetype):
         if fetype == 'folder':
@@ -258,9 +300,9 @@ class FileUpdate(QThread):
         # print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'])
 
         #
-        # if self.Thread_LoadImg.isRunning():
-        #     self.Thread_LoadImg.wait()
-        # self.Thread_LoadImg.runthread(self.MainWindow)
+        if self.Thread_LoadImgs.isRunning():
+            self.Thread_LoadImgs.wait()
+        self.Thread_LoadImgs.runthread(self.MainWindow)
 
 
     def run(self):
@@ -271,9 +313,8 @@ class FileUpdate(QThread):
 
             if self.MainWindow.CurNetChosed == 'SBC':
 
-                self.SBCRe.GetFileList(self.path)
-                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
-
+                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] == []:
+                    self.SBCRe.GetFileList(self.path)
                     self.CurFileList = self.SBCRe.CurFileList
                     self.MainWindow.nav[self.MainWindow.CurNetChosed] = self.SBCRe.Nav
                     # self.signal.emit()
@@ -282,26 +323,37 @@ class FileUpdate(QThread):
                         self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
 
-
-
-
             # self.CurFileListOld = self.SBCRe.CurFileList
             # self.CurFileList = self.SBCRe.CurFileList
             # print(self.CurFileList)
             # self.signal.emit()
         if self.MainWindow.CurNavChosed == 'Photo':
-            # self.SBCRe.GetFileList(self.path)
-            self.SBCRe.SearchFile('','image')
-            # self.CurFileListOld = self.SBCRe.CurFileList
-            self.CurFileList = self.SBCRe.CurFileList
-            # print(self.CurFileList)
-            self.signal.emit()
+            if self.MainWindow.CurNetChosed == 'SBC':
+                # print(self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
+                #     self.MainWindow.CurNavChosed])
+                # print(self.CurFileList)
+                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
+                    self.MainWindow.CurNavChosed] == []:
+                    # print(6)
+                    # self.SBCRe.GetFileList(self.path)
+                    self.SBCRe.SearchFile('','image')
+                    # self.CurFileListOld = self.SBCRe.CurFileList
+                    self.CurFileList = self.SBCRe.CurFileList
+                    # print(self.CurFileList)
+                    self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
+                        self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
+                    self.signal.emit()
         if self.MainWindow.CurNavChosed == 'Video':
-            # self.SBCRe.GetFileList('/home/BaiduNet/')
-            self.SBCRe.SearchFile('', 'video')
-            # self.CurFileListOld = self.SBCRe.CurFileList
-            self.CurFileList = self.SBCRe.CurFileList
-            self.signal.emit()
+            if self.MainWindow.CurNetChosed == 'SBC':
+                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
+                    self.MainWindow.CurNavChosed] == []:
+                    # self.SBCRe.GetFileList('/home/BaiduNet/')
+                    self.SBCRe.SearchFile('', 'video')
+                    # self.CurFileListOld = self.SBCRe.CurFileList
+                    self.CurFileList = self.SBCRe.CurFileList
+                    self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][
+                        self.MainWindow.CurNavChosed] = self.SBCRe.CurFileList
+                    self.signal.emit()
 
     def UpdateShow(self,Show):
         # self.CurShow = Show

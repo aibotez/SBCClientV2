@@ -17,9 +17,9 @@ from UpdateUi import FileUpdate
 
 
 class ClickEventDeals():
-    def __init__(self,ui):
+    def __init__(self,ui,FileUpdates):
         self.ui = ui
-        self.filepdate = FileUpdate.FileUpdate(ui)
+        self.filepdate = FileUpdates
     def ClearNavStyle(self):
         self.ui.frame_2.setStyleSheet("")
         self.ui.frame_3.setStyleSheet("")
@@ -135,7 +135,7 @@ class initWindow():
         self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['refreshbutton'].mousePressEvent = partial(self.FileUpdates.Refresh)
 
     def init(self):
-        CED = ClickEventDeals(self.SBCMain)
+        CED = ClickEventDeals(self.SBCMain,self.FileUpdates)
         self.SBCMain.frame_13.deleteLater()
         self.SBCMain.frame_2.mousePressEvent = partial(CED.NavChoose,'File')
         self.SBCMain.frame_3.mousePressEvent = partial(CED.NavChoose, 'Photo')
@@ -143,7 +143,7 @@ class initWindow():
         self.SBCMain.frame_5.mousePressEvent = partial(CED.NavChoose, 'Share')
         self.SBCMain.frame_6.mousePressEvent = partial(CED.NavChoose, 'Transmit')
         # print(self.SBCMain.CurFileListOld)
-        self.FileUpdates.FileShow()
+        self.FileUpdates.start()
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
 
