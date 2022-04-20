@@ -312,8 +312,8 @@ class FileUpdate(QThread):
         if self.MainWindow.CurNavChosed == 'File':
 
             if self.MainWindow.CurNetChosed == 'SBC':
-
-                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] == []:
+                self.SBCRe.GetFileList(self.path)
+                if self.MainWindow.CurFileListOld[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed] != self.SBCRe.CurFileList:
                     self.SBCRe.GetFileList(self.path)
                     self.CurFileList = self.SBCRe.CurFileList
                     self.MainWindow.nav[self.MainWindow.CurNetChosed] = self.SBCRe.Nav
