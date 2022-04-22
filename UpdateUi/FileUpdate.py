@@ -273,6 +273,7 @@ class FileUpdate(QThread):
             CurSBCFiles['fename'] = FileInfo['filename']
             CurSBCFiles['fepath_base64'] = FileInfo['filelj']
             CurSBCFiles['fetype'] = FileInfo['fetype']
+            CurSBCFiles['imgLoad'] = 0
             if FileInfo['fetype'] == 'img':
                 Filecon.append(CurSBCFiles)
             CurSBCFiles['con'].setText("")

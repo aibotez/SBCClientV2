@@ -113,6 +113,7 @@ class initWindow():
     def test1(self):
         horizontal_bar = self.SBCMain.frameandscroll['SBC']['File']['scrollArea'].verticalScrollBar()
         print(horizontal_bar.value(),horizontal_bar.maximum())
+        print(self.SBCMain.frameandscroll['SBC']['File']['scrollArea'].size())
     # def test(self,e):
     #     horizontal_bar = self.SBCMain.frameandscroll['SBC']['File']['scrollArea'].verticalScrollBar()
     #     delta_y = - e.angleDelta().y()
@@ -137,6 +138,7 @@ class initWindow():
             self.SBCMain.frameandscroll[i]['File'] = self.Navshows.initfileshow()
             self.SBCMain.frameandscroll[i]['File']['frame'].resizeEvent = self.MainWindowSizeChange
             # self.SBCMain.frameandscroll[i]['File']['scrollArea'].wheelEvent = self.test
+
             self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar().valueChanged.connect(self.test1)
             # vertical.valueChanged.connect(self.test1)
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
