@@ -184,6 +184,7 @@ class Ui_PhotoShow(QThread):
         self.scrollArea.setFrameShadow(QtWidgets.QFrame.Raised)
         self.scrollArea.setLineWidth(-1)
         self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        # self.scrollArea.changeEvent()
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
@@ -314,6 +315,7 @@ class Ui_PhotoShow(QThread):
         #     label_11.setText(">")
         #     horizontalLayout_.addWidget(label_11)
         frame_12.hide()
+        # self.scrollArea.changeEvent()
         frame = {'frame': frame_12, 'scrollArea': self.scrollArea,'frame_navF':frame_9,'frame_nav':frame_9_,'horizontalLayout_nav':horizontalLayout_1}
         return frame
 

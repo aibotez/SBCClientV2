@@ -110,6 +110,17 @@ class initWindow():
             self.SBCMain.CurFileListOld[i]['Video'] = []
             self.SBCMain.CurFileListOld[i]['File'] = []
 
+    def test1(self,e):
+        horizontal_bar = self.SBCMain.frameandscroll['SBC']['File']['scrollArea'].verticalScrollBar()
+        print(horizontal_bar.value())
+    def test(self,e):
+        horizontal_bar = self.SBCMain.frameandscroll['SBC']['File']['scrollArea'].verticalScrollBar()
+        delta_y = - e.angleDelta().y()
+        v = horizontal_bar.value() + delta_y
+        v = max(min(v, horizontal_bar.maximum()), horizontal_bar.minimum())
+        print(horizontal_bar.minimum(),horizontal_bar.maximum())
+        horizontal_bar.setValue(v)
+
     def initFrame(self):
         self.initparameter()
         self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
@@ -125,6 +136,9 @@ class initWindow():
             self.SBCMain.frameandscroll[i]['Video']['frame'].resizeEvent = self.MainWindowSizeChange
             self.SBCMain.frameandscroll[i]['File'] = self.Navshows.initfileshow()
             self.SBCMain.frameandscroll[i]['File']['frame'].resizeEvent = self.MainWindowSizeChange
+            self.SBCMain.frameandscroll[i]['File']['scrollArea'].wheelEvent = self.test
+            vertical = self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar()
+            vertical.changeEvent = self.test1
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 
         # self.Main.resizeEvent = self.MainWindowSizeChange
