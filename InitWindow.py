@@ -65,10 +65,14 @@ class initWindow():
     def __init__(self,Main):
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
+        self.SBCMain.SBCRe = SBCRequest.SBCRe()
         self.SBCMain.setupUi(Main)
+
+        self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
         self.SBCMain = self.initFrame()
         # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
+
         self.init()
 
     def WindowReSize(self):
@@ -139,7 +143,7 @@ class initWindow():
             self.SBCMain.frameandscroll[i]['File']['frame'].resizeEvent = self.MainWindowSizeChange
             # self.SBCMain.frameandscroll[i]['File']['scrollArea'].wheelEvent = self.test
 
-            self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar().valueChanged.connect(self.test1)
+            self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar().valueChanged.connect(self.Thread_LoadImgs.runthread1)
             # vertical.valueChanged.connect(self.test1)
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 

@@ -1,4 +1,4 @@
-import sys
+import sys,threading
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -12,15 +12,17 @@ from pack.preview import ImgPreview
 
 
 class Thread_LoadImg(QThread):
-    def __init__(self):
+    def __init__(self,MainWindow):
         super().__init__()
-        self.SBCRe = SBCRequest.SBCRe()
+        self.MainWindow = MainWindow
+        self.SBCRe = self.MainWindow.SBCRe
 
         # self.Thread_LoadImg = Thread_LoadImg(self.ui)
 
     def func(self, listTemp, n):
         for i in range(0, len(listTemp), n):
             yield listTemp[i:i + n]
+
 
     def ShowCon(self, px, base64data):
         ba = base64data
@@ -31,7 +33,64 @@ class Thread_LoadImg(QThread):
     def runthread(self,MainWindow):
         self.MainWindow = MainWindow
         # print(self.FileCons)
+        print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File'])
+        Files = self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File']
+        if len(Files) <= 0:
+            return
+
+        FilesKeys = list(Files.keys())
+        ConHeight = Files[FilesKeys[0]]['frame'].height()
+        ScrollFrameHeight = self.MainWindow.frameandscroll['SBC']['File']['scrollArea'].height()
+        # print(ConHeight,ScrollFrameHeight)
+        horizontal_bar = self.MainWindow.frameandscroll['SBC']['File']['scrollArea'].verticalScrollBar()
+        # print(horizontal_bar.value(),horizontal_bar.maximum())
+        # print(self.MainWindow.frameandscroll['SBC']['File']['scrollArea'].size())
+        offset = int(horizontal_bar.value()/ConHeight)
+        shownums = int(ScrollFrameHeight/ConHeight)
+
         self.start()
+
+    def run1(self):
+        Files = self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File']
+        if len(Files) <= 0:
+            return
+        FilesKeys = list(Files.keys())
+        ConHeight = Files[FilesKeys[0]]['frame'].height()
+        ScrollFrameHeight = self.MainWindow.frameandscroll['SBC']['File']['scrollArea'].height()
+        horizontal_bar = self.MainWindow.frameandscroll['SBC']['File']['scrollArea'].verticalScrollBar()
+        offset = int(horizontal_bar.value()/ConHeight)
+        shownums = int(ScrollFrameHeight/ConHeight)+1
+        # print(offset,shownums)
+        CurShowFiles = FilesKeys[offset:shownums+offset]
+        FileCon = []
+        for i in CurShowFiles:
+            # print(Files[i]['fename'])
+            # print(Files[i])
+            if Files[i]['fetype'] == 'img' and 'LoadImg' not in Files[i]:
+                # print(Files[i]['fename'])
+                FileCon.append(Files[i])
+                self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File'][i]['LoadImg'] = 1
+        temp = self.func(FileCon, 2)
+        for i in temp:
+            SendList = [{'fepath': j['fepath']} for j in i]
+            # print('send',SendList)
+            ConList = self.SBCRe.GetFileCon(SendList)
+            try:
+                for num in range(len(ConList['src'])):
+                    coninfo = ConList['src'][num]
+                    ConBase64 = coninfo.split(',')[-1]
+                    img_b64decode = base64.b64decode(ConBase64)  # [21:]
+                    # print(ConBase64)
+                    # print(img_b64decode)
+                    self.ShowCon(i[num]['con'], img_b64decode)
+            except:
+                # print('threderror')
+                break
+
+    def runthread1(self):
+        t = threading.Thread(target=self.run1)
+        t.setDaemon(True)
+        t.start()
 
     def run(self):
 
@@ -60,7 +119,7 @@ class FileUpdate(QThread):
         self.signal.connect(self.ScrollContentUpdate)
         self.path = '/home/'
         self.CurFileList = []
-        self.Thread_LoadImgs = Thread_LoadImg()
+        self.Thread_LoadImgs = Thread_LoadImg(self.MainWindow)
 
     def FileConChose(self,fetype):
         if fetype == 'folder':
@@ -301,13 +360,13 @@ class FileUpdate(QThread):
         # print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNavChosed]['scrollAreaWidgetContents'])
 
         #
-        if self.Thread_LoadImgs.isRunning():
-            self.Thread_LoadImgs.wait()
-        self.Thread_LoadImgs.runthread(self.MainWindow)
+        # if self.Thread_LoadImgs.isRunning():
+        #     self.Thread_LoadImgs.wait()
+        self.Thread_LoadImgs.runthread1()
 
 
     def run(self):
-        self.SBCRe = SBCRequest.SBCRe()
+        self.SBCRe = self.MainWindow.SBCRe
         # if self.isRunning():
         #     return
         CurNavChosed = self.MainWindow.CurNavChosed

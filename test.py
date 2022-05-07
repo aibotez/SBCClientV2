@@ -40,6 +40,13 @@ class bc(b):
     def c_c(self):
         self.b_b()
 
-c = b()
+# c = b()
+#
+# c.b_b()
 
-c.b_b()
+def te(ma):
+    ma['ab'] = 1
+
+m = {}
+te(m)
+print(m)
