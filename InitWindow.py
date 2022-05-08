@@ -61,6 +61,54 @@ class ClickEventDeals():
                 if WosLabel == 'Transmit':
                     self.ui.CurNavChosed = 'Transmit'
                     self.ui.frame_6.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
+
+def CreatPopFram(SBCMain):
+    frame_ChoseNet = QtWidgets.QFrame(SBCMain.frame_14)
+    frame_ChoseNet.setGeometry(QtCore.QRect(220, 35, 101, 171))
+    frame_ChoseNet.setStyleSheet("#frame_ChoseNet\n"
+                                      "{\n"
+                                      "    background:#D0D3D4;\n"
+                                      "}\n"
+                                      "\n"
+                                      "#frame_ChoseNet QLabel:hover{\n"
+                                      "    background:#A2D9CE;\n"
+                                      "    \n"
+                                      "    opacity:0.5;\n"
+                                      "    }")
+    frame_ChoseNet.setFrameShape(QtWidgets.QFrame.StyledPanel)
+    frame_ChoseNet.setFrameShadow(QtWidgets.QFrame.Raised)
+    frame_ChoseNet.setObjectName("frame_ChoseNet")
+    verticalLayout_3 = QtWidgets.QVBoxLayout(frame_ChoseNet)
+    verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+    verticalLayout_3.setSpacing(0)
+    verticalLayout_3.setObjectName("verticalLayout_3")
+    label = QtWidgets.QLabel(frame_ChoseNet)
+    label.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    label.setAlignment(QtCore.Qt.AlignCenter)
+    label.setObjectName("label")
+    verticalLayout_3.addWidget(label)
+    label_2 = QtWidgets.QLabel(frame_ChoseNet)
+    label_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    label_2.setAlignment(QtCore.Qt.AlignCenter)
+    label_2.setObjectName("label_2")
+    verticalLayout_3.addWidget(label_2)
+    label_3 = QtWidgets.QLabel(frame_ChoseNet)
+    label_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    label_3.setAlignment(QtCore.Qt.AlignCenter)
+    label_3.setObjectName("label_3")
+    verticalLayout_3.addWidget(label_3)
+    # self.retranslateUi(Form)
+    # QtCore.QMetaObject.connectSlotsByName(Form)
+    label.setText("小黑云")
+    label_2.setText("百度云")
+    label_3.setText("阿里云")
+    SBCMain.frame_ChoseNet = frame_ChoseNet
+    SBCMain.choseSBCLabel = label
+    SBCMain.choseBDCLabel = label_2
+    SBCMain.choseALCLabel = label_3
+    SBCMain.frame_ChoseNet.raise_()
+    SBCMain.frame_ChoseNet.hide()
+
 class initWindow():
     def __init__(self,Main):
         self.Main = Main
@@ -125,6 +173,9 @@ class initWindow():
     #     v = max(min(v, horizontal_bar.maximum()), horizontal_bar.minimum())
     #     print(horizontal_bar.minimum(),horizontal_bar.maximum())
     #     horizontal_bar.setValue(v)
+
+    def initpopup(self):
+        pass
 
     def initFrame(self):
         self.initparameter()
