@@ -54,7 +54,7 @@ class Thread_LoadImg(QThread):
 
     def run1(self):
         if 'File' not in self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]:
-            return 
+            return
         Files = self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File']
         if len(Files) <= 0:
             return
