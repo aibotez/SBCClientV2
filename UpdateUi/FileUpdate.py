@@ -53,6 +53,8 @@ class Thread_LoadImg(QThread):
         self.start()
 
     def run1(self):
+        if 'File' not in self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]:
+            return 
         Files = self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File']
         if len(Files) <= 0:
             return
@@ -181,6 +183,9 @@ class FileUpdate(QThread):
         self.path = path
         if self.isRunning():
             self.wait()
+        CurNavChosed = self.MainWindow.CurNavChosed
+        CurNetChosed = self.MainWindow.CurNetChosed
+        self.MainWindow.CurFileListOld[CurNetChosed][CurNavChosed] = []
         self.start()
 
 
