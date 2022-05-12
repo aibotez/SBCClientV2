@@ -2,9 +2,11 @@ import sys,threading
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction
 from PyQt5.Qt import QThread
 import SBCMainWindow
-from PyQt5.QtGui import QFontMetrics
+from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
@@ -147,7 +149,8 @@ class FileUpdate(QThread):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.FileLeftDeal(FileInfo)
         elif e.buttons() == QtCore.Qt.RightButton:
-            self.FileRightDeal(FileInfo)
+            self.create_Filerightmenu()
+            # self.FileRightDeal(FileInfo)
     def FileLeftDeal(self,FileInfo):
         print('FileLeft',FileInfo)
         # ImgPreviews = ImgPreview.ImageViewer()
@@ -222,7 +225,36 @@ class FileUpdate(QThread):
 
             # frame = {'frame': frame_12, 'scrollArea': self.scrollArea, 'frame_nav': frame_9_,
             #          'horizontalLayout_nav': horizontalLayout_1}
-
+    def creat_ChoseNetmenu(self):
+        groupBox_menu = QMenu()
+        actionSBC = QAction('小黑云', self)
+        actionBDC = QAction('百度云', self)
+        actionALC = QAction('阿里云', self)
+        groupBox_menu.addAction(actionSBC)
+        groupBox_menu.addAction(actionBDC)
+        groupBox_menu.addAction(actionALC)
+        groupBox_menu.popup(QCursor.pos())
+    def create_Filerightmenu(self):
+        # 菜单对象
+        self.groupBox_menu = QMenu()
+        # self.actionA = QAction(QIcon('image/保存.png'), u'保存数据', self)  # 创建菜单选项对象
+        self.actionDown = QAction('下载', self)
+        # self.actionA.setShortcut('Ctrl+S')  # 设置动作A的快捷键
+        self.groupBox_menu.addAction(self.actionDown)  # 把动作A选项对象添加到菜单self.groupBox_menu上
+        self.actionShare = QAction(u'分享', self)
+        self.groupBox_menu.addAction(self.actionShare)
+        self.actionProper = QAction(u'属性', self)
+        self.groupBox_menu.addAction(self.actionProper)
+        self.actionCopy = QAction(u'复制', self)
+        self.groupBox_menu.addAction(self.actionCopy)
+        self.actionMove = QAction(u'移动', self)
+        self.groupBox_menu.addAction(self.actionMove)
+        self.actionDel = QAction(u'删除', self)
+        self.groupBox_menu.addAction(self.actionDel)
+        self.actionNewname = QAction(u'重命名', self)
+        self.groupBox_menu.addAction(self.actionNewname)
+        # self.actionA.triggered.connect(self.button)  # 将动作A触发时连接到槽函数 button
+        self.groupBox_menu.popup(QCursor.pos())  # 声明当鼠标在groupBox控件上右击时，在鼠标位置显示右键菜单   ,exec_,popup两个都可以，
 
     def ScrollContentUpdate(self):
         self.NavUpdate()
@@ -249,6 +281,10 @@ class FileUpdate(QThread):
         SBCFile = {}
         self.CurSBCFilesDict['scrollAreaWidgetContents'] = self.scrollAreaWidgetContents
 
+        # self.scrollAreaWidgetContents.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.scrollAreaWidgetContents.customContextMenuRequested.connect(self.create_rightmenu)
+
+
         for i in range(len(self.CurFileList)):
 
             CurSBCFiles = {}
@@ -259,6 +295,10 @@ class FileUpdate(QThread):
             CurSBCFiles['frame'].setFrameShape(QtWidgets.QFrame.StyledPanel)
             CurSBCFiles['frame'].setFrameShadow(QtWidgets.QFrame.Raised)
             CurSBCFiles['frame'].setObjectName("frame_13")
+
+            # CurSBCFiles['frame'].setContextMenuPolicy(Qt.CustomContextMenu)
+            # CurSBCFiles['frame'].customContextMenuRequested.connect(self.create_rightmenu)
+
             horizontalLayout_14 = QtWidgets.QHBoxLayout(CurSBCFiles['frame'])
             horizontalLayout_14.setContentsMargins(3, 0, 9, 0)
             horizontalLayout_14.setSpacing(0)

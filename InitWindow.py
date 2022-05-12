@@ -3,9 +3,10 @@ import sys
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction
 from PyQt5.Qt import QThread
 import SBCMainWindow
-from PyQt5.QtGui import QFontMetrics
+from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
@@ -62,6 +63,12 @@ class ClickEventDeals():
                     self.ui.CurNavChosed = 'Transmit'
                     self.ui.frame_6.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
+
+
+
+
+
+
 def CreatPopFram(SBCMain):
     frame_ChoseNet = QtWidgets.QFrame(SBCMain.frame_14)
     frame_ChoseNet.setGeometry(QtCore.QRect(220, 35, 101, 171))
@@ -108,6 +115,7 @@ def CreatPopFram(SBCMain):
     SBCMain.choseALCLabel = label_3
     SBCMain.frame_ChoseNet.raise_()
     SBCMain.frame_ChoseNet.hide()
+
 
 class initWindow():
     def __init__(self,Main):
@@ -174,6 +182,16 @@ class initWindow():
     #     print(horizontal_bar.minimum(),horizontal_bar.maximum())
     #     horizontal_bar.setValue(v)
 
+    def creat_ChoseNetmenu(self):
+        print(6)
+        # groupBox_menu = QMenu()
+        # actionSBC = QAction('小黑云', self)
+        # actionBDC = QAction('百度云', self)
+        # actionALC = QAction('阿里云', self)
+        # groupBox_menu.addAction(actionSBC)
+        # groupBox_menu.addAction(actionBDC)
+        # groupBox_menu.addAction(actionALC)
+        # groupBox_menu.popup(QCursor.pos())
     def initpopup(self):
         pass
 
@@ -198,12 +216,15 @@ class initWindow():
             # vertical.valueChanged.connect(self.test1)
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 
+        self.SBCMain.creat_ChoseNetmenu = self.creat_ChoseNetmenu
+
         # self.Main.resizeEvent = self.MainWindowSizeChange
         return self.SBCMain
 
     def initBindSignal(self):
         self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['backbutton'].mousePressEvent = partial(self.FileUpdates.navBackClick)  # back
         self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['refreshbutton'].mousePressEvent = partial(self.FileUpdates.Refresh)
+        # self.SBCMain.label_18.mousePressEvent = self.SBCMain.creat_ChoseNetmenu
 
     def init(self):
         CED = ClickEventDeals(self.SBCMain,self.FileUpdates)
@@ -214,6 +235,7 @@ class initWindow():
         self.SBCMain.frame_5.mousePressEvent = partial(CED.NavChoose, 'Share')
         self.SBCMain.frame_6.mousePressEvent = partial(CED.NavChoose, 'Transmit')
         # print(self.SBCMain.CurFileListOld)
+        # self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu
         self.FileUpdates.start()
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
