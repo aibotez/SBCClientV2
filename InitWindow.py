@@ -182,12 +182,25 @@ class initWindow():
     #     print(horizontal_bar.minimum(),horizontal_bar.maximum())
     #     horizontal_bar.setValue(v)
 
+    def creat_Upmenu(self,e):
+        self.groupBox_Upmenu = QMenu()
+        self.actionUpfile = self.groupBox_Upmenu.addAction(u'上传文件')
+        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'上传文件夹')
+        self.groupBox_Upmenu.popup(QCursor.pos())
     def creat_ChoseNetmenu(self,e):
-        self.groupBox_menu = QMenu()
-        self.actionSBC = self.groupBox_menu.addAction(u'小黑云')
-        self.actionBDC = self.groupBox_menu.addAction(u'百度云')
-        self.actionALC = self.groupBox_menu.addAction(u'阿里云')
-        self.groupBox_menu.popup(QCursor.pos())
+        self.groupBox_ChoseNetmenu = QMenu()
+        self.actionSBC = self.groupBox_ChoseNetmenu.addAction(u'小黑云')
+        self.actionBDC = self.groupBox_ChoseNetmenu.addAction(u'百度云')
+        self.actionALC = self.groupBox_ChoseNetmenu.addAction(u'阿里云')
+        self.groupBox_ChoseNetmenu.popup(QCursor.pos())
+    def creat_Moremenu(self,e):
+        self.groupBox_Moremenu = QMenu()
+        self.actionShare = self.groupBox_Moremenu.addAction(u'分享')
+        self.actionMove = self.groupBox_Moremenu.addAction(u'移动')
+        self.actionCopy = self.groupBox_Moremenu.addAction(u'复制')
+        self.actionPorper = self.groupBox_Moremenu.addAction(u'属性')
+        self.actionNewFolders = self.groupBox_Moremenu.addAction(u'新建文件夹')
+        self.groupBox_Moremenu.popup(QCursor.pos())
     def initpopup(self):
         pass
 
@@ -231,7 +244,11 @@ class initWindow():
         self.SBCMain.frame_5.mousePressEvent = partial(CED.NavChoose, 'Share')
         self.SBCMain.frame_6.mousePressEvent = partial(CED.NavChoose, 'Transmit')
         # print(self.SBCMain.CurFileListOld)
-        self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu
+        self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu #切换网盘
+        self.SBCMain.label_17.mousePressEvent = self.creat_Moremenu  # 更多
+        self.SBCMain.label_15.mousePressEvent = self.creat_Upmenu  # 上传
+
+
         self.FileUpdates.start()
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
