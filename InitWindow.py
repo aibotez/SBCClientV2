@@ -182,16 +182,12 @@ class initWindow():
     #     print(horizontal_bar.minimum(),horizontal_bar.maximum())
     #     horizontal_bar.setValue(v)
 
-    def creat_ChoseNetmenu(self):
-        print(6)
-        # groupBox_menu = QMenu()
-        # actionSBC = QAction('小黑云', self)
-        # actionBDC = QAction('百度云', self)
-        # actionALC = QAction('阿里云', self)
-        # groupBox_menu.addAction(actionSBC)
-        # groupBox_menu.addAction(actionBDC)
-        # groupBox_menu.addAction(actionALC)
-        # groupBox_menu.popup(QCursor.pos())
+    def creat_ChoseNetmenu(self,e):
+        self.groupBox_menu = QMenu()
+        self.actionSBC = self.groupBox_menu.addAction(u'小黑云')
+        self.actionBDC = self.groupBox_menu.addAction(u'百度云')
+        self.actionALC = self.groupBox_menu.addAction(u'阿里云')
+        self.groupBox_menu.popup(QCursor.pos())
     def initpopup(self):
         pass
 
@@ -216,7 +212,7 @@ class initWindow():
             # vertical.valueChanged.connect(self.test1)
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 
-        self.SBCMain.creat_ChoseNetmenu = self.creat_ChoseNetmenu
+        # self.SBCMain.creat_ChoseNetmenu = self.creat_ChoseNetmenu
 
         # self.Main.resizeEvent = self.MainWindowSizeChange
         return self.SBCMain
@@ -235,7 +231,7 @@ class initWindow():
         self.SBCMain.frame_5.mousePressEvent = partial(CED.NavChoose, 'Share')
         self.SBCMain.frame_6.mousePressEvent = partial(CED.NavChoose, 'Transmit')
         # print(self.SBCMain.CurFileListOld)
-        # self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu
+        self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu
         self.FileUpdates.start()
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
