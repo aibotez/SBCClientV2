@@ -187,12 +187,22 @@ class initWindow():
         self.actionUpfile = self.groupBox_Upmenu.addAction(u'上传文件')
         self.actionUpfolder = self.groupBox_Upmenu.addAction(u'上传文件夹')
         self.groupBox_Upmenu.popup(QCursor.pos())
+        self.groupBox_Upmenu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:18px;\n"
+                                        "}\n")
     def creat_ChoseNetmenu(self,e):
         self.groupBox_ChoseNetmenu = QMenu()
         self.actionSBC = self.groupBox_ChoseNetmenu.addAction(u'小黑云')
         self.actionBDC = self.groupBox_ChoseNetmenu.addAction(u'百度云')
         self.actionALC = self.groupBox_ChoseNetmenu.addAction(u'阿里云')
         self.groupBox_ChoseNetmenu.popup(QCursor.pos())
+        self.groupBox_ChoseNetmenu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:18px;\n"
+                                        "}\n")
     def creat_Moremenu(self,e):
         self.groupBox_Moremenu = QMenu()
         self.actionShare = self.groupBox_Moremenu.addAction(u'分享')
@@ -201,6 +211,12 @@ class initWindow():
         self.actionPorper = self.groupBox_Moremenu.addAction(u'属性')
         self.actionNewFolders = self.groupBox_Moremenu.addAction(u'新建文件夹')
         self.groupBox_Moremenu.popup(QCursor.pos())
+
+        self.groupBox_Moremenu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:18px;\n"
+                                        "}\n")
     def initpopup(self):
         pass
 
@@ -209,6 +225,7 @@ class initWindow():
         self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
         Nets = ['SBC', 'BDC', 'ALC']
         for i in Nets:
+            self.SBCMain.CurNetChosed = i
             self.SBCMain.frameandscroll[i] = {}
             self.SBCMain.SBCFilesDict[i] = {}
             self.SBCMain.FileCons[i] = {}
@@ -223,6 +240,7 @@ class initWindow():
 
             self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar().valueChanged.connect(self.Thread_LoadImgs.runthread1)
             # vertical.valueChanged.connect(self.test1)
+        self.SBCMain.CurNetChosed = 'SBC'
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 
         # self.SBCMain.creat_ChoseNetmenu = self.creat_ChoseNetmenu
@@ -231,11 +249,10 @@ class initWindow():
         return self.SBCMain
 
     def initBindSignal(self):
+        print(self.SBCMain.NetOper)
         self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['backbutton'].mousePressEvent = partial(self.FileUpdates.navBackClick)  # back
         self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['refreshbutton'].mousePressEvent = partial(self.FileUpdates.Refresh)
         # self.SBCMain.label_18.mousePressEvent = self.SBCMain.creat_ChoseNetmenu
-
-    def init(self):
         CED = ClickEventDeals(self.SBCMain,self.FileUpdates)
         self.SBCMain.frame_13.deleteLater()
         self.SBCMain.frame_2.mousePressEvent = partial(CED.NavChoose,'File')
@@ -243,12 +260,12 @@ class initWindow():
         self.SBCMain.frame_4.mousePressEvent = partial(CED.NavChoose, 'Video')
         self.SBCMain.frame_5.mousePressEvent = partial(CED.NavChoose, 'Share')
         self.SBCMain.frame_6.mousePressEvent = partial(CED.NavChoose, 'Transmit')
-        # print(self.SBCMain.CurFileListOld)
         self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu #切换网盘
         self.SBCMain.label_17.mousePressEvent = self.creat_Moremenu  # 更多
         self.SBCMain.label_15.mousePressEvent = self.creat_Upmenu  # 上传
 
-
+    def init(self):
+        self.initBindSignal()
         self.FileUpdates.start()
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 

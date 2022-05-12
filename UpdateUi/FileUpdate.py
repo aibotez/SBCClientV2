@@ -255,6 +255,11 @@ class FileUpdate(QThread):
         self.groupBox_menu.addAction(self.actionNewname)
         # self.actionA.triggered.connect(self.button)  # 将动作A触发时连接到槽函数 button
         self.groupBox_menu.popup(QCursor.pos())  # 声明当鼠标在groupBox控件上右击时，在鼠标位置显示右键菜单   ,exec_,popup两个都可以，
+        self.groupBox_menu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:16px;\n"
+                                        "}\n")
 
     def ScrollContentUpdate(self):
         self.NavUpdate()
