@@ -48,8 +48,6 @@ class SBCRe():
 
     def GetFileCon(self,Files):
         url = 'http://' + self.host + '/GetImgCon/'
-
-
         postdata = json.dumps(Files,ensure_ascii=False)
         postdata = base64.encodebytes(postdata.encode('utf8')).decode()
         data = {

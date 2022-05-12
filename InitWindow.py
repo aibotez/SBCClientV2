@@ -5,7 +5,7 @@ from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction
 from PyQt5.Qt import QThread
-import SBCMainWindow
+
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
 import base64

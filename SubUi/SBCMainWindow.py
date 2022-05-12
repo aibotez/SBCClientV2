@@ -152,8 +152,11 @@ class Ui_SBCclient(object):
         self.frame_6.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_6.setObjectName("frame_6")
         self.label_6 = QtWidgets.QLabel(self.frame_6)
-        self.label_6.setGeometry(QtCore.QRect(30, 10, 61, 21))
+        self.label_6.setGeometry(QtCore.QRect(30, 10, 71, 21))
         self.label_6.setObjectName("label_6")
+        self.label_23 = QtWidgets.QLabel(self.frame_6)
+        self.label_23.setGeometry(QtCore.QRect(100, 10, 31, 21))
+        self.label_23.setObjectName("label_23")
         self.verticalLayout_3.addWidget(self.frame_6)
         self.verticalLayout_3.setStretch(0, 1)
         self.verticalLayout_3.setStretch(1, 1)
@@ -409,7 +412,7 @@ class Ui_SBCclient(object):
         self.label_19.setObjectName("label_19")
         self.horizontalLayout_3.addWidget(self.label_19)
         spacerItem3 = QtWidgets.QSpacerItem(681, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_3.addItem(spacerItem3)
+        self.horizontalLayout_3.addItem(spacerItem3)
         self.label_8 = QtWidgets.QLabel(self.frame_8)
         font = QtGui.QFont()
         font.setPointSize(-1)
@@ -590,6 +593,7 @@ class Ui_SBCclient(object):
         QtCore.QMetaObject.connectSlotsByName(SBCclient)
 
     def retranslateUi(self, SBCclient):
+
         _translate = QtCore.QCoreApplication.translate
         SBCclient.setWindowTitle(_translate("SBCclient", "小黑云客户端"))
         self.label.setText(_translate("SBCclient", "小黑云"))
@@ -598,6 +602,7 @@ class Ui_SBCclient(object):
         self.label_4.setText(_translate("SBCclient", "视频"))
         self.label_5.setText(_translate("SBCclient", "分享"))
         self.label_6.setText(_translate("SBCclient", "传输列表"))
+        self.label_23.setText(_translate("SBCclient", "Tran"))
         self.label_7.setText(_translate("SBCclient", "10.1GB/6.0T"))
         self.label_9.setText(_translate("SBCclient", "用户"))
         self.label_14.setText(_translate("SBCclient", "下载"))
