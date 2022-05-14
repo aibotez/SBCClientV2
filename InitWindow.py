@@ -14,6 +14,7 @@ from pack.preview import ImgPreview
 
 from SubUi import SBCMainWindow
 from SubUi import NavShow
+from SubUi import Transmitui
 from UpdateUi import FileUpdate
 
 
@@ -127,6 +128,7 @@ class initWindow():
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
         self.SBCMain = self.initFrame()
         # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
+
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
 
         self.init()

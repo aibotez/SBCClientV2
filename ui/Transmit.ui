@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>755</width>
+    <width>711</width>
     <height>585</height>
    </rect>
   </property>
@@ -29,7 +29,7 @@
     <attribute name="title">
      <string>正在下载</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -197,7 +197,7 @@
         <widget class="QWidget" name="scrollAreaWidgetContents_5">
          <property name="geometry">
           <rect>
-           <x>-2</x>
+           <x>0</x>
            <y>0</y>
            <width>649</width>
            <height>503</height>
