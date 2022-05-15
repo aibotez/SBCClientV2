@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>862</width>
+    <width>911</width>
     <height>706</height>
    </rect>
   </property>
@@ -112,6 +112,12 @@ Line{
       </property>
       <item>
        <widget class="QFrame" name="frame">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>150</width>
@@ -1148,7 +1154,7 @@ Line{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>710</width>
+                   <width>751</width>
                    <height>579</height>
                   </rect>
                  </property>
@@ -1345,7 +1351,7 @@ Line{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>862</width>
+     <width>911</width>
      <height>23</height>
     </rect>
    </property>

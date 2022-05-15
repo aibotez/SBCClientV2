@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SBCclient(object):
     def setupUi(self, SBCclient):
         SBCclient.setObjectName("SBCclient")
-        SBCclient.resize(862, 706)
+        SBCclient.resize(911, 706)
         SBCclient.setMinimumSize(QtCore.QSize(800, 700))
         font = QtGui.QFont()
         font.setFamily("宋体")
@@ -68,6 +68,7 @@ class Ui_SBCclient(object):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame = QtWidgets.QFrame(self.centralwidget)
+        self.frame.setMinimumSize(QtCore.QSize(150, 0))
         self.frame.setMaximumSize(QtCore.QSize(150, 16777215))
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -501,7 +502,7 @@ class Ui_SBCclient(object):
         self.scrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 710, 579))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 751, 579))
         self.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.formLayout = QtWidgets.QFormLayout(self.scrollAreaWidgetContents)
@@ -585,7 +586,7 @@ class Ui_SBCclient(object):
         self.horizontalLayout_5.addLayout(self.horizontalLayout)
         SBCclient.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(SBCclient)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 862, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 911, 23))
         self.menubar.setObjectName("menubar")
         SBCclient.setMenuBar(self.menubar)
 
@@ -593,7 +594,6 @@ class Ui_SBCclient(object):
         QtCore.QMetaObject.connectSlotsByName(SBCclient)
 
     def retranslateUi(self, SBCclient):
-
         _translate = QtCore.QCoreApplication.translate
         SBCclient.setWindowTitle(_translate("SBCclient", "小黑云客户端"))
         self.label.setText(_translate("SBCclient", "小黑云"))
