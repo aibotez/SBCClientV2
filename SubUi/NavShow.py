@@ -9,6 +9,7 @@ from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
+from SubUi import Transmitui
 from pack.preview import ImgPreview
 
 
@@ -319,6 +320,19 @@ class Ui_PhotoShow(QThread):
         frame = {'frame': frame_12, 'scrollArea': self.scrollArea,'frame_navF':frame_9,'frame_nav':frame_9_,'horizontalLayout_nav':horizontalLayout_1}
         return frame
 
+
+    def InitTranShow(self):
+        self.frame_TranShow = QtWidgets.QFrame(self.MainWindow.centralwidget)
+        # self.frame_TranShow = QtWidgets.QFrame(self.MainWindow.frame_14)
+        self.frame_TranShow.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_TranShow.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_TranShow.setObjectName("frame_TranShow")
+        transmitui = Transmitui.Ui_Form()
+        transmitui.setupUi(self.frame_TranShow)
+        self.MainWindow.horizontalLayout.addWidget(self.frame_TranShow)
+        # self.MainWindow.verticalLayout_6.addWidget(self.frame_TranShow)
+        self.frame_TranShow.hide()
+        return self.frame_TranShow
 
     def InitShow(self):
         # self.centralwidget = self.MainWindow.centralwidget

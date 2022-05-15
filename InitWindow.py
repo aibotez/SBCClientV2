@@ -14,7 +14,7 @@ from pack.preview import ImgPreview
 
 from SubUi import SBCMainWindow
 from SubUi import NavShow
-from SubUi import Transmitui
+# from SubUi import Transmitui
 from UpdateUi import FileUpdate
 
 
@@ -33,9 +33,12 @@ class ClickEventDeals():
         # ui.frame_12.hide()
         for i in self.ui.frameandscroll:
             # print(i)
-            self.ui.frameandscroll[i]['Photo']['frame'].hide()
-            self.ui.frameandscroll[i]['Video']['frame'].hide()
-            self.ui.frameandscroll[i]['File']['frame'].hide()
+            if 'Tran' != i:
+                self.ui.frameandscroll[i]['Photo']['frame'].hide()
+                self.ui.frameandscroll[i]['Video']['frame'].hide()
+                self.ui.frameandscroll[i]['File']['frame'].hide()
+        self.ui.frameandscroll['Tran'].hide()
+        self.ui.frame_14.hide()
     def NavChoose(self,WosLabel,e):
         if e.buttons() == QtCore.Qt.LeftButton:
             if self.ui.CurNavChosed != WosLabel:
@@ -44,24 +47,30 @@ class ClickEventDeals():
                 # print(WosLabel)
                 if WosLabel == 'Photo':
                     self.ui.CurNavChosed = 'Photo'
+                    self.ui.frame_14.show()
                     self.filepdate.PhotoShow()
                     # SBCM.ChoseNav_Photo()
                     self.ui.frame_3.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
                 if WosLabel == 'File':
                     self.ui.CurNavChosed = 'File'
+                    self.ui.frame_14.show()
                     self.filepdate.FileShow()
                     # SBCM.ChoseNav_File()
                     self.ui.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
                 if WosLabel == 'Video':
                     self.ui.CurNavChosed = 'Video'
                     self.ui.frame_4.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
+                    self.ui.frame_14.show()
                     self.filepdate.VideoShow()
                     # SBCM.ChoseNav_Video()
                 if WosLabel == 'Share':
                     self.ui.CurNavChosed = 'Share'
+                    self.ui.frame_14.show()
                     self.ui.frame_5.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
                 if WosLabel == 'Transmit':
                     self.ui.CurNavChosed = 'Transmit'
+                    # self.ui.frame_14.show()
+                    self.ui.frameandscroll['Tran'].show()
                     self.ui.frame_6.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
 
@@ -242,6 +251,8 @@ class initWindow():
 
             self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar().valueChanged.connect(self.Thread_LoadImgs.runthread1)
             # vertical.valueChanged.connect(self.test1)
+
+        self.SBCMain.frameandscroll['Tran'] = self.Navshows.InitTranShow()
         self.SBCMain.CurNetChosed = 'SBC'
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 

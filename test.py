@@ -47,6 +47,7 @@ class bc(b):
 def te(ma):
     ma['ab'] = 1
 
+
 m = {}
 te(m)
 print(m)
