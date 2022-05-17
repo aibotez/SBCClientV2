@@ -149,7 +149,7 @@ class Ui_Form(object):
         self.frame_18.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_18.setObjectName("frame_18")
         self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.frame_18)
-        self.verticalLayout_11.setContentsMargins(0, 10, 0, 0)
+        self.verticalLayout_11.setContentsMargins(0, 15, 0, 0)
         self.verticalLayout_11.setSpacing(0)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
         self.progressBar_4 = QtWidgets.QProgressBar(self.frame_18)
@@ -242,13 +242,13 @@ class Ui_Form(object):
         self.tabWidget.addTab(self.tab_3, "")
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
-        self.widget = QtWidgets.QWidget(self.tab_4)
-        self.widget.setGeometry(QtCore.QRect(11, 11, 721, 531))
-        self.widget.setObjectName("widget")
-        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(self.tab_4)
+        self.layoutWidget.setGeometry(QtCore.QRect(11, 11, 721, 531))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.frame_8 = QtWidgets.QFrame(self.widget)
+        self.frame_8 = QtWidgets.QFrame(self.layoutWidget)
         self.frame_8.setStyleSheet("#frame\n"
 "{\n"
 "    background:#E5E7E9;\n"
@@ -294,7 +294,7 @@ class Ui_Form(object):
         self.horizontalLayout_6.addWidget(self.pushButton_6)
         self.horizontalLayout_5.addWidget(self.frame_9)
         self.verticalLayout_7.addWidget(self.frame_8)
-        self.scrollArea_6 = QtWidgets.QScrollArea(self.widget)
+        self.scrollArea_6 = QtWidgets.QScrollArea(self.layoutWidget)
         self.scrollArea_6.setStyleSheet("#scrollAreaWidgetContents_5\n"
 "{\n"
 "    background:white;\n"

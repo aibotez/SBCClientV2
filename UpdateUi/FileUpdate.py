@@ -151,7 +151,7 @@ class FileUpdate(QThread):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.FileLeftDeal(FileInfo)
         elif e.buttons() == QtCore.Qt.RightButton:
-            self.create_Filerightmenu()
+            self.create_Filerightmenu(FileInfo)
             # self.FileRightDeal(FileInfo)
     def FileLeftDeal(self,FileInfo):
         print('FileLeft',FileInfo)
@@ -239,7 +239,8 @@ class FileUpdate(QThread):
         groupBox_menu.addAction(actionBDC)
         groupBox_menu.addAction(actionALC)
         groupBox_menu.popup(QCursor.pos())
-    def create_Filerightmenu(self):
+    def create_Filerightmenu(self,FileInfo):
+        print(FileInfo)
         # 菜单对象
         self.groupBox_menu = QMenu()
         # self.actionA = QAction(QIcon('image/保存.png'), u'保存数据', self)  # 创建菜单选项对象
@@ -493,3 +494,7 @@ class FileUpdate(QThread):
         self.MainWindow.frameandscroll[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['frame'].show()
         # self.MainWindow.frame_PhotoShow.show()
         self.UpdateShow('Video')
+
+class Trans():
+    def __init__(self,MainWindow):
+        self.MainWindow = MainWindow

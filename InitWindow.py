@@ -129,6 +129,7 @@ def CreatPopFram(SBCMain):
 
 class initWindow():
     def __init__(self,Main):
+
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
@@ -180,6 +181,8 @@ class initWindow():
             self.SBCMain.CurFileListOld[i]['Photo'] = []
             self.SBCMain.CurFileListOld[i]['Video'] = []
             self.SBCMain.CurFileListOld[i]['File'] = []
+
+        self.SBCMain.TransDicts = {'Downing':[],'Uping':[],'AcrossNeting':[],'Finish':[]}
 
     def test1(self):
         horizontal_bar = self.SBCMain.frameandscroll['SBC']['File']['scrollArea'].verticalScrollBar()
@@ -281,7 +284,6 @@ class initWindow():
         self.initBindSignal()
         self.FileUpdates.start()
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
-
 
 
 

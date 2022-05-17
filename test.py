@@ -48,6 +48,8 @@ def te(ma):
     ma['ab'] = 1
 
 
-m = {}
-te(m)
-print(m)
+# m = {}
+# te(m)
+# print(m)
+
+print(__name__)
