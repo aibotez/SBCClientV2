@@ -6,8 +6,9 @@ class SBCRe():
         self.headers = ''
         self.CurFileList = []
         self.host = 'pi.sbc.plus:800'
+        self.host = '127.0.0.1:90'
         self.UserEmail = '2290227486@qq.com'
-        self.UserPassword = '123'
+        self.UserPassword = '12'
         self.GetSBCCookie()
         self.PublicHeaders()
 
@@ -23,7 +24,7 @@ class SBCRe():
         url = 'http://'+self.host+'/loginVerify/'
         data = {
             'useremail': '2290227486@qq.com',
-            'userpassword': '123',
+            'userpassword': '12',
         }
         res = requests.post(url, data=data, allow_redirects=False)
         cookies = res.cookies
