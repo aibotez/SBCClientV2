@@ -18,6 +18,13 @@ from SubUi import NavShow
 from UpdateUi import FileUpdate
 
 
+
+class FileOperClick():
+    def __init__(self,ui):
+        self.ui = ui
+    def Down(self,e):
+        print('Dwn')
+
 class ClickEventDeals():
     def __init__(self,ui,FileUpdates):
         self.ui = ui
@@ -135,13 +142,13 @@ class initWindow():
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         self.SBCMain.setupUi(Main)
 
+
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
         self.SBCMain = self.initFrame()
         # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
-
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
-
         self.init()
+
 
     def WindowReSize(self):
         # if ui.scrollArea.width() < 500:
@@ -279,6 +286,9 @@ class initWindow():
         self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu #切换网盘
         self.SBCMain.label_17.mousePressEvent = self.creat_Moremenu  # 更多
         self.SBCMain.label_15.mousePressEvent = self.creat_Upmenu  # 上传
+        self.fileoperclick = FileOperClick(self.SBCMain)
+        self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down  # 下载
+
 
     def init(self):
         self.initBindSignal()

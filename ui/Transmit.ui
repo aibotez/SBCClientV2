@@ -41,7 +41,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -584,7 +584,7 @@
             <item>
              <widget class="QLabel" name="label_25">
               <property name="text">
-               <string>总下载个数：</string>
+               <string>总上传个数：</string>
               </property>
              </widget>
             </item>

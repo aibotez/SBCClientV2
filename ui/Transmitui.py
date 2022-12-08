@@ -577,7 +577,7 @@ class Ui_Form(object):
         self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -596,7 +596,7 @@ class Ui_Form(object):
         self.label_23.setText(_translate("Form", "X"))
         self.label_24.setText(_translate("Form", "[]"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "正在下载"))
-        self.label_25.setText(_translate("Form", "总下载个数："))
+        self.label_25.setText(_translate("Form", "总上传个数："))
         self.label_26.setText(_translate("Form", "6"))
         self.pushButton_10.setText(_translate("Form", "全部开始"))
         self.pushButton_11.setText(_translate("Form", "全部暂停"))
