@@ -230,7 +230,42 @@ class FileUpdate(QThread):
 
             # frame = {'frame': frame_12, 'scrollArea': self.scrollArea, 'frame_nav': frame_9_,
             #          'horizontalLayout_nav': horizontalLayout_1}
-
+    def creat_ChoseNetmenu(self):
+        groupBox_menu = QMenu()
+        actionSBC = QAction('小黑云', self)
+        actionBDC = QAction('百度云', self)
+        actionALC = QAction('阿里云', self)
+        groupBox_menu.addAction(actionSBC)
+        groupBox_menu.addAction(actionBDC)
+        groupBox_menu.addAction(actionALC)
+        groupBox_menu.popup(QCursor.pos())
+    def create_Filerightmenu(self,FileInfo):
+        print(FileInfo)
+        # 菜单对象
+        self.groupBox_menu = QMenu()
+        # self.actionA = QAction(QIcon('image/保存.png'), u'保存数据', self)  # 创建菜单选项对象
+        self.actionDown = QAction('下载', self)
+        # self.actionA.setShortcut('Ctrl+S')  # 设置动作A的快捷键
+        self.groupBox_menu.addAction(self.actionDown)  # 把动作A选项对象添加到菜单self.groupBox_menu上
+        self.actionShare = QAction(u'分享', self)
+        self.groupBox_menu.addAction(self.actionShare)
+        self.actionProper = QAction(u'属性', self)
+        self.groupBox_menu.addAction(self.actionProper)
+        self.actionCopy = QAction(u'复制', self)
+        self.groupBox_menu.addAction(self.actionCopy)
+        self.actionMove = QAction(u'移动', self)
+        self.groupBox_menu.addAction(self.actionMove)
+        self.actionDel = QAction(u'删除', self)
+        self.groupBox_menu.addAction(self.actionDel)
+        self.actionNewname = QAction(u'重命名', self)
+        self.groupBox_menu.addAction(self.actionNewname)
+        # self.actionA.triggered.connect(self.button)  # 将动作A触发时连接到槽函数 button
+        self.groupBox_menu.popup(QCursor.pos())  # 声明当鼠标在groupBox控件上右击时，在鼠标位置显示右键菜单   ,exec_,popup两个都可以，
+        self.groupBox_menu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:16px;\n"
+                                        "}\n")
 
     def ScrollContentUpdate(self):
         self.NavUpdate()
