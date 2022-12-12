@@ -29,7 +29,7 @@ class FileOperClick():
         for i in FileDicts:
             Filei = FileDicts[i]
             if Filei['checkBox'].isChecked():
-                ChosedFiles.append(Filei)
+                ChosedFiles.append({'fepath':Filei['fepath'],'fename':Filei['fename'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
         return ChosedFiles
     def Down(self,e):
         print('Dwn')
