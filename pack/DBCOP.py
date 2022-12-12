@@ -35,7 +35,7 @@ class Demo():
         sql = "create table UserDown(FileMd5,FileName,FilePath,RoFilePath,isUp)"
         self.cur.execute(sql)
         self.conn.commit()
-    
+
 
     def AddUserDownRecord(self,DownInfo):
         DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
