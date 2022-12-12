@@ -11,7 +11,7 @@ class TransFileManager():
         while True:
             try:
                 with open(self.DownRecordFile,'a+') as f:
-                    f.write(DownInfo['FileName']+'\a'+DownInfo['FileMd5']+'\a'+DownInfo['FilePath']+'\a'+DownInfo['RoFilePath']+'\n')
+                    f.write(DownInfo['FileName']+'\t'+DownInfo['FileMd5']+'\t'+DownInfo['FilePath']+'\t'+DownInfo['RoFilePath']+'\n')
                 break
             except Exception as e:
                 print('TranspFile')

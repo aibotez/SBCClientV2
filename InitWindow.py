@@ -10,6 +10,7 @@ from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
+from pack import TransFileManager
 from pack.preview import ImgPreview
 
 from SubUi import SBCMainWindow
@@ -31,10 +32,29 @@ class FileOperClick():
             if Filei['checkBox'].isChecked():
                 ChosedFiles.append({'fepath':Filei['fepath'],'fename':Filei['fename'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
         return ChosedFiles
+
+    def Downact(self,DownFile,DownFaPath):
+        FeMd5req = self.ui.SBCRe.GetRoFileMd5(DownFile['fepath'])
+        Femd5 = None
+        if not FeMd5req['error']:
+            Femd5 = FeMd5req['md5']
+        print(Femd5,DownFile)
+        DownFeInfo ={}
+        if DownFile['fetype'] != 'folder':
+            DownFeInfo['FileMd5'] = Femd5
+            DownFeInfo['FileName'] = DownFile['fename']
+            DownFeInfo['FilePath'] = DownFaPath
+            DownFeInfo['RoFilePath'] = DownFile['fepath']
+            self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
+
     def Down(self,e):
         print('Dwn')
         ChosedFiles = self.GetChoseFiles()
-        print(ChosedFiles)
+        for i in ChosedFiles:
+            if i['fetype'] != 'folder':
+                DownFaPath = self.ui.DownPath
+                self.Downact(i,DownFaPath)
+
 
 class ClickEventDeals():
     def __init__(self,ui,FileUpdates):
@@ -151,10 +171,13 @@ class initWindow():
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
+
         self.SBCMain.setupUi(Main)
         self.SBCMain.DownRecordFile = 'DownRecord.txt'
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
         self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
+        self.SBCMain.DownPath = 'D:/SBCDown/'
+        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.SBCMain.DownRecordFile,self.SBCMain.UpRecordFile,self.SBCMain.FinishRcordFile)
 
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
         self.SBCMain = self.initFrame()

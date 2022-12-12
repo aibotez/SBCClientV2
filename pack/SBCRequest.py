@@ -31,6 +31,18 @@ class SBCRe():
         cookie = requests.utils.dict_from_cookiejar(cookies)
         if 'coks' in cookie:
             self.Cookie = 'coks='+cookie['coks']
+
+    def GetRoFileMd5(self,path):
+        # print(path)
+        url = 'http://' + self.host + '/GetFileMd5/'
+        data = {
+            'path': path,
+        }
+        res = requests.post(url, data=data,headers=self.headers)
+        # print(json.loads(res.text))
+
+        # FileDatas = json.loads(res.text)
+        return json.loads(res.text)
     def GetFileList(self,path):
         url = 'http://' + self.host + '/GetFileListbyClient/'
         data = {
