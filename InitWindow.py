@@ -178,7 +178,7 @@ class initWindow():
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
         self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
         self.SBCMain.DownPath = 'D:/SBCDown/'
-        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager()
+        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main)
         # self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.SBCMain.DownRecordFile,self.SBCMain.UpRecordFile,self.SBCMain.FinishRcordFile)
 
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
