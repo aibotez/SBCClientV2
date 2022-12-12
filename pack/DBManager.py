@@ -2,7 +2,7 @@ import sys,sqlite3,os
 
 
 
-class Demo():
+class DBManager():
     def __init__(self):
         self.cur = None
         self.conn = None
@@ -15,6 +15,8 @@ class Demo():
             self.conn = conn
             self.creatClientSettingform()
             self.creatUserDownRecordform()
+            self.creatUserUpRecordform()
+            self.creatUserTransFinshRecordform()
             # # 关闭资源
             # cur.close()
             # conn.close()
@@ -32,21 +34,29 @@ class Demo():
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserUpRecordform(self):
-        sql = "create table UserDown(FileMd5,FileName,FilePath,RoFilePath,isUp)"
+        sql = "create table UserUp(FileMd5,FileName,FilePath,RoFilePath,isUp)"
+        self.cur.execute(sql)
+        self.conn.commit()
+    def creatUserTransFinshRecordform(self):
+        sql = "create table TransFinsh(FileMd5,FileName,FilePath)"
         self.cur.execute(sql)
         self.conn.commit()
 
 
     def AddUserDownRecord(self,DownInfo):
-        DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
+        if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
+            print('Have Down')
+            return 'Have'
+        # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
         sql = "insert into UserDown(FileMd5,FileName,FilePath,RoFilePath,isDown) values (?,?,?,?,?)"
         data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['FilePath'],DownInfo['RoFilePath'],'1')
         self.cur.execute(sql, data)
         self.conn.commit()
+        return 1
 
-    def GetUserDownRecord(self):
-        FilePath = '/home/p'
-        FileName = 'record.txt'
+    def GetUserDownRecord(self,FilePath,FileName):
+        # FilePath = '/home/p'
+        # FileName = 'record.txt'
         sql = "select * from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         self.cur.execute(sql)
         self.conn.commit()
@@ -121,8 +131,8 @@ class Demo():
 
 
 
-demo = Demo()
-# demo.AddUserDownRecord(1)
-# demo.GetUserDownRecordAll()
-# demo.UpdataUserDownRecord()
-demo.DelUserDownRecord()
+# demo = DBManager()
+# # demo.AddUserDownRecord(1)
+# # demo.GetUserDownRecordAll()
+# # demo.UpdataUserDownRecord()
+# demo.DelUserDownRecord()

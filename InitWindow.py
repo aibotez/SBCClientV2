@@ -11,6 +11,7 @@ from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
 from pack import TransFileManager
+from pack import DBManager
 from pack.preview import ImgPreview
 
 from SubUi import SBCMainWindow
@@ -177,7 +178,8 @@ class initWindow():
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
         self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
         self.SBCMain.DownPath = 'D:/SBCDown/'
-        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.SBCMain.DownRecordFile,self.SBCMain.UpRecordFile,self.SBCMain.FinishRcordFile)
+        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager()
+        # self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.SBCMain.DownRecordFile,self.SBCMain.UpRecordFile,self.SBCMain.FinishRcordFile)
 
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
         self.SBCMain = self.initFrame()
