@@ -1,10 +1,10 @@
 import os,time
 
 class TransFileManager():
-    def __init__(self,DownRecordFile,UpRecordFile,FinishcordFile):
+    def __init__(self,DownRecordFile,UpRecordFile,FinishRcordFile):
         self.DownRecordFile = DownRecordFile
         self.UpRecordFile = UpRecordFile
-        self.FinishcordFile = FinishcordFile
+        self.FinishRcordFile = FinishRcordFile
 
 
     def AddDownRecord(self,DownInfo):

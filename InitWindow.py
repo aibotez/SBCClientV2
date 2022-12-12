@@ -22,8 +22,19 @@ from UpdateUi import FileUpdate
 class FileOperClick():
     def __init__(self,ui):
         self.ui = ui
+
+    def GetChoseFiles(self):
+        ChosedFiles = []
+        FileDicts = self.ui.SBCFilesDict[self.ui.CurNetChosed][self.ui.CurNavChosed]['File']
+        for i in FileDicts:
+            Filei = FileDicts[i]
+            if Filei['checkBox'].isChecked():
+                ChosedFiles.append(Filei)
+        return ChosedFiles
     def Down(self,e):
         print('Dwn')
+        ChosedFiles = self.GetChoseFiles()
+        print(ChosedFiles)
 
 class ClickEventDeals():
     def __init__(self,ui,FileUpdates):
@@ -141,7 +152,9 @@ class initWindow():
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         self.SBCMain.setupUi(Main)
-
+        self.SBCMain.DownRecordFile = 'DownRecord.txt'
+        self.SBCMain.UpRecordFile = 'UpRecord.txt'
+        self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
 
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
         self.SBCMain = self.initFrame()

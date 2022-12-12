@@ -260,7 +260,7 @@ class FileUpdate(QThread):
         # self.scrollAreaWidgetContents.setContextMenuPolicy(Qt.CustomContextMenu)
         # self.scrollAreaWidgetContents.customContextMenuRequested.connect(self.create_rightmenu)
 
-        self.FilescheckBox = []
+        # self.MainWindow.FilescheckBox = []
         for i in range(len(self.CurFileList)):
 
             CurSBCFiles = {}
@@ -292,7 +292,8 @@ class FileUpdate(QThread):
             checkBox_2.setText("")
             checkBox_2.setObjectName("checkBox_2")
             horizontalLayout_13.addWidget(checkBox_2)
-            self.FilescheckBox.append(checkBox_2)
+            CurSBCFiles['checkBox'] = checkBox_2
+            # self.MainWindow.FilescheckBox.append(checkBox_2)
             CurSBCFiles['con'] = QtWidgets.QLabel(CurSBCFiles['frame'])
             CurSBCFiles['con'].setMaximumSize(QtCore.QSize(36, 36))
             sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
