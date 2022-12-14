@@ -18,6 +18,7 @@ from SubUi import SBCMainWindow
 from SubUi import NavShow
 # from SubUi import Transmitui
 from UpdateUi import FileUpdate
+# from UpdateUi import TransShowUpdate
 
 
 
@@ -178,7 +179,7 @@ class initWindow():
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
         self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
         self.SBCMain.DownPath = 'D:/SBCDown/'
-        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main)
+        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main,self.SBCMain)
         # self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.SBCMain.DownRecordFile,self.SBCMain.UpRecordFile,self.SBCMain.FinishRcordFile)
 
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
@@ -300,7 +301,10 @@ class initWindow():
             self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar().valueChanged.connect(self.Thread_LoadImgs.runthread1)
             # vertical.valueChanged.connect(self.test1)
 
-        self.SBCMain.frameandscroll['Tran'] = self.Navshows.InitTranShow()
+        TranShow = self.Navshows.InitTranShow()
+        self.SBCMain.TranspscrollArea = TranShow[1]
+
+        self.SBCMain.frameandscroll['Tran'] = TranShow[0]
         self.SBCMain.CurNetChosed = 'SBC'
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 

@@ -328,10 +328,11 @@ class Ui_PhotoShow(QThread):
         self.frame_TranShow.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_TranShow.setObjectName("frame_TranShow")
         transmitui = Transmitui.Ui_Form()
-        transmitui.setupUi(self.frame_TranShow)
+        TranspscrollAreaformLayout = transmitui.setupUi(self.frame_TranShow)
         self.MainWindow.horizontalLayout.addWidget(self.frame_TranShow)
         self.frame_TranShow.hide()
-        return self.frame_TranShow
+
+        return [self.frame_TranShow,TranspscrollAreaformLayout]
 
     def InitShow(self):
         # self.centralwidget = self.MainWindow.centralwidget

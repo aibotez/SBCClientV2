@@ -201,6 +201,12 @@ class Ui_Form(object):
         self.formLayout_3.setLayout(0, QtWidgets.QFormLayout.SpanningRole, self.verticalLayout_9)
         self.scrollArea_7.setWidget(self.scrollAreaWidgetContents_7)
         self.verticalLayout_8.addWidget(self.scrollArea_7)
+
+        # TranspDownscrollAreaformLayout = self.formLayout_3
+        # TranspDownscrollAreaverticalLayout = self.verticalLayout_9
+        TranspscrollArea = {'Down':[self.formLayout_3,self.verticalLayout_9,self.scrollAreaWidgetContents_7]}
+        # self.verticalLayout_9.itemAt(1).widget().deleteLater()
+
         self.gridLayout.addLayout(self.verticalLayout_8, 0, 0, 1, 1)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
@@ -289,6 +295,9 @@ class Ui_Form(object):
         self.scrollArea_8.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scrollArea_8.setWidgetResizable(True)
         self.scrollArea_8.setObjectName("scrollArea_8")
+
+
+
         self.scrollAreaWidgetContents_8 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_8.setGeometry(QtCore.QRect(0, 0, 744, 552))
         self.scrollAreaWidgetContents_8.setObjectName("scrollAreaWidgetContents_8")
@@ -391,6 +400,8 @@ class Ui_Form(object):
         self.line_4.setObjectName("line_4")
         self.verticalLayout_13.addWidget(self.line_4)
         self.formLayout_4.setLayout(0, QtWidgets.QFormLayout.SpanningRole, self.verticalLayout_13)
+
+
         self.scrollArea_8.setWidget(self.scrollAreaWidgetContents_8)
         self.verticalLayout_12.addWidget(self.scrollArea_8)
         self.gridLayout_4.addLayout(self.verticalLayout_12, 0, 0, 1, 1)
@@ -579,6 +590,7 @@ class Ui_Form(object):
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
+        return TranspscrollArea
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

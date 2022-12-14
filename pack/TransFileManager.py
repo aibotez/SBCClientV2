@@ -1,12 +1,16 @@
-import os,time
+import os,time,sys
+sys.path.append('..')
 from . import DBManager
+from UpdateUi import TransShowUpdate
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
 
 class TransFileManager():
     # def __init__(self,DownRecordFile,UpRecordFile,FinishRcordFile):
-    def __init__(self,MainUi):
+    def __init__(self,MainUi,ui):
         self.dbManager = DBManager.DBManager()
         self.MainUi = MainUi
+        self.Transhow = TransShowUpdate.TransShowUpdate(ui)
+
         # self.DownRecordFile = DownRecordFile
         # self.UpRecordFile = UpRecordFile
         # self.FinishRcordFile = FinishRcordFile
@@ -14,12 +18,14 @@ class TransFileManager():
 
 
     def AddDownRecord(self,DownInfo):
+        self.Transhow.AddDown()
         AdW = self.dbManager.AddUserDownRecord(DownInfo)
         if AdW == 'Have':
             reply = QMessageBox.question(self.MainUi,'提示', '该文件正在下载，重新下载？',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply == QMessageBox.Yes:
                 pass
+
 
         # while True:
         #     try:
