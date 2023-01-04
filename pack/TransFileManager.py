@@ -18,7 +18,7 @@ class TransFileManager():
 
 
     def AddDownRecord(self,DownInfo):
-        self.Transhow.AddDown()
+        self.Transhow.AddDown(DownInfo)
         AdW = self.dbManager.AddUserDownRecord(DownInfo)
         if AdW == 'Have':
             reply = QMessageBox.question(self.MainUi,'提示', '该文件正在下载，重新下载？',

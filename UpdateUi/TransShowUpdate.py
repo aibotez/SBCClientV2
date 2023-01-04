@@ -7,7 +7,7 @@ class TransShowUpdate():
     def __init__(self,ui):
         self.ui = ui
 
-    def add1(self,scrollAreaWidgetContents):
+    def add1(self,scrollAreaWidgetContents,DownInfo):
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
         self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_16.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -99,25 +99,41 @@ class TransShowUpdate():
         self.label_22.setText(">")
         self.label_23.setText("X")
         self.label_24.setText("[]")
-        return self.frame_16
+        Downinginfoi = {}
+        Downinginfoi['frame'] = self.frame_16
+        Downinginfoi['status'] = self.label_22
+        Downinginfoi['progressBar'] = self.progressBar_4
+        Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
+        self.label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
+        return Downinginfoi
 
+    def DelDowing(self,info,e):
+        DownverticalLayout = self.DownLayout[1]
+        print(info['frame'])
+        DownverticalLayout.itemAt(0).widget().deleteLater()
 # myLayout.count()
-    def AddDown(self):
+    def AddDown(self,DownInfo):
         # self.ui.TranspscrollAreaformLayout.itemAt(0).widget().deleteLater()
         print(self.ui.TranspscrollArea)
         DownLayout = self.ui.TranspscrollArea['Down']
+        self.DownLayout = DownLayout
         DownformLayout = DownLayout[0]
         DownverticalLayout = DownLayout[1]
         scrollAreaWidgetContents_down = DownLayout[2]
-
         DownverticalLayout.itemAt(0).widget().deleteLater()
-        for i in range(10):
-            self.line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
-            self.line_3.setMinimumSize(QtCore.QSize(649, 0))
-            self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
-            self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-            self.line_3.setObjectName("line_3")
-            form = self.add1(scrollAreaWidgetContents_down)
-            DownverticalLayout.addWidget(form)
-            DownverticalLayout.addWidget(self.line_3)
+        DownverticalLayout.itemAt(0).widget().deleteLater()
+        print(DownInfo)
+        Downinginfoi = self.add1(scrollAreaWidgetContents_down,DownInfo)
+        form = Downinginfoi['frame']
+        DownverticalLayout.addWidget(form)
+        # for i in range(10):
+        #     # self.line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
+        #     # self.line_3.setMinimumSize(QtCore.QSize(649, 0))
+        #     # self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
+        #     # self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        #     # self.line_3.setObjectName("line_3")
+        #     Downinginfoi = self.add1(scrollAreaWidgetContents_down)
+        #     form = Downinginfoi['frame']
+        #     DownverticalLayout.addWidget(form)
+        #     # DownverticalLayout.addWidget(self.line_3)
 
