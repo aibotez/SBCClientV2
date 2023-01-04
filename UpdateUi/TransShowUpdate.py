@@ -129,10 +129,12 @@ class TransShowUpdate():
         scrollAreaWidgetContents_down = DownLayout[2]
         # DownverticalLayout.itemAt(0).widget().deleteLater()
         # DownverticalLayout.itemAt(0).widget().deleteLater()
-        Downinginfoi = self.add1(scrollAreaWidgetContents_down,DownInfo)
-        form = Downinginfoi['frame']
-        DownverticalLayout.addWidget(form)
-        self.DownInfos.append(DownInfo)
+
+        if DownInfo not in self.DownInfos:
+            self.DownInfos.append(DownInfo)
+            Downinginfoi = self.add1(scrollAreaWidgetContents_down, DownInfo)
+            form = Downinginfoi['frame']
+            DownverticalLayout.addWidget(form)
         # for i in range(10):
         #     # self.line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
         #     # self.line_3.setMinimumSize(QtCore.QSize(649, 0))
