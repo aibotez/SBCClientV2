@@ -329,6 +329,8 @@ class Ui_PhotoShow(QThread):
         self.frame_TranShow.setObjectName("frame_TranShow")
         transmitui = Transmitui.Ui_Form()
         TranspscrollAreaformLayout = transmitui.setupUi(self.frame_TranShow)
+        TranspscrollAreaformLayout['Down'][1].itemAt(1).widget().deleteLater()
+        TranspscrollAreaformLayout['Down'][1].itemAt(0).widget().deleteLater()
         self.MainWindow.horizontalLayout.addWidget(self.frame_TranShow)
         self.frame_TranShow.hide()
 

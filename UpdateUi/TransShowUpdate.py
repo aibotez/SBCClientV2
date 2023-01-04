@@ -6,6 +6,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class TransShowUpdate():
     def __init__(self,ui):
         self.ui = ui
+        self.DownInfos = []
 
     def add1(self,scrollAreaWidgetContents,DownInfo):
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
@@ -93,12 +94,13 @@ class TransShowUpdate():
         self.horizontalLayout_11.setStretch(6, 5)
         self.horizontalLayout_11.setStretch(7, 1)
         self.label_33.setText("con")
-        self.label_19.setText("5K.mat")
+        self.label_19.setText(DownInfo['FileName'])
         self.label_20.setText("752KB/19.95MB")
         self.label_21.setText("暂停")
         self.label_22.setText(">")
         self.label_23.setText("X")
         self.label_24.setText("[]")
+        self.label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         Downinginfoi = {}
         Downinginfoi['frame'] = self.frame_16
         Downinginfoi['status'] = self.label_22
@@ -108,24 +110,29 @@ class TransShowUpdate():
         return Downinginfoi
 
     def DelDowing(self,info,e):
-        DownverticalLayout = self.DownLayout[1]
-        print(info['frame'])
-        DownverticalLayout.itemAt(0).widget().deleteLater()
+        j=0
+        for i in self.DownInfos:
+            if i['FilePath']+i['FileName'] == info['LoPath']:
+                DownverticalLayout = self.DownLayout[1]
+                DownverticalLayout.itemAt(j).widget().deleteLater()
+                break
+            j+=1
+        del self.DownInfos[j]
+
 # myLayout.count()
     def AddDown(self,DownInfo):
         # self.ui.TranspscrollAreaformLayout.itemAt(0).widget().deleteLater()
-        print(self.ui.TranspscrollArea)
         DownLayout = self.ui.TranspscrollArea['Down']
         self.DownLayout = DownLayout
         DownformLayout = DownLayout[0]
         DownverticalLayout = DownLayout[1]
         scrollAreaWidgetContents_down = DownLayout[2]
-        DownverticalLayout.itemAt(0).widget().deleteLater()
-        DownverticalLayout.itemAt(0).widget().deleteLater()
-        print(DownInfo)
+        # DownverticalLayout.itemAt(0).widget().deleteLater()
+        # DownverticalLayout.itemAt(0).widget().deleteLater()
         Downinginfoi = self.add1(scrollAreaWidgetContents_down,DownInfo)
         form = Downinginfoi['frame']
         DownverticalLayout.addWidget(form)
+        self.DownInfos.append(DownInfo)
         # for i in range(10):
         #     # self.line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
         #     # self.line_3.setMinimumSize(QtCore.QSize(649, 0))

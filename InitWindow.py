@@ -303,8 +303,8 @@ class initWindow():
 
         TranShow = self.Navshows.InitTranShow()
         self.SBCMain.TranspscrollArea = TranShow[1]
-
         self.SBCMain.frameandscroll['Tran'] = TranShow[0]
+
         self.SBCMain.CurNetChosed = 'SBC'
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()
 
