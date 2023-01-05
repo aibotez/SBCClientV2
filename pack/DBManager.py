@@ -85,9 +85,9 @@ class DBManager():
         self.cur.execute(sql,data)
         self.conn.commit()
 
-    def DelUserDownRecord(self):
-        FilePath = '/home/p1'
-        FileName = 'record.txt'
+    def DelUserDownRecord(self,FilePath,FileName):
+        # FilePath = '/home/p1'
+        # FileName = 'record.txt'
         sql = "delete from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
         self.cur.execute(sql)
         self.conn.commit()

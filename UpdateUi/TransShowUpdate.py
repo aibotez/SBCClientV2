@@ -1,5 +1,6 @@
 import sys,threading
 sys.path.append('..')
+from pack import DBManager
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -7,6 +8,7 @@ class TransShowUpdate():
     def __init__(self,ui):
         self.ui = ui
         self.DownInfos = []
+        self.dbManager = DBManager.DBManager()
 
     def add1(self,scrollAreaWidgetContents,DownInfo):
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
@@ -105,22 +107,44 @@ class TransShowUpdate():
         Downinginfoi['frame'] = self.frame_16
         Downinginfoi['status'] = self.label_22
         Downinginfoi['progressBar'] = self.progressBar_4
+        Downinginfoi['FilePath'] = DownInfo['FilePath']
+        Downinginfoi['FileName'] = DownInfo['FileName']
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
         self.label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
         return Downinginfoi
 
     def DelDowing(self,info,e):
-        j=0
+        self.dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
+        self.RefreshDowning()
+
+        # j=0
+        # for i in self.DownInfos:
+        #     if i['FilePath']+i['FileName'] == info['LoPath']:
+        #         DownverticalLayout = self.DownLayout[1]
+        #         DownverticalLayout.itemAt(j).widget().deleteLater()
+        #         break
+        #     j+=1
+        # del self.DownInfos[j]
+
+    def RefreshDowning(self):
+        DownLayout = self.ui.TranspscrollArea['Down']
+        self.DownLayout = DownLayout
+        DownformLayout = DownLayout[0]
+        DownverticalLayout = DownLayout[1]
+        scrollAreaWidgetContents_down = DownLayout[2]
+        LaConts = DownverticalLayout.count()
+        for i in range(LaConts):
+            DownverticalLayout.itemAt(i).widget().deleteLater()
+        self.DownInfos = self.dbManager.GetUserDownRecordAll()
         for i in self.DownInfos:
-            if i['FilePath']+i['FileName'] == info['LoPath']:
-                DownverticalLayout = self.DownLayout[1]
-                DownverticalLayout.itemAt(j).widget().deleteLater()
-                break
-            j+=1
-        del self.DownInfos[j]
+            Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
+            form = Downinginfoi['frame']
+            DownverticalLayout.addWidget(form)
+
 
 # myLayout.count()
     def AddDown(self,DownInfo):
+        self.RefreshDowning()
         # self.ui.TranspscrollAreaformLayout.itemAt(0).widget().deleteLater()
         DownLayout = self.ui.TranspscrollArea['Down']
         self.DownLayout = DownLayout

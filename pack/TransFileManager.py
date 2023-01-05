@@ -18,13 +18,17 @@ class TransFileManager():
 
 
     def AddDownRecord(self,DownInfo):
-        self.Transhow.AddDown(DownInfo)
+        # self.Transhow.AddDown(DownInfo)
+
         AdW = self.dbManager.AddUserDownRecord(DownInfo)
         if AdW == 'Have':
             reply = QMessageBox.question(self.MainUi,'提示', '该文件正在下载，重新下载？',
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply == QMessageBox.Yes:
                 pass
+            else:
+                return
+        self.Transhow.RefreshDowning()
 
 
         # while True:
@@ -37,7 +41,7 @@ class TransFileManager():
         #         print(e)
 
     def GetDownRecord(self):
-        DownInfo = self.dbManager.GetUserDownRecord()
+        DownInfo = self.dbManager.GetUserDownRecordAll()
         # DownInfo = []
         # with open(self.DownRecordFile,'r') as f:
         #     Rd = f.readline()
