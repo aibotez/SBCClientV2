@@ -32,7 +32,8 @@ class FileOperClick():
         for i in FileDicts:
             Filei = FileDicts[i]
             if Filei['checkBox'].isChecked():
-                ChosedFiles.append({'fepath':Filei['fepath'],'fename':Filei['fename'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
+                # print('InitWind',Filei)
+                ChosedFiles.append({'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
         return ChosedFiles
 
     def Downact(self,DownFile,DownFaPath):
@@ -45,6 +46,7 @@ class FileOperClick():
         if DownFile['fetype'] != 'folder':
             DownFeInfo['FileMd5'] = Femd5
             DownFeInfo['FileName'] = DownFile['fename']
+            DownFeInfo['size'] = DownFile['size']
             DownFeInfo['FilePath'] = DownFaPath
             DownFeInfo['RoFilePath'] = DownFile['fepath']
             self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
@@ -302,8 +304,8 @@ class initWindow():
             # vertical.valueChanged.connect(self.test1)
 
         TranShow = self.Navshows.InitTranShow()
-        self.SBCMain.TranspscrollArea = TranShow[1]
-        self.SBCMain.frameandscroll['Tran'] = TranShow[0]
+        # self.SBCMain.TranspscrollArea = TranShow[1]
+        # self.SBCMain.frameandscroll['Tran'] = TranShow[0]
 
         self.SBCMain.CurNetChosed = 'SBC'
         self.SBCMain.frameandscroll['SBC']['File']['frame'].show()

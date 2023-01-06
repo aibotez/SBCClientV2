@@ -11,12 +11,14 @@ import base64
 from pack import SBCRequest
 from SubUi import Transmitui
 from pack.preview import ImgPreview
+from UpdateUi import TransShowUpdate
 
 
 class Ui_PhotoShow(QThread):
     def __init__(self,ui):
         super().__init__()
         self.MainWindow= ui
+
 
         # self.ImgPreviews = ImgPreview.ImageViewer()
 
@@ -333,6 +335,13 @@ class Ui_PhotoShow(QThread):
         TranspscrollAreaformLayout['Down'][1].itemAt(0).widget().deleteLater()
         self.MainWindow.horizontalLayout.addWidget(self.frame_TranShow)
         self.frame_TranShow.hide()
+
+
+        self.MainWindow.TranspscrollArea = TranspscrollAreaformLayout
+        self.MainWindow.frameandscroll['Tran'] = self.frame_TranShow
+
+        self.TransShowUpdate_ = TransShowUpdate.TransShowUpdate(self.MainWindow)
+        self.TransShowUpdate_.RefreshDowning()
 
         return [self.frame_TranShow,TranspscrollAreaformLayout]
 

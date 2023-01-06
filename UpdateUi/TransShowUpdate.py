@@ -140,6 +140,13 @@ class TransShowUpdate():
             Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
             form = Downinginfoi['frame']
             DownverticalLayout.addWidget(form)
+            line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
+            line_3.setMinimumSize(QtCore.QSize(649, 0))
+            line_3.setFrameShape(QtWidgets.QFrame.HLine)
+            line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+            line_3.setObjectName("line_3")
+            DownverticalLayout.addWidget(line_3)
+
 
 
 # myLayout.count()
