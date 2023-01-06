@@ -1,8 +1,9 @@
-import sys,threading
+import sys,threading,os
 sys.path.append('..')
 from pack import DBManager
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QFont
 
 class TransShowUpdate():
     def __init__(self,ui):
@@ -10,6 +11,27 @@ class TransShowUpdate():
         self.DownInfos = []
         self.dbManager = DBManager.DBManager()
 
+    def FileConChose(self,fetype):
+        if fetype == 'folder':
+            return 'img/filecon/foldersm.png'
+        if fetype == 'zip':
+            return 'img/filecon/zipcon.png'
+        if fetype == 'img':
+            return 'img/filecon/imgcon.jpg'
+        if fetype == 'pdf':
+            return 'img/filecon/pdfcon.jpg'
+        if fetype == 'ppt':
+            return 'img/filecon/pptcon.jpg'
+        if fetype == 'exe':
+            return 'img/filecon/execon.jpg'
+        if fetype == 'excel':
+            return 'img/filecon/excelcon.jpg'
+        if fetype == 'word':
+            return 'img/filecon/wordcon.jpg'
+        if fetype == 'html':
+            return 'img/filecon/htmlcon.jpg'
+        else:
+            return 'img/filecon/wj.jfif'
     def add1(self,scrollAreaWidgetContents,DownInfo):
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
         self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -59,7 +81,7 @@ class TransShowUpdate():
         self.progressBar_4 = QtWidgets.QProgressBar(self.frame_18)
         self.progressBar_4.setMinimumSize(QtCore.QSize(0, 0))
         self.progressBar_4.setMaximumSize(QtCore.QSize(16777215, 15))
-        self.progressBar_4.setProperty("value", 24)
+        # self.progressBar_4.setProperty("value", 24)
         self.progressBar_4.setObjectName("progressBar_4")
         self.verticalLayout_11.addWidget(self.progressBar_4)
         self.label_21 = QtWidgets.QLabel(self.frame_18)
@@ -95,23 +117,90 @@ class TransShowUpdate():
         self.horizontalLayout_11.setStretch(5, 1)
         self.horizontalLayout_11.setStretch(6, 5)
         self.horizontalLayout_11.setStretch(7, 1)
-        self.label_33.setText("con")
+
+        LoFile = self.CheckLoFile(DownInfo)
+        LoSize = self.size_format(LoFile['size'])
+
+        self.progressBar_4.setProperty("value", (LoFile['size']/DownInfo['Size'])*100)
+
+
+        self.label_33.setText("")
+        self.label_33.setPixmap(QtGui.QPixmap(self.FileConChose(DownInfo['fetype'])))
+        self.label_33.setScaledContents(True)
+        self.label_33.setMaximumSize(46, 46)
+
+
+
+
         self.label_19.setText(DownInfo['FileName'])
-        self.label_20.setText("752KB/19.95MB")
+        self.label_19.setFixedWidth(200)
+        self.label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
         self.label_21.setText("暂停")
         self.label_22.setText(">")
+        self.label_22.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
+                           "QLabel:hover{color:rgb(20, 90, 50);}")
+
         self.label_23.setText("X")
+        self.label_23.setStyleSheet("QLabel{font-size:26px;font-family:Roman times;}"
+                           "QLabel:hover{color:rgb(20, 90, 50);}")
+
         self.label_24.setText("[]")
+        self.label_24.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
+                           "QLabel:hover{color:rgb(20, 90, 50);}")
+
+
+
+        # self.label_23.setText("")
+        # self.label_23.setMaximumSize(20,20)
+        # self.label_23.setPixmap(QtGui.QPixmap('./img/del1.png'))
+        # self.label_23.setScaledContents(True)
+        # self.label_22.setText("")
+        # self.label_22.setMaximumSize(22,23)
+        # self.label_22.setPixmap(QtGui.QPixmap('./img/start1.png'))
+        # self.label_22.setScaledContents(True)
+        # self.label_22.setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 2px;")
+
+
+        # self.label_23.setStyleSheet("border:1px groove gray;border-radius:10px;padding:0px 0px;")
+
         self.label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         Downinginfoi = {}
         Downinginfoi['frame'] = self.frame_16
         Downinginfoi['status'] = self.label_22
         Downinginfoi['progressBar'] = self.progressBar_4
+        Downinginfoi['DownSize'] = self.label_20
         Downinginfoi['FilePath'] = DownInfo['FilePath']
         Downinginfoi['FileName'] = DownInfo['FileName']
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
         self.label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
+        self.label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
+
+    def OpenDownFile(self,info,e):
+        Path = info['LoPath']
+        os.system(r"explorer /select,{}".format(Path))
+    def size_format(self,size):
+        if size < 1024:
+            return '%i' % size + 'size'
+        elif 1024 <= size < 1024 * 1024:
+            return '%.1f' % float(size / 1024) + 'KB'
+        elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
+            return '%.1f' % float(size / (1024 * 1024)) + 'MB'
+        elif 1024 * 1024 * 1024 <= size < 1024 * 1024 * 1024 * 1024:
+            return '%.1f' % float(size / (1024 * 1024 * 1024)) + 'GB'
+        elif 1024 * 1024 * 1024 * 1024 <= size:
+            return '%.1f' % float(size / (1024 * 1024 * 1024 * 1024)) + 'TB'
+    def CheckLoFile(self,downinfo):
+        # print(self.ui.DownPath)
+        FileLoPath = downinfo['FilePath']+downinfo['FileName']
+        LoFileSize = 0
+        LoFileExist = 0
+        if os.path.exists(FileLoPath):
+            LoFileSize = os.path.getsize(FileLoPath)
+            LoFileExist = 1
+        return {'exist':LoFileExist,'size':LoFileSize}
 
     def DelDowing(self,info,e):
         self.dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
@@ -136,8 +225,10 @@ class TransShowUpdate():
         for i in range(LaConts):
             DownverticalLayout.itemAt(i).widget().deleteLater()
         self.DownInfos = self.dbManager.GetUserDownRecordAll()
+        self.DownInfosUpdateLabs = []
         for i in self.DownInfos:
             Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
+            self.DownInfosUpdateLabs.append(Downinginfoi)
             form = Downinginfoi['frame']
             DownverticalLayout.addWidget(form)
             line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)

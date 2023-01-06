@@ -30,7 +30,7 @@ class DBManager():
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserDownRecordform(self):
-        sql = "create table UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown)"
+        sql = "create table UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype)"
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserUpRecordform(self):
@@ -47,10 +47,10 @@ class DBManager():
         if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
             print('Have Down')
             return 'Have'
-        print(DownInfo)
+        print('DBM',DownInfo)
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
-        sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown) values (?,?,?,?,?,?)"
-        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'1')
+        sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype) values (?,?,?,?,?,?,?)"
+        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'1',DownInfo['fetype'])
         self.cur.execute(sql, data)
         self.conn.commit()
         return 1
@@ -64,7 +64,7 @@ class DBManager():
         Result = None
         for i in self.cur:
             info = list(i)
-            Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5])}
+            Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
         return Result
     def GetUserDownRecordAll(self):
         # FilePath = '/home/p'
@@ -75,7 +75,7 @@ class DBManager():
         Result = []
         for i in self.cur:
             info = list(i)
-            Resulti = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5])}
+            Resulti = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
             Result.append(Resulti)
         return Result
     def UpdataUserDownRecord(self):

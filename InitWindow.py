@@ -47,6 +47,7 @@ class FileOperClick():
             DownFeInfo['FileMd5'] = Femd5
             DownFeInfo['FileName'] = DownFile['fename']
             DownFeInfo['size'] = DownFile['size']
+            DownFeInfo['fetype'] = DownFile['fetype']
             DownFeInfo['FilePath'] = DownFaPath
             DownFeInfo['RoFilePath'] = DownFile['fepath']
             self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
