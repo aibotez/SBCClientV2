@@ -133,7 +133,7 @@ class TransShowUpdate():
 
 
         self.label_19.setText(DownInfo['FileName'])
-        self.label_19.setFixedWidth(200)
+        self.label_19.setFixedWidth(260)
         self.label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
         self.label_21.setText("暂停")
         self.label_22.setText(">")
