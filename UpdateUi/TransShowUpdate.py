@@ -459,6 +459,15 @@ class TransShowUpdate(QThread):
         #     j+=1
         # del self.DownInfos[j]
 
+    def checkFile(self,info):
+        CurLabs = []
+        for i in self.DownInfosUpdateLabs:
+            CurLabs.append(i['LoPath'])
+        if info['FilePath']+info['FileName'] in self.DownInfosUpdateLabs:
+            return 1
+        return 0
+
+
     def RefreshDowning(self):
         self.infos = []
 
