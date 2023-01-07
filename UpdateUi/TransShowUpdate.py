@@ -9,17 +9,19 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.Qt import QThread,QMutex
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont
-
+import threading
 
 qmut_1 = QMutex()
 
 
 class ThreadUpdate(QThread):
+    signal = pyqtSignal()
     def __init__(self,ui):
         super().__init__()
         self.ui = ui
         self.dbManager = DBManager.DBManager()
         self.ClientSetting = self.dbManager.GetClientSetting()
+        self.signal.connect(self.UpdateDowning)
 
     def size_format(self,size):
         if size < 1024:
@@ -35,6 +37,11 @@ class ThreadUpdate(QThread):
 
     def setPar(self,par):
         self.info = par
+
+    def UpdateDowning(self):
+        self.info['progressBar'].setProperty("value", (self.LoFileSize/self.RoFileSize)*100)
+        self.info['DownSizeLabel'].setText("{}/{}".format(self.size_format(self.LoFileSize),self.size_format(self.RoFileSize)))
+        self.info['statusLabel'].setText("{}/S".format(self.size_format(self.DownSpeed)))
     def Downact(self,info):
 
         if int(info['isDown']):
@@ -44,7 +51,8 @@ class ThreadUpdate(QThread):
             RoFileSize = info['Size']
 
             if LoFileSize >= RoFileSize:
-                self.DownFinsh(info)
+                pass
+                # self.DownFinsh(info)
             else:
 
                 downinfo = {
@@ -64,8 +72,10 @@ class ThreadUpdate(QThread):
                     # for chunk1 in r.iter_content(chunk_size=1*1024*1024):
                     #     print(66,len(chunk1))
                     for chunk in r.iter_content(chunk_size=2*1024*1024):
-                        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
-                        if int(DownInfoi['isDown']):
+                        # DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
+                        # if int(DownInfoi['isDown']):
+                        s = 1
+                        if s:
                             DownSpeed = 0
                             if chunk:
 
@@ -76,20 +86,24 @@ class ThreadUpdate(QThread):
                                 if deltat ==0:
                                     deltat = 0.001
                                 DownSpeed = len(chunk)/deltat
-                                info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
-                                info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
-                                info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
+                                self.DownSpeed = DownSpeed
+                                self.LoFileSize = LoFileSize
+                                self.RoFileSize = RoFileSize
+                                self.signal.emit()
+                                # info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
+                                # info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
+                                # info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
 
-                            if LoFileSize >= RoFileSize:
-                                self.DownFinsh(info)
+                            # if LoFileSize >= RoFileSize:
+                            #     self.DownFinsh(info)
 
                         else:
                             # self.DownCancel(info)
                             break
 
-    def Down(self):
-
-        info = self.info
+    def Down(self,info):
+        #
+        # info = self.info
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']
@@ -98,12 +112,16 @@ class ThreadUpdate(QThread):
             if not os.path.isdir(info['FilePath']):
                 os.makedirs(info['FilePath'])
             # qmut_1.lock()
-            self.start()
+
+            t = threading.Thread(target=self.run1,args=(info,))
+            t.setDaemon(True)
+            t.start()
+            # self.start()
 
             # qmut_1.unlock()
-    def run(self):
-        info = self.info
+    def run1(self,info):
         # print(66)
+        self.info = info
         self.Downact(info)
 
 class TransShowUpdate(QThread):
@@ -170,9 +188,9 @@ class TransShowUpdate(QThread):
         self.label_19 = QtWidgets.QLabel(self.frame_17)
         self.label_19.setObjectName("label_19")
         self.verticalLayout_10.addWidget(self.label_19)
-        self.label_20 = QtWidgets.QLabel(self.frame_17)
-        self.label_20.setObjectName("label_20")
-        self.verticalLayout_10.addWidget(self.label_20)
+        label_20 = QtWidgets.QLabel(self.frame_17)
+        label_20.setObjectName("label_20")
+        self.verticalLayout_10.addWidget(label_20)
         self.horizontalLayout_11.addWidget(self.frame_17)
         spacerItem2 = QtWidgets.QSpacerItem(18, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem2)
@@ -184,15 +202,15 @@ class TransShowUpdate(QThread):
         self.verticalLayout_11.setContentsMargins(0, 15, 0, 0)
         self.verticalLayout_11.setSpacing(0)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
-        self.progressBar_4 = QtWidgets.QProgressBar(self.frame_18)
-        self.progressBar_4.setMinimumSize(QtCore.QSize(0, 0))
-        self.progressBar_4.setMaximumSize(QtCore.QSize(16777215, 15))
-        # self.progressBar_4.setProperty("value", 24)
-        self.progressBar_4.setObjectName("progressBar_4")
-        self.verticalLayout_11.addWidget(self.progressBar_4)
-        self.label_21 = QtWidgets.QLabel(self.frame_18)
-        self.label_21.setObjectName("label_21")
-        self.verticalLayout_11.addWidget(self.label_21)
+        progressBar_4 = QtWidgets.QProgressBar(self.frame_18)
+        progressBar_4.setMinimumSize(QtCore.QSize(0, 0))
+        progressBar_4.setMaximumSize(QtCore.QSize(16777215, 15))
+        # progressBar_4.setProperty("value", 24)
+        progressBar_4.setObjectName("progressBar_4")
+        self.verticalLayout_11.addWidget(progressBar_4)
+        label_21 = QtWidgets.QLabel(self.frame_18)
+        label_21.setObjectName("label_21")
+        self.verticalLayout_11.addWidget(label_21)
         self.horizontalLayout_11.addWidget(self.frame_18)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem3)
@@ -203,15 +221,15 @@ class TransShowUpdate(QThread):
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout(self.frame_19)
         self.horizontalLayout_12.setContentsMargins(-1, -1, 0, -1)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        self.label_22 = QtWidgets.QLabel(self.frame_19)
-        self.label_22.setObjectName("label_22")
-        self.horizontalLayout_12.addWidget(self.label_22)
-        self.label_23 = QtWidgets.QLabel(self.frame_19)
-        self.label_23.setObjectName("label_23")
-        self.horizontalLayout_12.addWidget(self.label_23)
-        self.label_24 = QtWidgets.QLabel(self.frame_19)
-        self.label_24.setObjectName("label_24")
-        self.horizontalLayout_12.addWidget(self.label_24)
+        label_22 = QtWidgets.QLabel(self.frame_19)
+        label_22.setObjectName("label_22")
+        self.horizontalLayout_12.addWidget(label_22)
+        label_23 = QtWidgets.QLabel(self.frame_19)
+        label_23.setObjectName("label_23")
+        self.horizontalLayout_12.addWidget(label_23)
+        label_24 = QtWidgets.QLabel(self.frame_19)
+        label_24.setObjectName("label_24")
+        self.horizontalLayout_12.addWidget(label_24)
         self.horizontalLayout_11.addWidget(self.frame_19)
         spacerItem4 = QtWidgets.QSpacerItem(18, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem4)
@@ -227,7 +245,7 @@ class TransShowUpdate(QThread):
         LoFile = self.CheckLoFile(DownInfo)
         LoSize = self.size_format(LoFile['size'])
 
-        self.progressBar_4.setProperty("value", (LoFile['size']/DownInfo['Size'])*100)
+        progressBar_4.setProperty("value", (LoFile['size']/DownInfo['Size'])*100)
 
 
         self.label_33.setText("")
@@ -240,45 +258,45 @@ class TransShowUpdate(QThread):
 
         self.label_19.setText(DownInfo['FileName'])
         self.label_19.setFixedWidth(260)
-        self.label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
-        self.label_21.setText("--")
-        self.label_22.setText(">")
-        self.label_22.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
+        label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
+        label_21.setText("--")
+        label_22.setText(">")
+        label_22.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
                            "QLabel:hover{color:rgb(20, 90, 50);}")
 
-        self.label_23.setText("X")
-        self.label_23.setStyleSheet("QLabel{font-size:26px;font-family:Roman times;}"
+        label_23.setText("X")
+        label_23.setStyleSheet("QLabel{font-size:26px;font-family:Roman times;}"
                            "QLabel:hover{color:rgb(20, 90, 50);}")
 
-        self.label_24.setText("[]")
-        self.label_24.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
+        label_24.setText("[]")
+        label_24.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
                            "QLabel:hover{color:rgb(20, 90, 50);}")
 
 
 
-        # self.label_23.setText("")
-        # self.label_23.setMaximumSize(20,20)
-        # self.label_23.setPixmap(QtGui.QPixmap('./img/del1.png'))
-        # self.label_23.setScaledContents(True)
-        # self.label_22.setText("")
-        # self.label_22.setMaximumSize(22,23)
-        # self.label_22.setPixmap(QtGui.QPixmap('./img/start1.png'))
-        # self.label_22.setScaledContents(True)
-        # self.label_22.setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 2px;")
+        # label_23.setText("")
+        # label_23.setMaximumSize(20,20)
+        # label_23.setPixmap(QtGui.QPixmap('./img/del1.png'))
+        # label_23.setScaledContents(True)
+        # label_22.setText("")
+        # label_22.setMaximumSize(22,23)
+        # label_22.setPixmap(QtGui.QPixmap('./img/start1.png'))
+        # label_22.setScaledContents(True)
+        # label_22.setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 2px;")
 
 
-        # self.label_23.setStyleSheet("border:1px groove gray;border-radius:10px;padding:0px 0px;")
+        # label_23.setStyleSheet("border:1px groove gray;border-radius:10px;padding:0px 0px;")
 
-        self.label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         # Downinginfoi = {}
         Downinginfoi = DownInfo
         Downinginfoi['frame'] = self.frame_16
-        Downinginfoi['statusButon'] = self.label_22
-        Downinginfoi['statusLabel'] = self.label_21
-        Downinginfoi['progressBar'] = self.progressBar_4
-        Downinginfoi['DownSizeLabel'] = self.label_20
+        Downinginfoi['statusButon'] = label_22
+        Downinginfoi['statusLabel'] = label_21
+        Downinginfoi['progressBar'] = progressBar_4
+        Downinginfoi['DownSizeLabel'] = label_20
         # Downinginfoi['FilePath'] = DownInfo['FilePath']
         # Downinginfoi['FileName'] = DownInfo['FileName']
         # Downinginfoi['isDown'] = DownInfo['isDown']
@@ -286,9 +304,9 @@ class TransShowUpdate(QThread):
         # Downinginfoi['RoFilePath'] = DownInfo['RoFilePath']
         Downinginfoi['LoFileSatus'] = LoFile
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
-        self.label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
-        self.label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
-        self.label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
+        label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
+        label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
+        label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
 
     def getfileMd5(self,filename):
@@ -367,9 +385,13 @@ class TransShowUpdate(QThread):
                                 if deltat ==0:
                                     deltat = 0.001
                                 DownSpeed = len(chunk)/deltat
-                                info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
-                                info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
-                                info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
+                                try:
+                                    info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
+                                    info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
+                                    info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
+                                except Exception as e:
+                                    print(e)
+                                    print(info)
 
                             if LoFileSize >= RoFileSize:
                                 self.DownFinsh(info)
@@ -446,8 +468,8 @@ class TransShowUpdate(QThread):
         DownverticalLayout = DownLayout[1]
         scrollAreaWidgetContents_down = DownLayout[2]
         LaConts = DownverticalLayout.count()
-        for i in range(LaConts):
-            DownverticalLayout.itemAt(i).widget().deleteLater()
+        # for i in range(LaConts):
+        #     DownverticalLayout.itemAt(i).widget().deleteLater()
 
         # dbManager = DBManager.DBManager()
         self.DownInfos = self.dbManager.GetUserDownRecordAll()
@@ -465,9 +487,9 @@ class TransShowUpdate(QThread):
             line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
             line_3.setObjectName("line_3")
             DownverticalLayout.addWidget(line_3)
-            self.ThreadUpdatei = ThreadUpdate(self.ui)
-            self.ThreadUpdatei.setPar(Downinginfoi)
-            self.ThreadUpdatei.Down()
+            ThreadUpdatei = ThreadUpdate(self.ui)
+            # # ThreadUpdatei.setPar(Downinginfoi)
+            ThreadUpdatei.Down(Downinginfoi)
             # self.Down(Downinginfoi)
 
 
