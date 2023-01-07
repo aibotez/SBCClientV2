@@ -25,8 +25,20 @@ class DBManager():
             cur = conn.cursor()
             self.cur = cur
             self.conn = conn
+
+    def Connect(self):
+        conn = sqlite3.connect('./UserDB.db')
+        cur = conn.cursor()
+        self.cur = cur
+        self.conn = conn
+    def close(self):
+        # 关闭游标
+        self.cur.close()
+        # 关闭连接
+        self.conn.close()
+
     def creatClientSettingform(self):
-        sql = "create table ClientSetting(DownPath,BackupPath)"
+        sql = "create table ClientSetting(DownPath,BackupPath,host)"
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserDownRecordform(self):
@@ -42,12 +54,20 @@ class DBManager():
         self.cur.execute(sql)
         self.conn.commit()
 
+    def GetClientSetting(self):
+        sql = "select * from ClientSetting"
+        self.cur.execute(sql)
+        self.conn.commit()
+        Result = {}
+        for i in self.cur:
+            info = list(i)
+            Result = {'DownPath':info[0],'BackupPath':info[1],'host':info[2]}
+        return Result
 
     def AddUserDownRecord(self,DownInfo):
         if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
             print('Have Down')
             return 'Have'
-        print('DBM',DownInfo)
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
         sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype) values (?,?,?,?,?,?,?)"
         data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'1',DownInfo['fetype'])
@@ -58,15 +78,22 @@ class DBManager():
     def GetUserDownRecord(self,FilePath,FileName):
         # FilePath = '/home/p'
         # FileName = 'record.txt'
+        self.close()
+        self.Connect()
+
         sql = "select * from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
+
         self.cur.execute(sql)
         self.conn.commit()
         Result = None
         for i in self.cur:
             info = list(i)
+
             Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
         return Result
     def GetUserDownRecordAll(self):
+        self.close()
+        self.Connect()
         # FilePath = '/home/p'
         # FileName = 'record.txt'
         sql = "select * from UserDown"
@@ -77,18 +104,21 @@ class DBManager():
             info = list(i)
             Resulti = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
             Result.append(Resulti)
+
         return Result
-    def UpdataUserDownRecord(self):
-        FilePath = '/home/p1'
-        FileName = 'record.txt'
+    def UpdataUserDownRecord(self,FilePath,FileName,changeVaule):
+        self.close()
+        self.Connect()
         sql = "update UserDown set isDown=? where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
-        data = ('0')
+        data = (str(changeVaule))
         self.cur.execute(sql,data)
         self.conn.commit()
 
     def DelUserDownRecord(self,FilePath,FileName):
         # FilePath = '/home/p1'
         # FileName = 'record.txt'
+        self.close()
+        self.Connect()
         sql = "delete from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
         self.cur.execute(sql)
         self.conn.commit()

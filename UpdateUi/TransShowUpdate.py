@@ -1,15 +1,121 @@
-import sys,threading,os
+import sys,threading,os,hashlib,requests,json
+import time
+
 sys.path.append('..')
 from pack import DBManager
+# from pack import SBCRequest
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.Qt import QThread,QMutex
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont
 
-class TransShowUpdate():
+
+qmut_1 = QMutex()
+
+
+class ThreadUpdate(QThread):
     def __init__(self,ui):
+        super().__init__()
+        self.ui = ui
+        self.dbManager = DBManager.DBManager()
+        self.ClientSetting = self.dbManager.GetClientSetting()
+
+    def size_format(self,size):
+        if size < 1024:
+            return '%i' % size + 'size'
+        elif 1024 <= size < 1024 * 1024:
+            return '%.1f' % float(size / 1024) + 'KB'
+        elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
+            return '%.1f' % float(size / (1024 * 1024)) + 'MB'
+        elif 1024 * 1024 * 1024 <= size < 1024 * 1024 * 1024 * 1024:
+            return '%.1f' % float(size / (1024 * 1024 * 1024)) + 'GB'
+        elif 1024 * 1024 * 1024 * 1024 <= size:
+            return '%.1f' % float(size / (1024 * 1024 * 1024 * 1024)) + 'TB'
+
+    def setPar(self,par):
+        self.info = par
+    def Downact(self,info):
+
+        if int(info['isDown']):
+            info['statusButon'].setText("||")
+            LoFileSatus = info['LoFileSatus']
+            LoFileSize = LoFileSatus['size']
+            RoFileSize = info['Size']
+
+            if LoFileSize >= RoFileSize:
+                self.DownFinsh(info)
+            else:
+
+                downinfo = {
+                    'fename':info['FileName'],
+                    'fepath':info['RoFilePath'],
+                    'feseek':LoFileSize
+                }
+                data = {
+                    'downinfo':downinfo
+                }
+                url_fileDown = 'http://'+self.ClientSetting['host']+'/FileDown1/'
+                dbManager = DBManager.DBManager()
+
+                r = requests.post(url_fileDown,data=json.dumps(data),headers=self.ui.SBCRe.headers,stream=True)
+                with open(info['LoPath'], 'ab') as f:
+                    t0 = time.time()
+                    # for chunk1 in r.iter_content(chunk_size=1*1024*1024):
+                    #     print(66,len(chunk1))
+                    for chunk in r.iter_content(chunk_size=2*1024*1024):
+                        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
+                        if int(DownInfoi['isDown']):
+                            DownSpeed = 0
+                            if chunk:
+
+                                f.write(chunk)
+                                LoFileSize += len(chunk)
+                                deltat = time.time()-t0
+                                t0 = time.time()
+                                if deltat ==0:
+                                    deltat = 0.001
+                                DownSpeed = len(chunk)/deltat
+                                info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
+                                info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
+                                info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
+
+                            if LoFileSize >= RoFileSize:
+                                self.DownFinsh(info)
+
+                        else:
+                            # self.DownCancel(info)
+                            break
+
+    def Down(self):
+
+        info = self.info
+        Path = info['LoPath']
+        LoFileSatus = info['LoFileSatus']
+        LoFileSize = LoFileSatus['size']
+        LoFileExist = LoFileSatus['exist']
+        if int(info['isDown']):
+            if not os.path.isdir(info['FilePath']):
+                os.makedirs(info['FilePath'])
+            # qmut_1.lock()
+            self.start()
+
+            # qmut_1.unlock()
+    def run(self):
+        info = self.info
+        # print(66)
+        self.Downact(info)
+
+class TransShowUpdate(QThread):
+    signal = pyqtSignal()
+    def __init__(self,ui):
+        super().__init__()
         self.ui = ui
         self.DownInfos = []
         self.dbManager = DBManager.DBManager()
+        self.ClientSetting = self.dbManager.GetClientSetting()
+        self.signal.connect(self.RefreshDowning)
+        # self.SBCRequest = SBCRequest.SBCRe()
 
     def FileConChose(self,fetype):
         if fetype == 'folder':
@@ -135,7 +241,7 @@ class TransShowUpdate():
         self.label_19.setText(DownInfo['FileName'])
         self.label_19.setFixedWidth(260)
         self.label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
-        self.label_21.setText("暂停")
+        self.label_21.setText("--")
         self.label_22.setText(">")
         self.label_22.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
                            "QLabel:hover{color:rgb(20, 90, 50);}")
@@ -166,21 +272,137 @@ class TransShowUpdate():
         self.label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        Downinginfoi = {}
+        # Downinginfoi = {}
+        Downinginfoi = DownInfo
         Downinginfoi['frame'] = self.frame_16
-        Downinginfoi['status'] = self.label_22
+        Downinginfoi['statusButon'] = self.label_22
+        Downinginfoi['statusLabel'] = self.label_21
         Downinginfoi['progressBar'] = self.progressBar_4
-        Downinginfoi['DownSize'] = self.label_20
-        Downinginfoi['FilePath'] = DownInfo['FilePath']
-        Downinginfoi['FileName'] = DownInfo['FileName']
+        Downinginfoi['DownSizeLabel'] = self.label_20
+        # Downinginfoi['FilePath'] = DownInfo['FilePath']
+        # Downinginfoi['FileName'] = DownInfo['FileName']
+        # Downinginfoi['isDown'] = DownInfo['isDown']
+        # Downinginfoi['size'] = DownInfo['Size']
+        # Downinginfoi['RoFilePath'] = DownInfo['RoFilePath']
+        Downinginfoi['LoFileSatus'] = LoFile
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
+        self.label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
         self.label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
         self.label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
 
-    def OpenDownFile(self,info,e):
+    def getfileMd5(self,filename):
+        if not os.path.isfile(filename):
+            return
+        myhash = hashlib.md5()
+        f = open(filename, "rb")
+        while True:
+            b = f.read(8096)
+            if not b:
+                break
+            myhash.update(b)
+        f.close()
+        return myhash.hexdigest()
+
+    def DownFinsh(self,info):
+        dbManager = DBManager.DBManager()
+        info['statusLabel'].setText("校验文件...")
+        LofeMd5 = self.getfileMd5(info['LoPath'])
+        RofeMd5 = info['FileMd5']
+        if LofeMd5 == RofeMd5:
+            info['statusLabel'].setText("校验通过")
+            print('校验通过')
+        else:
+            info['statusLabel'].setText("文件损坏")
+        dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
+        self.signal.emit()
+
+
+    def DownCancel(self,info):
+        self.signal.emit()
+    def DownSatusChange(self,info,e):
+        dbManager = DBManager.DBManager()
+        if int(info['isDown']):
+            info['statusButon'].setText(">")
+            dbManager.UpdataUserDownRecord(info['FilePath'],info['FileName'],0)
+        else:
+            info['statusButon'].setText("||")
+            dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
+        self.signal.emit()
+
+    def Downact(self,info):
+        if int(info['isDown']):
+            info['statusButon'].setText("||")
+            LoFileSatus = info['LoFileSatus']
+            LoFileSize = LoFileSatus['size']
+            RoFileSize = info['Size']
+            if LoFileSize >= RoFileSize:
+                self.DownFinsh(info)
+            else:
+                downinfo = {
+                    'fename':info['FileName'],
+                    'fepath':info['RoFilePath'],
+                    'feseek':LoFileSize
+                }
+                data = {
+                    'downinfo':downinfo
+                }
+                url_fileDown = 'http://'+self.ClientSetting['host']+'/FileDown1/'
+                dbManager = DBManager.DBManager()
+                r = requests.post(url_fileDown,data=json.dumps(data),headers=self.ui.SBCRe.headers,stream=True)
+                with open(info['LoPath'], 'ab') as f:
+                    t0 = time.time()
+                    # for chunk1 in r.iter_content(chunk_size=1*1024*1024):
+                    #     print(66,len(chunk1))
+                    for chunk in r.iter_content(chunk_size=2*1024*1024):
+                        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
+                        if int(DownInfoi['isDown']):
+                            DownSpeed = 0
+                            if chunk:
+
+                                f.write(chunk)
+                                LoFileSize += len(chunk)
+                                deltat = time.time()-t0
+                                t0 = time.time()
+                                if deltat ==0:
+                                    deltat = 0.001
+                                DownSpeed = len(chunk)/deltat
+                                info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
+                                info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
+                                info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
+
+                            if LoFileSize >= RoFileSize:
+                                self.DownFinsh(info)
+
+                        else:
+                            # self.DownCancel(info)
+                            break
+
+    def Down(self,info):
         Path = info['LoPath']
+        LoFileSatus = info['LoFileSatus']
+        LoFileSize = LoFileSatus['size']
+        LoFileExist = LoFileSatus['exist']
+        if int(info['isDown']):
+            if not os.path.isdir(info['FilePath']):
+                os.makedirs(info['FilePath'])
+            # qmut_1.lock()
+            self.info=info
+            self.start()
+            # qmut_1.unlock()
+    def run(self):
+        # return
+        self.Downact(self.info)
+
+
+
+
+
+    def OpenDownFile(self,info,e):
+        Path = info['LoPath'].replace('/','\\')
+        print(Path)
         os.system(r"explorer /select,{}".format(Path))
+
     def size_format(self,size):
         if size < 1024:
             return '%i' % size + 'size'
@@ -216,6 +438,8 @@ class TransShowUpdate():
         # del self.DownInfos[j]
 
     def RefreshDowning(self):
+        self.infos = []
+
         DownLayout = self.ui.TranspscrollArea['Down']
         self.DownLayout = DownLayout
         DownformLayout = DownLayout[0]
@@ -224,7 +448,11 @@ class TransShowUpdate():
         LaConts = DownverticalLayout.count()
         for i in range(LaConts):
             DownverticalLayout.itemAt(i).widget().deleteLater()
+
+        # dbManager = DBManager.DBManager()
         self.DownInfos = self.dbManager.GetUserDownRecordAll()
+        # dbManager.close()
+
         self.DownInfosUpdateLabs = []
         for i in self.DownInfos:
             Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
@@ -237,6 +465,10 @@ class TransShowUpdate():
             line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
             line_3.setObjectName("line_3")
             DownverticalLayout.addWidget(line_3)
+            self.ThreadUpdatei = ThreadUpdate(self.ui)
+            self.ThreadUpdatei.setPar(Downinginfoi)
+            self.ThreadUpdatei.Down()
+            # self.Down(Downinginfoi)
 
 
 

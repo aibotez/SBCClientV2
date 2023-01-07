@@ -7,6 +7,7 @@ class SBCRe():
         self.CurFileList = []
         self.host = 'pi.sbc.plus:800'
         self.host = '127.0.0.1:90'
+        self.host = '[2408:8244:520:1db0:1e02::577]:90'
         self.UserEmail = '2290227486@qq.com'
         self.UserPassword = '12'
         self.GetSBCCookie()
