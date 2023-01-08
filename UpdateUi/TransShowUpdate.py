@@ -25,6 +25,7 @@ class TransShowUpdate(QThread):
         self.ClientSetting = self.dbManager.GetClientSetting()
         self.signal.connect(self.RefreshDowning)
         self.ButtonBind()
+        self.RefreshDowning()
         # self.SBCRequest = SBCRequest.SBCRe()
 
     def FileConChose(self,fetype):
@@ -232,22 +233,35 @@ class TransShowUpdate(QThread):
 
 
     def DownCancel(self,info):
-        self.signal.emit()
-    def DownSatusChange(self,info,e):
-
         dbManager = DBManager.DBManager()
-        if int(info['isDown']):
-            info['statusButon'].setText(">")
-            info['statusLabel'].setText("已暂停")
-            dbManager.UpdataUserDownRecord(info['FilePath'],info['FileName'],0)
-
-            info['isDown'] = 0
-        else:
-            info['statusButon'].setText("||")
-            dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
-            info['isDown'] = 1
-            self.Down(info)
+        info['statusButon'].setText(">")
+        info['statusLabel'].setText("已暂停")
+        dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 0)
+        info['isDown'] = 0
         dbManager.close()
+    def DownGon(self,info):
+        dbManager = DBManager.DBManager()
+        info['statusButon'].setText("||")
+        dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
+        info['isDown'] = 1
+        self.Down(info)
+        dbManager.close()
+
+    def DownSatusChange(self,info,e):
+        if int(info['isDown']):
+            self.DownCancel(info)
+            # info['statusButon'].setText(">")
+            # info['statusLabel'].setText("已暂停")
+            # dbManager.UpdataUserDownRecord(info['FilePath'],info['FileName'],0)
+            #
+            # info['isDown'] = 0
+        else:
+            self.DownGon(info)
+            # info['statusButon'].setText("||")
+            # dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
+            # info['isDown'] = 1
+            # self.Down(info)
+        # dbManager.close()
         # self.signal.emit()
 
     def Downact(self,info):
@@ -395,6 +409,7 @@ class TransShowUpdate(QThread):
 
     def StartAll(self,e):
         print('StartAll')
+        self.DownInfos = self.dbManager.GetUserDownRecordAll()
     def PauseAll(self):
         print('PauseAll')
     def CancelAll(self):
