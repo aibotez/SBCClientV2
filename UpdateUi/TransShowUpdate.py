@@ -14,120 +14,11 @@ import threading
 qmut_1 = QMutex()
 
 
-class ThreadUpdate(QThread):
-    signal = pyqtSignal()
-    def __init__(self,ui):
-        super().__init__()
-        self.ui = ui
-        self.dbManager = DBManager.DBManager()
-        self.ClientSetting = self.dbManager.GetClientSetting()
-        self.signal.connect(self.UpdateDowning)
-
-    def size_format(self,size):
-        if size < 1024:
-            return '%i' % size + 'size'
-        elif 1024 <= size < 1024 * 1024:
-            return '%.1f' % float(size / 1024) + 'KB'
-        elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
-            return '%.1f' % float(size / (1024 * 1024)) + 'MB'
-        elif 1024 * 1024 * 1024 <= size < 1024 * 1024 * 1024 * 1024:
-            return '%.1f' % float(size / (1024 * 1024 * 1024)) + 'GB'
-        elif 1024 * 1024 * 1024 * 1024 <= size:
-            return '%.1f' % float(size / (1024 * 1024 * 1024 * 1024)) + 'TB'
-
-    def setPar(self,par):
-        self.info = par
-
-    def UpdateDowning(self):
-        self.info['progressBar'].setProperty("value", (self.LoFileSize/self.RoFileSize)*100)
-        self.info['DownSizeLabel'].setText("{}/{}".format(self.size_format(self.LoFileSize),self.size_format(self.RoFileSize)))
-        self.info['statusLabel'].setText("{}/S".format(self.size_format(self.DownSpeed)))
-    def Downact(self,info):
-
-        if int(info['isDown']):
-            info['statusButon'].setText("||")
-            LoFileSatus = info['LoFileSatus']
-            LoFileSize = LoFileSatus['size']
-            RoFileSize = info['Size']
-
-            if LoFileSize >= RoFileSize:
-                pass
-                # self.DownFinsh(info)
-            else:
-
-                downinfo = {
-                    'fename':info['FileName'],
-                    'fepath':info['RoFilePath'],
-                    'feseek':LoFileSize
-                }
-                data = {
-                    'downinfo':downinfo
-                }
-                url_fileDown = 'http://'+self.ClientSetting['host']+'/FileDown1/'
-                dbManager = DBManager.DBManager()
-
-                r = requests.post(url_fileDown,data=json.dumps(data),headers=self.ui.SBCRe.headers,stream=True)
-                with open(info['LoPath'], 'ab') as f:
-                    t0 = time.time()
-                    # for chunk1 in r.iter_content(chunk_size=1*1024*1024):
-                    #     print(66,len(chunk1))
-                    for chunk in r.iter_content(chunk_size=2*1024*1024):
-                        # DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
-                        # if int(DownInfoi['isDown']):
-                        s = 1
-                        if s:
-                            DownSpeed = 0
-                            if chunk:
-
-                                f.write(chunk)
-                                LoFileSize += len(chunk)
-                                deltat = time.time()-t0
-                                t0 = time.time()
-                                if deltat ==0:
-                                    deltat = 0.001
-                                DownSpeed = len(chunk)/deltat
-                                self.DownSpeed = DownSpeed
-                                self.LoFileSize = LoFileSize
-                                self.RoFileSize = RoFileSize
-                                self.signal.emit()
-                                # info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
-                                # info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
-                                # info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
-
-                            # if LoFileSize >= RoFileSize:
-                            #     self.DownFinsh(info)
-
-                        else:
-                            # self.DownCancel(info)
-                            break
-
-    def Down(self,info):
-        #
-        # info = self.info
-        Path = info['LoPath']
-        LoFileSatus = info['LoFileSatus']
-        LoFileSize = LoFileSatus['size']
-        LoFileExist = LoFileSatus['exist']
-        if int(info['isDown']):
-            if not os.path.isdir(info['FilePath']):
-                os.makedirs(info['FilePath'])
-            # qmut_1.lock()
-
-            t = threading.Thread(target=self.run1,args=(info,))
-            t.setDaemon(True)
-            t.start()
-            # self.start()
-
-            # qmut_1.unlock()
-    def run1(self,info):
-        # print(66)
-        self.info = info
-        self.Downact(info)
-
 class TransShowUpdate(QThread):
     signal = pyqtSignal()
     def __init__(self,ui):
         super().__init__()
+        self.DownInfosUpdateLabs = []
         self.ui = ui
         self.DownInfos = []
         self.dbManager = DBManager.DBManager()
@@ -339,19 +230,26 @@ class TransShowUpdate(QThread):
     def DownCancel(self,info):
         self.signal.emit()
     def DownSatusChange(self,info,e):
+
         dbManager = DBManager.DBManager()
         if int(info['isDown']):
             info['statusButon'].setText(">")
+            info['statusLabel'].setText("已暂停")
             dbManager.UpdataUserDownRecord(info['FilePath'],info['FileName'],0)
+
+            info['isDown'] = 0
         else:
             info['statusButon'].setText("||")
             dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
-        self.signal.emit()
+            info['isDown'] = 1
+            self.Down(info)
+        # self.signal.emit()
 
     def Downact(self,info):
         if int(info['isDown']):
             info['statusButon'].setText("||")
-            LoFileSatus = info['LoFileSatus']
+            LoFileSatus = self.CheckLoFile(info)
+            # LoFileSatus = info['LoFileSatus']
             LoFileSize = LoFileSatus['size']
             RoFileSize = info['Size']
             if LoFileSize >= RoFileSize:
@@ -374,7 +272,7 @@ class TransShowUpdate(QThread):
                     #     print(66,len(chunk1))
                     for chunk in r.iter_content(chunk_size=2*1024*1024):
                         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
-                        if int(DownInfoi['isDown']):
+                        if DownInfoi and int(DownInfoi['isDown']):
                             DownSpeed = 0
                             if chunk:
 
@@ -409,12 +307,15 @@ class TransShowUpdate(QThread):
             if not os.path.isdir(info['FilePath']):
                 os.makedirs(info['FilePath'])
             # qmut_1.lock()
+            t = threading.Thread(target=self.run1,args=(info,))
+            t.setDaemon(True)
+            t.start()
             self.info=info
-            self.start()
+            # self.start()
             # qmut_1.unlock()
-    def run(self):
+    def run1(self,info):
         # return
-        self.Downact(self.info)
+        self.Downact(info)
 
 
 
@@ -459,13 +360,33 @@ class TransShowUpdate(QThread):
         #     j+=1
         # del self.DownInfos[j]
 
-    def checkFile(self,info):
+    def checkAddFile(self,info):
         CurLabs = []
         for i in self.DownInfosUpdateLabs:
             CurLabs.append(i['LoPath'])
-        if info['FilePath']+info['FileName'] in self.DownInfosUpdateLabs:
+        if info['FilePath']+info['FileName'] in CurLabs:
             return 1
         return 0
+    def checkDelFile(self):
+        CurDowns = []
+        for i in self.DownInfos:
+            CurDowns.append(i['FilePath']+i['FileName'])
+
+        j = 0
+        delidxs = []
+        DownInfosUpdateLabs = []
+        for i in self.DownInfosUpdateLabs:
+            CurDownLabi = i['LoPath']
+            if CurDownLabi not in CurDowns:
+                delidxs.append(j)
+            else:
+                DownInfosUpdateLabs.append(i)
+            j+=1
+        self.DownInfosUpdateLabs = DownInfosUpdateLabs
+        for i in delidxs:
+            DownverticalLayout = self.DownLayout[1]
+            DownverticalLayout.itemAt(2*i+1).widget().deleteLater()
+            DownverticalLayout.itemAt(2 * i).widget().deleteLater()
 
 
     def RefreshDowning(self):
@@ -479,27 +400,28 @@ class TransShowUpdate(QThread):
         LaConts = DownverticalLayout.count()
         # for i in range(LaConts):
         #     DownverticalLayout.itemAt(i).widget().deleteLater()
-
         # dbManager = DBManager.DBManager()
         self.DownInfos = self.dbManager.GetUserDownRecordAll()
-        # dbManager.close()
+        self.checkDelFile()
 
-        self.DownInfosUpdateLabs = []
+        # dbManager.close()
+        # self.DownInfosUpdateLabs = []
         for i in self.DownInfos:
-            Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
-            self.DownInfosUpdateLabs.append(Downinginfoi)
-            form = Downinginfoi['frame']
-            DownverticalLayout.addWidget(form)
-            line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
-            line_3.setMinimumSize(QtCore.QSize(649, 0))
-            line_3.setFrameShape(QtWidgets.QFrame.HLine)
-            line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-            line_3.setObjectName("line_3")
-            DownverticalLayout.addWidget(line_3)
-            ThreadUpdatei = ThreadUpdate(self.ui)
-            # # ThreadUpdatei.setPar(Downinginfoi)
-            ThreadUpdatei.Down(Downinginfoi)
-            # self.Down(Downinginfoi)
+            if not self.checkAddFile(i):
+                Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
+                self.DownInfosUpdateLabs.append(Downinginfoi)
+                form = Downinginfoi['frame']
+                DownverticalLayout.addWidget(form)
+                line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
+                line_3.setMinimumSize(QtCore.QSize(649, 0))
+                line_3.setFrameShape(QtWidgets.QFrame.HLine)
+                line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+                line_3.setObjectName("line_3")
+                DownverticalLayout.addWidget(line_3)
+                # ThreadUpdatei = ThreadUpdate(self.ui)
+                # # ThreadUpdatei.setPar(Downinginfoi)
+                # ThreadUpdatei.Down(Downinginfoi)
+                self.Down(Downinginfoi)
 
 
 
