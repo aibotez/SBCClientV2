@@ -50,7 +50,7 @@ class DBManager():
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserTransFinshRecordform(self):
-        sql = "create table TransFinsh(FileMd5,FileName,FilePath)"
+        sql = "create table TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck)"
         self.cur.execute(sql)
         self.conn.commit()
 
@@ -64,6 +64,16 @@ class DBManager():
             Result = {'DownPath':info[0],'BackupPath':info[1],'host':info[2]}
         return Result
 
+    def AddUserTranspFinshRecord(self,DownInfo):
+        if self.GetUserTranspFinshRecord(DownInfo['FilePath'],DownInfo['FileName']):
+            return 'Have'
+        # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
+        sql = "insert into TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck) values (?,?,?,?,?,?)"
+        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['FilePath'],DownInfo['Size'],DownInfo['fetype'],DownInfo['FeCheck'])
+        self.cur.execute(sql, data)
+        self.conn.commit()
+        return 1
+
     def AddUserDownRecord(self,DownInfo):
         if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
             print('Have Down')
@@ -74,28 +84,35 @@ class DBManager():
         self.cur.execute(sql, data)
         self.conn.commit()
         return 1
-
     def GetUserDownRecord(self,FilePath,FileName):
-        # FilePath = '/home/p'
-        # FileName = 'record.txt'
-        # self.close()
-        # self.Connect()
-
         sql = "select * from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
-
         self.cur.execute(sql)
         self.conn.commit()
         Result = None
         for i in self.cur:
             info = list(i)
-
             Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
         return Result
+    def GetUserTranspFinshRecord(self,FilePath,FileName):
+        sql = "select * from TransFinsh where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
+        self.cur.execute(sql)
+        self.conn.commit()
+        Result = None
+        for i in self.cur:
+            info = list(i)
+            Result = {'FileMd5':info[0],'FileName':info[1],'FilePath':info[2],'Size':info[3],'fetype':info[4],'fecheck':info[5]}
+        return Result
+    def GetUserTranspFinshRecordAll(self):
+        sql = "select * from TransFinsh"
+        self.cur.execute(sql)
+        self.conn.commit()
+        Result = []
+        for i in self.cur:
+            info = list(i)
+            Resulti = {'FileMd5':info[0],'FileName':info[1],'FilePath':info[2],'Size':info[3],'fetype':info[4],'fecheck':info[5]}
+            Result.append(Resulti)
+        return Result
     def GetUserDownRecordAll(self):
-        # self.close()
-        # self.Connect()
-        # FilePath = '/home/p'
-        # FileName = 'record.txt'
         sql = "select * from UserDown"
         self.cur.execute(sql)
         self.conn.commit()
@@ -115,11 +132,11 @@ class DBManager():
         self.conn.commit()
 
     def DelUserDownRecord(self,FilePath,FileName):
-        # FilePath = '/home/p1'
-        # FileName = 'record.txt'
-        # self.close()
-        # self.Connect()
         sql = "delete from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
+        self.cur.execute(sql)
+        self.conn.commit()
+    def DelUserTranspFinshRecord(self,FilePath,FileName):
+        sql = "delete from TransFinsh where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
         self.cur.execute(sql)
         self.conn.commit()
 

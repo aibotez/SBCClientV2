@@ -335,7 +335,7 @@ class Ui_PhotoShow(QThread):
             'Down': [transmitui.formLayout_3, transmitui.verticalLayout_9, transmitui.scrollAreaWidgetContents_7, transmitui.label_18,transmitui.pushButton_7,transmitui.pushButton_8,transmitui.pushButton_9]}
         TranspscrollAreaformLayout['Down'][1].itemAt(1).widget().deleteLater()
         TranspscrollAreaformLayout['Down'][1].itemAt(0).widget().deleteLater()
-        TranspscrollAreaformLayout['TranspFinsh'] = [0,transmitui.verticalLayout_4, transmitui.scrollAreaWidgetContents_6,transmitui.label_10,transmitui.pushButton_6]
+        TranspscrollAreaformLayout['TranspFinsh'] = [0,transmitui.verticalLayout_4, transmitui.scrollAreaWidgetContents_6,transmitui.label_10,transmitui.pushButton_6,transmitui.label_13]
         transmitui.verticalLayout_4.itemAt(1).widget().deleteLater()
         transmitui.verticalLayout_4.itemAt(0).widget().deleteLater()
         self.MainWindow.horizontalLayout.addWidget(self.frame_TranShow)
