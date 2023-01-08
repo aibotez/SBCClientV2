@@ -24,6 +24,7 @@ class TransShowUpdate(QThread):
         self.dbManager = DBManager.DBManager()
         self.ClientSetting = self.dbManager.GetClientSetting()
         self.signal.connect(self.RefreshDowning)
+        self.ButtonBind()
         # self.SBCRequest = SBCRequest.SBCRe()
 
     def FileConChose(self,fetype):
@@ -392,9 +393,22 @@ class TransShowUpdate(QThread):
             DownverticalLayout.itemAt(2 * i).widget().deleteLater()
 
 
+    def StartAll(self,e):
+        print('StartAll')
+    def PauseAll(self):
+        print('PauseAll')
+    def CancelAll(self):
+        print('CancelAll')
+    def ButtonBind(self):
+        print('ui',self.ui.TranspscrollArea)
+        self.DownLayout = self.ui.TranspscrollArea['Down']
+        self.DownLayout[4].clicked.connect(self.StartAll)
+        self.DownLayout[5].clicked.connect(self.PauseAll)
+        self.DownLayout[6].clicked.connect(self.CancelAll)
+
+
     def RefreshDowning(self):
         self.infos = []
-
         DownLayout = self.ui.TranspscrollArea['Down']
         self.DownLayout = DownLayout
         DownformLayout = DownLayout[0]

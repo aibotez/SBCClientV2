@@ -332,7 +332,7 @@ class Ui_PhotoShow(QThread):
         transmitui = Transmitui.Ui_Form()
         transmitui.setupUi(self.frame_TranShow)
         TranspscrollAreaformLayout= {
-            'Down': [transmitui.formLayout_3, transmitui.verticalLayout_9, transmitui.scrollAreaWidgetContents_7, transmitui.label_18]}
+            'Down': [transmitui.formLayout_3, transmitui.verticalLayout_9, transmitui.scrollAreaWidgetContents_7, transmitui.label_18,transmitui.pushButton_7,transmitui.pushButton_8,transmitui.pushButton_9]}
         TranspscrollAreaformLayout['Down'][1].itemAt(1).widget().deleteLater()
         TranspscrollAreaformLayout['Down'][1].itemAt(0).widget().deleteLater()
         self.MainWindow.horizontalLayout.addWidget(self.frame_TranShow)
@@ -342,8 +342,8 @@ class Ui_PhotoShow(QThread):
         self.MainWindow.TranspscrollArea = TranspscrollAreaformLayout
         self.MainWindow.frameandscroll['Tran'] = self.frame_TranShow
 
-        self.TransShowUpdate_ = TransShowUpdate.TransShowUpdate(self.MainWindow)
-        self.TransShowUpdate_.RefreshDowning()
+        # self.TransShowUpdate_ = TransShowUpdate.TransShowUpdate(self.MainWindow)
+        # self.TransShowUpdate_.RefreshDowning()
 
         return [self.frame_TranShow,TranspscrollAreaformLayout]
 

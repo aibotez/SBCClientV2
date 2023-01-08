@@ -596,7 +596,7 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.label_17.setText(_translate("Form", "总下载个数："))
-        self.label_18.setText(_translate("Form", "6"))
+        self.label_18.setText(_translate("Form", "0"))
         self.pushButton_7.setText(_translate("Form", "全部开始"))
         self.pushButton_8.setText(_translate("Form", "全部暂停"))
         self.pushButton_9.setText(_translate("Form", "全部取消"))

@@ -35,7 +35,7 @@ class Thread_LoadImg(QThread):
     def runthread(self,MainWindow):
         self.MainWindow = MainWindow
         # print(self.FileCons)
-        print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File'])
+        # print(self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File'])
         Files = self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File']
         if len(Files) <= 0:
             return
