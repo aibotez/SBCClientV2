@@ -53,8 +53,13 @@ class FileOperClick():
             self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
 
     def Down(self,e):
-        print('Dwn')
         ChosedFiles = self.GetChoseFiles()
+        if ChosedFiles:
+            self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
+            self.anim.setDuration(2000)  # 设置动画间隔时间
+            self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
+            self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+            self.anim.start()  # 启动动画
         for i in ChosedFiles:
             if i['fetype'] != 'folder':
                 DownFaPath = self.ui.DownPath
@@ -180,6 +185,7 @@ class initWindow():
         self.SBCMain.setupUi(Main)
 
         self.SBCMain.TranspArrow = self.SBCMain.label_23
+
         # self.SBCMain.TranspArrow.setText("↑↓")
         self.SBCMain.DownRecordFile = 'DownRecord.txt'
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
@@ -308,6 +314,7 @@ class initWindow():
             # vertical.valueChanged.connect(self.test1)
 
         TranShow = self.Navshows.InitTranShow()
+
         # self.SBCMain.TranspscrollArea = TranShow[1]
         # self.SBCMain.frameandscroll['Tran'] = TranShow[0]
 
@@ -342,6 +349,12 @@ class initWindow():
         self.initBindSignal()
         self.FileUpdates.start()
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
+
+        self.SBCMain.TranspArrow1 = QtWidgets.QLabel(self.Main) #
+        self.SBCMain.TranspArrow1.setGeometry(200,20,0,0)
+        self.SBCMain.TranspArrow1.setPixmap(QtGui.QPixmap('img/Transp2.jpg'))
+        self.SBCMain.TranspArrow1.setScaledContents(True) # 图片随文本部件的大小变动
+
 
 
 

@@ -17,32 +17,11 @@ class TransFileManager():
         # self.DownRecordFile = DownRecordFile
         # self.UpRecordFile = UpRecordFile
         # self.FinishRcordFile = FinishRcordFile
-        self.TranspArrowShow()
+        # self.TranspArrowShow()
 
 
-
-
-    def TranspArrowShow(self):
-        print('Tra')
-        self.label = QtWidgets.QLabel(self.MainUi) #
-        self.label.setGeometry(200,20,20,20)
-        # self.label.setText("ABCDFED")
-
-        # png = QtGui.QPixmap()  # 创建一个绘图类
-        self.label.setPixmap(QtGui.QPixmap('./img/del1.png'))
-        # png.load("img/del1.png")  # 从png中加载一个图片
-        # print(66)
-        # self.label.setPixmap(png)  # 设置文本标签的图形
-        self.label.setScaledContents(True) # 图片随文本部件的大小变动
-        self.anim = QtCore.QPropertyAnimation(self.label,b'geometry') # 设置动画的对象及其属性
-        self.anim.setDuration(2000) # 设置动画间隔时间
-        self.anim.setStartValue(QtCore.QRect(200,20,20,20)) # 设置动画对象的起始属性
-        self.anim.setEndValue(QtCore.QRect(50, 500, 0, 0)) # 设置动画对象的结束属性
-        self.anim.start() # 启动动画
         # self.ui.TranspArrow.setText("↑↓")
     def AddDownRecord(self,DownInfo):
-        self.TranspArrowShow()
-        # self.Transhow.AddDown(DownInfo)
 
         AdW = self.dbManager.AddUserDownRecord(DownInfo)
         if AdW == 'Have':
