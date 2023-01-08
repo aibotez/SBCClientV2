@@ -204,7 +204,7 @@ class Ui_Form(object):
 
         # TranspDownscrollAreaformLayout = self.formLayout_3
         # TranspDownscrollAreaverticalLayout = self.verticalLayout_9
-        TranspscrollArea = {'Down':[self.formLayout_3,self.verticalLayout_9,self.scrollAreaWidgetContents_7]}
+        # TranspscrollArea = {'Down':[self.formLayout_3,self.verticalLayout_9,self.scrollAreaWidgetContents_7,self.label_18]}
         # self.verticalLayout_9.itemAt(1).widget().deleteLater()
 
         self.gridLayout.addLayout(self.verticalLayout_8, 0, 0, 1, 1)
@@ -590,7 +590,7 @@ class Ui_Form(object):
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
-        return TranspscrollArea
+        # return TranspscrollArea
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

@@ -407,6 +407,7 @@ class TransShowUpdate(QThread):
         self.DownInfos = self.dbManager.GetUserDownRecordAll()
         self.checkDelFile()
 
+        self.DownLayout[3].setText(str(len(self.DownInfos)))
         # dbManager.close()
         # self.DownInfosUpdateLabs = []
         for i in self.DownInfos:
