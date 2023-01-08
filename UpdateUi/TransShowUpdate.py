@@ -447,7 +447,13 @@ class TransShowUpdate(QThread):
         else:
             info['statusLabel'].setText("文件损坏")
             info['FeCheck'] = 0
+            print('文件损坏')
         dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
+        import sip
+        self.DownLayout[1].removeWidget(info['frame'])
+        sip.delete(info['frame'])
+        self.DownLayout[1].removeWidget(info['line'])
+        sip.delete(info['line'])
         dbManager.AddUserTranspFinshRecord(info)
         dbManager.close()
         self.signal.emit()
@@ -628,11 +634,14 @@ class TransShowUpdate(QThread):
             else:
                 DownInfosUpdateLabs.append(i)
             j+=1
+
+
         self.DownInfosUpdateLabs = DownInfosUpdateLabs
         for i in delidxs:
             DownverticalLayout = self.DownLayout[1]
             DownverticalLayout.itemAt(2*i+1).widget().deleteLater()
             DownverticalLayout.itemAt(2 * i).widget().deleteLater()
+
 
 
     def StartAll(self):
@@ -669,10 +678,11 @@ class TransShowUpdate(QThread):
         # for i in range(LaConts):
         #     DownverticalLayout.itemAt(i).widget().deleteLater()
         # dbManager = DBManager.DBManager()
+        qmut_1.lock()
         self.DownInfos = self.dbManager.GetUserDownRecordAll()
-        self.checkDelFile()
-
+        # self.checkDelFile()
         self.DownLayout[3].setText(str(len(self.DownInfos)))
+        qmut_1.unlock()
         # dbManager.close()
         # self.DownInfosUpdateLabs = []
         for i in self.DownInfos:
@@ -687,6 +697,7 @@ class TransShowUpdate(QThread):
                 line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
                 line_3.setObjectName("line_3")
                 DownverticalLayout.addWidget(line_3)
+                Downinginfoi['line'] = line_3
                 # ThreadUpdatei = ThreadUpdate(self.ui)
                 # # ThreadUpdatei.setPar(Downinginfoi)
                 # ThreadUpdatei.Down(Downinginfoi)
