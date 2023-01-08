@@ -419,6 +419,7 @@ class TransShowUpdate(QThread):
         for i in self.DownInfosUpdateLabs:
             self.DownGon(i)
 
+
     def PauseAll(self):
         print('PauseAll')
         for i in self.DownInfosUpdateLabs:

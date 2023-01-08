@@ -602,7 +602,7 @@ class Ui_SBCclient(object):
         self.label_4.setText(_translate("SBCclient", "视频"))
         self.label_5.setText(_translate("SBCclient", "分享"))
         self.label_6.setText(_translate("SBCclient", "传输列表"))
-        self.label_23.setText(_translate("SBCclient", "Tran"))
+        # self.label_23.setText(_translate("SBCclient", "↑↓"))
         self.label_7.setText(_translate("SBCclient", "10.1GB/6.0T"))
         self.label_9.setText(_translate("SBCclient", "用户"))
         self.label_14.setText(_translate("SBCclient", "下载"))

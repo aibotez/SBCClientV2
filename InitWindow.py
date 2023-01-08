@@ -178,6 +178,9 @@ class initWindow():
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
 
         self.SBCMain.setupUi(Main)
+
+        self.SBCMain.TranspArrow = self.SBCMain.label_23
+        # self.SBCMain.TranspArrow.setText("↑↓")
         self.SBCMain.DownRecordFile = 'DownRecord.txt'
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
         self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
