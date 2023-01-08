@@ -45,44 +45,7 @@ class TransFinishShowUpdate():
         # self.signal.connect(self.RefreshDowning)
         # self.ButtonBind()
         # self.RefreshDowning()
-
-
-class TransShowUpdate(QThread):
-    signal = pyqtSignal()
-    def __init__(self,ui):
-        super().__init__()
-        self.DownInfosUpdateLabs = []
-        self.ui = ui
-        self.DownInfos = []
-        self.dbManager = DBManager.DBManager()
-        self.ClientSetting = self.dbManager.GetClientSetting()
-        self.signal.connect(self.RefreshDowning)
-        self.ButtonBind()
-        self.RefreshDowning()
-        # self.SBCRequest = SBCRequest.SBCRe()
-
-    def FileConChose(self,fetype):
-        if fetype == 'folder':
-            return 'img/filecon/foldersm.png'
-        if fetype == 'zip':
-            return 'img/filecon/zipcon.png'
-        if fetype == 'img':
-            return 'img/filecon/imgcon.jpg'
-        if fetype == 'pdf':
-            return 'img/filecon/pdfcon.jpg'
-        if fetype == 'ppt':
-            return 'img/filecon/pptcon.jpg'
-        if fetype == 'exe':
-            return 'img/filecon/execon.jpg'
-        if fetype == 'excel':
-            return 'img/filecon/excelcon.jpg'
-        if fetype == 'word':
-            return 'img/filecon/wordcon.jpg'
-        if fetype == 'html':
-            return 'img/filecon/htmlcon.jpg'
-        else:
-            return 'img/filecon/wj.jfif'
-    def add1(self,scrollAreaWidgetContents,DownInfo):
+    def add(self,scrollAreaWidgetContents,DownInfo):
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
         self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_16.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -189,6 +152,197 @@ class TransShowUpdate(QThread):
         label_22.setText(">")
         label_22.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
                            "QLabel:hover{color:rgb(20, 90, 50);}")
+
+        label_23.setText("X")
+        label_23.setStyleSheet("QLabel{font-size:26px;font-family:Roman times;}"
+                           "QLabel:hover{color:rgb(20, 90, 50);}")
+
+        label_24.setText("[]")
+        label_24.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
+                           "QLabel:hover{color:rgb(20, 90, 50);}")
+
+
+
+        # label_23.setText("")
+        # label_23.setMaximumSize(20,20)
+        # label_23.setPixmap(QtGui.QPixmap('./img/del1.png'))
+        # label_23.setScaledContents(True)
+        # label_22.setText("")
+        # label_22.setMaximumSize(22,23)
+        # label_22.setPixmap(QtGui.QPixmap('./img/start1.png'))
+        # label_22.setScaledContents(True)
+        # label_22.setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 2px;")
+
+
+        # label_23.setStyleSheet("border:1px groove gray;border-radius:10px;padding:0px 0px;")
+
+        label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        # Downinginfoi = {}
+        Downinginfoi = DownInfo
+        Downinginfoi['frame'] = self.frame_16
+        Downinginfoi['statusButon'] = label_22
+        Downinginfoi['statusLabel'] = label_21
+        Downinginfoi['progressBar'] = progressBar_4
+        Downinginfoi['DownSizeLabel'] = label_20
+        # Downinginfoi['FilePath'] = DownInfo['FilePath']
+        # Downinginfoi['FileName'] = DownInfo['FileName']
+        # Downinginfoi['isDown'] = DownInfo['isDown']
+        # Downinginfoi['size'] = DownInfo['Size']
+        # Downinginfoi['RoFilePath'] = DownInfo['RoFilePath']
+        Downinginfoi['LoFileSatus'] = LoFile
+        Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
+        label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
+        label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
+        label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
+        return Downinginfoi
+
+
+class TransShowUpdate(QThread):
+    signal = pyqtSignal()
+    def __init__(self,ui):
+        super().__init__()
+        self.DownInfosUpdateLabs = []
+        self.ui = ui
+        self.DownInfos = []
+        self.dbManager = DBManager.DBManager()
+        self.ClientSetting = self.dbManager.GetClientSetting()
+        self.signal.connect(self.RefreshDowning)
+        self.ButtonBind()
+        self.RefreshDowning()
+        # self.SBCRequest = SBCRequest.SBCRe()
+
+    def FileConChose(self,fetype):
+        if fetype == 'folder':
+            return 'img/filecon/foldersm.png'
+        if fetype == 'zip':
+            return 'img/filecon/zipcon.png'
+        if fetype == 'img':
+            return 'img/filecon/imgcon.jpg'
+        if fetype == 'pdf':
+            return 'img/filecon/pdfcon.jpg'
+        if fetype == 'ppt':
+            return 'img/filecon/pptcon.jpg'
+        if fetype == 'exe':
+            return 'img/filecon/execon.jpg'
+        if fetype == 'excel':
+            return 'img/filecon/excelcon.jpg'
+        if fetype == 'word':
+            return 'img/filecon/wordcon.jpg'
+        if fetype == 'html':
+            return 'img/filecon/htmlcon.jpg'
+        else:
+            return 'img/filecon/wj.jfif'
+    def add1(self,scrollAreaWidgetContents,DownInfo):
+        self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
+        self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_16.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_16.setObjectName("frame_16")
+        self.frame_16.setStyleSheet("QFrame#frame_16::hover{background:#D0D3D4;border-radius:22px;}")
+        self.horizontalLayout_11 = QtWidgets.QHBoxLayout(self.frame_16)
+        self.horizontalLayout_11.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_11.setSpacing(0)
+        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
+        spacerItem1 = QtWidgets.QSpacerItem(18, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem1)
+        self.label_33 = QtWidgets.QLabel(self.frame_16)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_33.sizePolicy().hasHeightForWidth())
+        self.label_33.setSizePolicy(sizePolicy)
+        self.label_33.setMinimumSize(QtCore.QSize(30, 30))
+        self.label_33.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_33.setObjectName("label_33")
+        self.horizontalLayout_11.addWidget(self.label_33)
+        self.frame_17 = QtWidgets.QFrame(self.frame_16)
+        self.frame_17.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_17.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_17.setObjectName("frame_17")
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.frame_17)
+        self.verticalLayout_10.setContentsMargins(0, 8, 0, 8)
+        self.verticalLayout_10.setSpacing(6)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
+        self.label_19 = QtWidgets.QLabel(self.frame_17)
+        self.label_19.setObjectName("label_19")
+        self.verticalLayout_10.addWidget(self.label_19)
+        label_20 = QtWidgets.QLabel(self.frame_17)
+        label_20.setObjectName("label_20")
+        self.verticalLayout_10.addWidget(label_20)
+        self.horizontalLayout_11.addWidget(self.frame_17)
+        spacerItem2 = QtWidgets.QSpacerItem(18, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem2)
+        self.frame_18 = QtWidgets.QFrame(self.frame_16)
+        self.frame_18.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_18.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_18.setObjectName("frame_18")
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.frame_18)
+        self.verticalLayout_11.setContentsMargins(0, 15, 0, 0)
+        self.verticalLayout_11.setSpacing(0)
+        self.verticalLayout_11.setObjectName("verticalLayout_11")
+        progressBar_4 = QtWidgets.QProgressBar(self.frame_18)
+        progressBar_4.setMinimumSize(QtCore.QSize(0, 0))
+        progressBar_4.setMaximumSize(QtCore.QSize(16777215, 15))
+        # progressBar_4.setProperty("value", 24)
+        progressBar_4.setObjectName("progressBar_4")
+        self.verticalLayout_11.addWidget(progressBar_4)
+        label_21 = QtWidgets.QLabel(self.frame_18)
+        label_21.setObjectName("label_21")
+        self.verticalLayout_11.addWidget(label_21)
+        self.horizontalLayout_11.addWidget(self.frame_18)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem3)
+        self.frame_19 = QtWidgets.QFrame(self.frame_16)
+        self.frame_19.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_19.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_19.setObjectName("frame_19")
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout(self.frame_19)
+        self.horizontalLayout_12.setContentsMargins(-1, -1, 0, -1)
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        label_22 = QtWidgets.QLabel(self.frame_19)
+        label_22.setObjectName("label_22")
+        self.horizontalLayout_12.addWidget(label_22)
+        label_23 = QtWidgets.QLabel(self.frame_19)
+        label_23.setObjectName("label_23")
+        self.horizontalLayout_12.addWidget(label_23)
+        label_24 = QtWidgets.QLabel(self.frame_19)
+        label_24.setObjectName("label_24")
+        self.horizontalLayout_12.addWidget(label_24)
+        self.horizontalLayout_11.addWidget(self.frame_19)
+        spacerItem4 = QtWidgets.QSpacerItem(18, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem4)
+        self.horizontalLayout_11.setStretch(0, 1)
+        self.horizontalLayout_11.setStretch(1, 6)
+        self.horizontalLayout_11.setStretch(2, 10)
+        self.horizontalLayout_11.setStretch(3, 1)
+        self.horizontalLayout_11.setStretch(4, 10)
+        self.horizontalLayout_11.setStretch(5, 1)
+        self.horizontalLayout_11.setStretch(6, 5)
+        self.horizontalLayout_11.setStretch(7, 1)
+
+        LoFile = self.CheckLoFile(DownInfo)
+        LoSize = self.size_format(LoFile['size'])
+
+        progressBar_4.setProperty("value", (LoFile['size']/DownInfo['Size'])*100)
+
+
+        self.label_33.setText("")
+        self.label_33.setPixmap(QtGui.QPixmap(self.FileConChose(DownInfo['fetype'])))
+        self.label_33.setScaledContents(True)
+        self.label_33.setMaximumSize(46, 46)
+
+
+
+
+        self.label_19.setText(DownInfo['FileName'])
+        self.label_19.setFixedWidth(260)
+        label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
+        label_21.setText("--")
+        label_22.setText(">")
+        # QFrame  # frame_16::hover
+        label_22.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
+                           "#label_22:hover{color:rgb(20, 90, 50);}")
 
         label_23.setText("X")
         label_23.setStyleSheet("QLabel{font-size:26px;font-family:Roman times;}"
@@ -463,7 +617,6 @@ class TransShowUpdate(QThread):
         self.RefreshDowning()
 
     def ButtonBind(self):
-        print('ui',self.ui.TranspscrollArea)
         self.DownLayout = self.ui.TranspscrollArea['Down']
         self.DownLayout[4].clicked.connect(self.StartAll)
         self.DownLayout[5].clicked.connect(self.PauseAll)

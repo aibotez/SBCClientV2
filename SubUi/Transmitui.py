@@ -87,11 +87,11 @@ class Ui_Form(object):
 "    border:none;\n"
 "}\n"
 "\n"
-"#scrollAreaWidgetContents_7 QFrame:hover{\n"
-"    background:#D0D3D4;\n"
-"    border-radius:22px;\n"
-"    opacity:0.5;\n"
-"    }\n"
+# "#scrollAreaWidgetContents_7 QFrame:hover{\n"
+# "    background:#D0D3D4;\n"
+# "    border-radius:22px;\n"
+# "    opacity:0.5;\n"
+# "    }\n"
 "")
         self.scrollArea_7.setLineWidth(0)
         self.scrollArea_7.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -475,11 +475,11 @@ class Ui_Form(object):
 "    border:none;\n"
 "}\n"
 "\n"
-"#scrollAreaWidgetContents_6 QFrame:hover{\n"
-"    background:#D0D3D4;\n"
-"    border-radius:22px;\n"
-"    opacity:0.5;\n"
-"    }\n"
+# "#scrollAreaWidgetContents_6 QFrame:hover{\n"
+# "    background:#D0D3D4;\n"
+# "    border-radius:22px;\n"
+# "    opacity:0.5;\n"
+# "    }\n"
 "")
         self.scrollArea_6.setLineWidth(0)
         self.scrollArea_6.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
