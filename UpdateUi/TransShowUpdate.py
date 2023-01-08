@@ -237,18 +237,22 @@ class TransShowUpdate(QThread):
         info['statusButon'].setText(">")
         info['statusLabel'].setText("已暂停")
         dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 0)
-        info['isDown'] = 0
+        # info['isDown'] = 0
         dbManager.close()
     def DownGon(self,info):
         dbManager = DBManager.DBManager()
         info['statusButon'].setText("||")
         dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
-        info['isDown'] = 1
-        self.Down(info)
+        # info['isDown'] = 1
         dbManager.close()
+        self.Down(info)
+
 
     def DownSatusChange(self,info,e):
-        if int(info['isDown']):
+        dbManager = DBManager.DBManager()
+        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
+        if DownInfoi and int(DownInfoi['isDown']):
+        # if int(info['isDown']):
             self.DownCancel(info)
             # info['statusButon'].setText(">")
             # info['statusLabel'].setText("已暂停")
@@ -265,7 +269,10 @@ class TransShowUpdate(QThread):
         # self.signal.emit()
 
     def Downact(self,info):
-        if int(info['isDown']):
+        dbManager = DBManager.DBManager()
+        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
+        if DownInfoi and int(DownInfoi['isDown']):
+        # if int(info['isDown']):
             info['statusButon'].setText("||")
             LoFileSatus = self.CheckLoFile(info)
             # LoFileSatus = info['LoFileSatus']
@@ -283,7 +290,7 @@ class TransShowUpdate(QThread):
                     'downinfo':downinfo
                 }
                 url_fileDown = 'http://'+self.ClientSetting['host']+'/FileDown1/'
-                dbManager = DBManager.DBManager()
+                # dbManager = DBManager.DBManager()
                 r = requests.post(url_fileDown,data=json.dumps(data),headers=self.ui.SBCRe.headers,stream=True)
                 with open(info['LoPath'], 'ab') as f:
                     t0 = time.time()
@@ -316,20 +323,19 @@ class TransShowUpdate(QThread):
                         else:
                             # self.DownCancel(info)
                             break
-                dbManager.close()
+        dbManager.close()
     def Down(self,info):
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']
         LoFileExist = LoFileSatus['exist']
-        if int(info['isDown']):
-            if not os.path.isdir(info['FilePath']):
-                os.makedirs(info['FilePath'])
-            # qmut_1.lock()
-            t = threading.Thread(target=self.run1,args=(info,))
-            t.setDaemon(True)
-            t.start()
-            self.info=info
+        if not os.path.isdir(info['FilePath']):
+            os.makedirs(info['FilePath'])
+        # qmut_1.lock()
+        t = threading.Thread(target=self.run1, args=(info,))
+        t.setDaemon(True)
+        t.start()
+        self.info = info
             # self.start()
             # qmut_1.unlock()
     def run1(self,info):
@@ -409,11 +415,20 @@ class TransShowUpdate(QThread):
 
     def StartAll(self,e):
         print('StartAll')
-        self.DownInfos = self.dbManager.GetUserDownRecordAll()
+        # self.DownInfos = self.dbManager.GetUserDownRecordAll()
+        for i in self.DownInfosUpdateLabs:
+            self.DownGon(i)
+
     def PauseAll(self):
         print('PauseAll')
+        for i in self.DownInfosUpdateLabs:
+            self.DownCancel(i)
     def CancelAll(self):
         print('CancelAll')
+        for i in self.DownInfosUpdateLabs:
+            self.dbManager.DelUserDownRecord(i['FilePath'], i['FileName'])
+        self.RefreshDowning()
+
     def ButtonBind(self):
         print('ui',self.ui.TranspscrollArea)
         self.DownLayout = self.ui.TranspscrollArea['Down']
