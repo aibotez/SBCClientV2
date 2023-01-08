@@ -220,10 +220,13 @@ class TransShowUpdate(QThread):
         RofeMd5 = info['FileMd5']
         if LofeMd5 == RofeMd5:
             info['statusLabel'].setText("校验通过")
+            info['FeCheck'] = 1
             print('校验通过')
         else:
             info['statusLabel'].setText("文件损坏")
+            info['FeCheck'] = 0
         dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
+        dbManager.close()
         self.signal.emit()
 
 
@@ -243,6 +246,7 @@ class TransShowUpdate(QThread):
             dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
             info['isDown'] = 1
             self.Down(info)
+        dbManager.close()
         # self.signal.emit()
 
     def Downact(self,info):
@@ -270,7 +274,7 @@ class TransShowUpdate(QThread):
                     t0 = time.time()
                     # for chunk1 in r.iter_content(chunk_size=1*1024*1024):
                     #     print(66,len(chunk1))
-                    for chunk in r.iter_content(chunk_size=2*1024*1024):
+                    for chunk in r.iter_content(chunk_size=1024*1024):
                         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
                         if DownInfoi and int(DownInfoi['isDown']):
                             DownSpeed = 0
@@ -297,7 +301,7 @@ class TransShowUpdate(QThread):
                         else:
                             # self.DownCancel(info)
                             break
-
+                dbManager.close()
     def Down(self,info):
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
@@ -323,7 +327,6 @@ class TransShowUpdate(QThread):
 
     def OpenDownFile(self,info,e):
         Path = info['LoPath'].replace('/','\\')
-        print(Path)
         os.system(r"explorer /select,{}".format(Path))
 
     def size_format(self,size):

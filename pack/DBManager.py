@@ -78,8 +78,8 @@ class DBManager():
     def GetUserDownRecord(self,FilePath,FileName):
         # FilePath = '/home/p'
         # FileName = 'record.txt'
-        self.close()
-        self.Connect()
+        # self.close()
+        # self.Connect()
 
         sql = "select * from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
 
@@ -92,8 +92,8 @@ class DBManager():
             Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
         return Result
     def GetUserDownRecordAll(self):
-        self.close()
-        self.Connect()
+        # self.close()
+        # self.Connect()
         # FilePath = '/home/p'
         # FileName = 'record.txt'
         sql = "select * from UserDown"
@@ -107,8 +107,8 @@ class DBManager():
 
         return Result
     def UpdataUserDownRecord(self,FilePath,FileName,changeVaule):
-        self.close()
-        self.Connect()
+        # self.close()
+        # self.Connect()
         sql = "update UserDown set isDown=? where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         data = (str(changeVaule))
         self.cur.execute(sql,data)
@@ -117,8 +117,8 @@ class DBManager():
     def DelUserDownRecord(self,FilePath,FileName):
         # FilePath = '/home/p1'
         # FileName = 'record.txt'
-        self.close()
-        self.Connect()
+        # self.close()
+        # self.Connect()
         sql = "delete from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
         self.cur.execute(sql)
         self.conn.commit()
