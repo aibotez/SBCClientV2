@@ -154,8 +154,9 @@ class TransFinishShowUpdate():
         LoSize = size_format(LoFile['size'])
 
         self.label_13.setFixedWidth(0)
-        self.label_14.setText("文件损坏")
-        self.label_14.setStyleSheet("QLabel{color:red;}")
+        if not int(DownInfo['fecheck']):
+            self.label_14.setText("文件损坏")
+            self.label_14.setStyleSheet("QLabel{color:red;}")
 
         self.label_32.setText("")
         self.label_32.setPixmap(QtGui.QPixmap(FileConChose(DownInfo['fetype'])))
