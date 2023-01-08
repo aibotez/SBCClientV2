@@ -540,12 +540,11 @@ class TransShowUpdate(QThread):
                                     print(e)
                                     print(info)
 
-                            if LoFileSize >= RoFileSize:
-                                self.DownFinsh(info)
-
                         else:
                             # self.DownCancel(info)
                             break
+                if LoFileSize >= RoFileSize:
+                    self.DownFinsh(info)
         dbManager.close()
     def Down(self,info):
         Path = info['LoPath']
