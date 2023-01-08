@@ -14,6 +14,39 @@ import threading
 qmut_1 = QMutex()
 
 
+def FileConChose(fetype):
+    if fetype == 'folder':
+        return 'img/filecon/foldersm.png'
+    if fetype == 'zip':
+        return 'img/filecon/zipcon.png'
+    if fetype == 'img':
+        return 'img/filecon/imgcon.jpg'
+    if fetype == 'pdf':
+        return 'img/filecon/pdfcon.jpg'
+    if fetype == 'ppt':
+        return 'img/filecon/pptcon.jpg'
+    if fetype == 'exe':
+        return 'img/filecon/execon.jpg'
+    if fetype == 'excel':
+        return 'img/filecon/excelcon.jpg'
+    if fetype == 'word':
+        return 'img/filecon/wordcon.jpg'
+    if fetype == 'html':
+        return 'img/filecon/htmlcon.jpg'
+    else:
+        return 'img/filecon/wj.jfif'
+class TransFinishShowUpdate():
+    signal = pyqtSignal()
+    def __init__(self,ui):
+        super().__init__()
+        self.ui = ui
+        self.dbManager = DBManager.DBManager()
+        self.ClientSetting = self.dbManager.GetClientSetting()
+        # self.signal.connect(self.RefreshDowning)
+        # self.ButtonBind()
+        # self.RefreshDowning()
+
+
 class TransShowUpdate(QThread):
     signal = pyqtSignal()
     def __init__(self,ui):
@@ -413,19 +446,18 @@ class TransShowUpdate(QThread):
             DownverticalLayout.itemAt(2 * i).widget().deleteLater()
 
 
-    def StartAll(self,e):
-        print('StartAll')
+    def StartAll(self):
+        self.PauseAll()
+        time.sleep(2)
         # self.DownInfos = self.dbManager.GetUserDownRecordAll()
         for i in self.DownInfosUpdateLabs:
             self.DownGon(i)
 
 
     def PauseAll(self):
-        print('PauseAll')
         for i in self.DownInfosUpdateLabs:
             self.DownCancel(i)
     def CancelAll(self):
-        print('CancelAll')
         for i in self.DownInfosUpdateLabs:
             self.dbManager.DelUserDownRecord(i['FilePath'], i['FileName'])
         self.RefreshDowning()
