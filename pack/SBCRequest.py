@@ -44,6 +44,16 @@ class SBCRe():
 
         # FileDatas = json.loads(res.text)
         return json.loads(res.text)
+    def GetAllFilesfromFolder(self,path):
+        url = 'http://' + self.host + '/GetAllFilesfromFolder/'
+        data = {
+            'path': path,
+        }
+        # print(self.headers)
+        res = requests.post(url, data=data,headers=self.headers)
+        # print(res)
+        FileDatas = json.loads(res.text)
+        return FileDatas
     def GetFileList(self,path):
         url = 'http://' + self.host + '/GetFileListbyClient/'
         data = {

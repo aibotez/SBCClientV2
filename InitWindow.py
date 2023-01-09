@@ -49,6 +49,7 @@ class FileOperClick():
             DownFeInfo['fetype'] = DownFile['fetype']
             DownFeInfo['FilePath'] = DownFaPath
             DownFeInfo['RoFilePath'] = DownFile['fepath']
+            # print(DownFeInfo)
             self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
 
     def Down(self,e):
@@ -63,6 +64,22 @@ class FileOperClick():
             if i['fetype'] != 'folder':
                 DownFaPath = self.ui.DownPath
                 self.Downact(i,DownFaPath)
+            else:
+                # FatherPath0 = self.ui.DownPath+i['fename']+'/'
+                CurPath = i['fepath']
+                Files = self.ui.SBCRe.GetAllFilesfromFolder(CurPath)
+                if Files['Files']:
+                    for fei in Files['Files']:
+                        DownFaPath = self.ui.DownPath + i['fename']+fei['fapath']+'/'
+                        # DownFaPath = DownFaPath.replace('//','/')
+                        self.Downact(fei, DownFaPath)
+                # while True:
+                #     self.ui.SBCRe.GetFileList(CurPath)
+                #     CurFileList = self.ui.SBCRe.CurFileList
+                #     for j in CurFileList:
+                #         if j['fetype'] != 'folder':
+                #             DownPathi = FatherPath0
+                # print(CurFileList)
 
 
 class ClickEventDeals():

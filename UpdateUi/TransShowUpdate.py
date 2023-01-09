@@ -568,6 +568,7 @@ class TransShowUpdate(QThread):
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']
         LoFileExist = LoFileSatus['exist']
+        # print(info)
         if not os.path.isdir(info['FilePath']):
             os.makedirs(info['FilePath'])
         # qmut_1.lock()
