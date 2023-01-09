@@ -65,6 +65,7 @@ def str_trans_to_md5(src):
     myMd5.update(src)
     myMd5_Digest = myMd5.hexdigest()
     return myMd5_Digest
+
 class TransFinishShowUpdate():
     signal = pyqtSignal()
     def __init__(self,ui):
@@ -235,6 +236,7 @@ class TransFinishShowUpdate():
 class TransShowUpdate(QThread):
     signal = pyqtSignal()
     signal1 = pyqtSignal()
+    signaladd = pyqtSignal(dict)
     def __init__(self,ui):
         super().__init__()
         self.DownInfosUpdateLabs = {}
@@ -243,6 +245,7 @@ class TransShowUpdate(QThread):
         self.dbManager = DBManager.DBManager()
         self.ClientSetting = self.dbManager.GetClientSetting()
         self.signal.connect(self.RefreshDowning)
+        self.signaladd.connect(self.AddDowning1)
 
         self.ButtonBind()
         self.RefreshDowning()
@@ -704,7 +707,10 @@ class TransShowUpdate(QThread):
         self.DownLayout[6].clicked.connect(self.CancelAll)
 
 
+
     def AddDowning(self,DownInfo):
+        self.signaladd.emit(DownInfo)
+    def AddDowning1(self,DownInfo):
         DownInfo['Size'] = DownInfo['size']
         DownLayout = self.ui.TranspscrollArea['Down']
         DownverticalLayout = DownLayout[1]

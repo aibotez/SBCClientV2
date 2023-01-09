@@ -10,7 +10,7 @@ class TransFileManager():
     def __init__(self,MainUi,ui):
         self.ui = ui
         # self.ui.TranspArrow.setText("↑↓")
-        self.dbManager = DBManager.DBManager()
+        # self.dbManager = DBManager.DBManager()
         self.MainUi = MainUi
         self.Transhow = TransShowUpdate.TransShowUpdate(ui)
 
@@ -22,7 +22,8 @@ class TransFileManager():
 
         # self.ui.TranspArrow.setText("↑↓")
     def AddDownRecord(self,DownInfo):
-        AdW = self.dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
+        dbManager = DBManager.DBManager()
+        AdW = dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
         # AdW = self.dbManager.AddUserDownRecord(DownInfo)
         if AdW:
             return
@@ -32,6 +33,7 @@ class TransFileManager():
             #     pass
             # else:
             #     return
+        dbManager.close()
         self.Transhow.AddDowning(DownInfo)
         # self.Transhow.RefreshDowning()
 
