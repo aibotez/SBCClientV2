@@ -1,5 +1,5 @@
 import sys,threading,os,hashlib,requests,json
-import time
+import time,sip
 
 sys.path.append('..')
 from pack import DBManager
@@ -448,15 +448,16 @@ class TransShowUpdate(QThread):
             info['statusLabel'].setText("文件损坏")
             info['FeCheck'] = 0
             print('文件损坏')
-        dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
-        import sip
-        self.DownLayout[1].removeWidget(info['frame'])
-        sip.delete(info['frame'])
-        self.DownLayout[1].removeWidget(info['line'])
-        sip.delete(info['line'])
         dbManager.AddUserTranspFinshRecord(info)
+        self.DelDowing(info,0)
+        # dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
+        # self.DownLayout[1].removeWidget(info['frame'])
+        # sip.delete(info['frame'])
+        # self.DownLayout[1].removeWidget(info['line'])
+        # sip.delete(info['line'])
+        # dbManager.AddUserTranspFinshRecord(info)
         dbManager.close()
-        self.signal.emit()
+        # # self.signal.emit()
         self.signal1.emit()
 
 
@@ -600,8 +601,17 @@ class TransShowUpdate(QThread):
         return {'exist':LoFileExist,'size':LoFileSize}
 
     def DelDowing(self,info,e):
-        self.dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
-        self.RefreshDowning()
+        dbManager = DBManager.DBManager()
+        dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
+        self.DownLayout[1].removeWidget(info['frame'])
+        sip.delete(info['frame'])
+        self.DownLayout[1].removeWidget(info['line'])
+        sip.delete(info['line'])
+        # self.RefreshDowning()
+        DownInfos = dbManager.GetUserDownRecordAll()
+        print('DownS',DownInfos)
+        self.DownLayout[3].setText(str(len(DownInfos)))
+        dbManager.close()
 
         # j=0
         # for i in self.DownInfos:
@@ -657,14 +667,41 @@ class TransShowUpdate(QThread):
             self.DownCancel(i)
     def CancelAll(self):
         for i in self.DownInfosUpdateLabs:
-            self.dbManager.DelUserDownRecord(i['FilePath'], i['FileName'])
-        self.RefreshDowning()
+            # self.dbManager.DelUserDownRecord(i['FilePath'], i['FileName'])
+            self.DelDowing(i,0)
+        # self.RefreshDowning()
 
     def ButtonBind(self):
         self.DownLayout = self.ui.TranspscrollArea['Down']
         self.DownLayout[4].clicked.connect(self.StartAll)
         self.DownLayout[5].clicked.connect(self.PauseAll)
         self.DownLayout[6].clicked.connect(self.CancelAll)
+
+
+    def AddDowning(self,DownInfo):
+        DownInfo['Size'] = DownInfo['size']
+        DownLayout = self.ui.TranspscrollArea['Down']
+        DownverticalLayout = DownLayout[1]
+        scrollAreaWidgetContents_down = DownLayout[2]
+        dbManager = DBManager.DBManager()
+        dbManager.AddUserDownRecord(DownInfo)
+        DownInfos = dbManager.GetUserDownRecordAll()
+        self.DownLayout[3].setText(str(len(DownInfos)))
+
+        Downinginfoi = self.add1(scrollAreaWidgetContents_down,DownInfo)
+        self.DownInfosUpdateLabs.append(Downinginfoi)
+        form = Downinginfoi['frame']
+        DownverticalLayout.addWidget(form)
+        line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
+        line_3.setMinimumSize(QtCore.QSize(649, 0))
+        line_3.setFrameShape(QtWidgets.QFrame.HLine)
+        line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line_3.setObjectName("line_3")
+        DownverticalLayout.addWidget(line_3)
+        Downinginfoi['line'] = line_3
+        dbManager.close()
+        self.Down(Downinginfoi)
+
 
 
     def RefreshDowning(self):
@@ -675,17 +712,12 @@ class TransShowUpdate(QThread):
         DownverticalLayout = DownLayout[1]
         scrollAreaWidgetContents_down = DownLayout[2]
         LaConts = DownverticalLayout.count()
-        # for i in range(LaConts):
-        #     DownverticalLayout.itemAt(i).widget().deleteLater()
-        # dbManager = DBManager.DBManager()
-        qmut_1.lock()
-        self.DownInfos = self.dbManager.GetUserDownRecordAll()
+        dbManager = DBManager.DBManager()
+        DownInfos = dbManager.GetUserDownRecordAll()
         # self.checkDelFile()
-        self.DownLayout[3].setText(str(len(self.DownInfos)))
-        qmut_1.unlock()
-        # dbManager.close()
-        # self.DownInfosUpdateLabs = []
-        for i in self.DownInfos:
+        self.DownLayout[3].setText(str(len(DownInfos)))
+        # print(66,DownInfos)
+        for i in DownInfos:
             if not self.checkAddFile(i):
                 Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
                 self.DownInfosUpdateLabs.append(Downinginfoi)
@@ -702,6 +734,10 @@ class TransShowUpdate(QThread):
                 # # ThreadUpdatei.setPar(Downinginfoi)
                 # ThreadUpdatei.Down(Downinginfoi)
                 self.Down(Downinginfoi)
+
+
+
+        dbManager.close()
 
 
 
