@@ -160,8 +160,10 @@ class TransFinishShowUpdate():
 
         LoFile = CheckLoFile(DownInfo)
         LoSize = size_format(LoFile['size'])
-
-        self.label_13.setFixedWidth(0)
+        timestamp = float(DownInfo['timestamp'])
+        strtime = time.strftime("%Y-%m-%d\n%H:%M:%S", time.localtime(timestamp))
+        # strtime = time.strftime("%Y-%m-%d", time.localtime(timestamp))
+        self.label_13.setText(strtime)
         if not int(DownInfo['fecheck']):
             self.label_14.setText("文件损坏")
             self.label_14.setStyleSheet("QLabel{color:red;}")
@@ -461,6 +463,7 @@ class TransShowUpdate(QThread):
             info['statusLabel'].setText("文件损坏")
             info['FeCheck'] = 0
             print('文件损坏')
+        info['timestamp'] = time.time()     # 当前时间戳
         dbManager.AddUserTranspFinshRecord(info)
         self.DelDowing(info,0)
         # dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])

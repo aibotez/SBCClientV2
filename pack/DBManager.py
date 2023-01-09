@@ -50,7 +50,7 @@ class DBManager():
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserTransFinshRecordform(self):
-        sql = "create table TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck)"
+        sql = "create table TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck,timestamp)"
         self.cur.execute(sql)
         self.conn.commit()
 
@@ -68,8 +68,8 @@ class DBManager():
         if self.GetUserTranspFinshRecord(DownInfo['FilePath'],DownInfo['FileName']):
             return 'Have'
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
-        sql = "insert into TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck) values (?,?,?,?,?,?)"
-        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['FilePath'],DownInfo['Size'],DownInfo['fetype'],DownInfo['FeCheck'])
+        sql = "insert into TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck,timestamp) values (?,?,?,?,?,?,?)"
+        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['FilePath'],DownInfo['Size'],DownInfo['fetype'],DownInfo['FeCheck'],DownInfo['timestamp'])
         self.cur.execute(sql, data)
         self.conn.commit()
         return 1
@@ -100,7 +100,7 @@ class DBManager():
         Result = None
         for i in self.cur:
             info = list(i)
-            Result = {'FileMd5':info[0],'FileName':info[1],'FilePath':info[2],'Size':info[3],'fetype':info[4],'fecheck':info[5]}
+            Result = {'FileMd5':info[0],'FileName':info[1],'FilePath':info[2],'Size':info[3],'fetype':info[4],'fecheck':info[5],'timestamp':info[6]}
         return Result
     def GetUserTranspFinshRecordAll(self):
         sql = "select * from TransFinsh"
@@ -109,7 +109,7 @@ class DBManager():
         Result = []
         for i in self.cur:
             info = list(i)
-            Resulti = {'FileMd5':info[0],'FileName':info[1],'FilePath':info[2],'Size':info[3],'fetype':info[4],'fecheck':info[5]}
+            Resulti = {'FileMd5':info[0],'FileName':info[1],'FilePath':info[2],'Size':info[3],'fetype':info[4],'fecheck':info[5],'timestamp':info[6]}
             Result.append(Resulti)
         return Result
     def GetUserDownRecordAll(self):
