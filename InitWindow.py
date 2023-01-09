@@ -70,7 +70,9 @@ class FileOperClick():
                 Files = self.ui.SBCRe.GetAllFilesfromFolder(CurPath)
                 if Files['Files']:
                     for fei in Files['Files']:
-                        DownFaPath = self.ui.DownPath + i['fename']+fei['fapath']+'/'
+                        # print(fei)
+                        DownFaPath = self.ui.DownPath + i['fename']+'/'+fei['fapath']+'/'
+                        DownFaPath = DownFaPath.replace('//','/')
                         # DownFaPath = DownFaPath.replace('//','/')
                         self.Downact(fei, DownFaPath)
                 # while True:
