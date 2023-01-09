@@ -41,7 +41,6 @@ class FileOperClick():
         Femd5 = None
         if not FeMd5req['error']:
             Femd5 = FeMd5req['md5']
-        print(Femd5,DownFile)
         DownFeInfo ={}
         if DownFile['fetype'] != 'folder':
             DownFeInfo['FileMd5'] = Femd5

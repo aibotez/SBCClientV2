@@ -58,6 +58,13 @@ def FileConChose(fetype):
         return 'img/filecon/htmlcon.jpg'
     else:
         return 'img/filecon/wj.jfif'
+
+def str_trans_to_md5(src):
+    src = src.encode("utf-8")
+    myMd5 = hashlib.md5()
+    myMd5.update(src)
+    myMd5_Digest = myMd5.hexdigest()
+    return myMd5_Digest
 class TransFinishShowUpdate():
     signal = pyqtSignal()
     def __init__(self,ui):
@@ -230,7 +237,7 @@ class TransShowUpdate(QThread):
     signal1 = pyqtSignal()
     def __init__(self,ui):
         super().__init__()
-        self.DownInfosUpdateLabs = []
+        self.DownInfosUpdateLabs = {}
         self.ui = ui
         self.DownInfos = []
         self.dbManager = DBManager.DBManager()
@@ -268,6 +275,7 @@ class TransShowUpdate(QThread):
         else:
             return 'img/filecon/wj.jfif'
     def add1(self,scrollAreaWidgetContents,DownInfo):
+
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
         self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_16.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -417,6 +425,8 @@ class TransShowUpdate(QThread):
         # Downinginfoi['RoFilePath'] = DownInfo['RoFilePath']
         Downinginfoi['LoFileSatus'] = LoFile
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
+        self.DownInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
+
         label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
         label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
         label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
@@ -609,8 +619,9 @@ class TransShowUpdate(QThread):
         sip.delete(info['line'])
         # self.RefreshDowning()
         DownInfos = dbManager.GetUserDownRecordAll()
-        print('DownS',DownInfos)
+        # print('DownS',DownInfos)
         self.DownLayout[3].setText(str(len(DownInfos)))
+        del self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath']+info['FileName'])]
         dbManager.close()
 
         # j=0
@@ -659,17 +670,31 @@ class TransShowUpdate(QThread):
         time.sleep(2)
         # self.DownInfos = self.dbManager.GetUserDownRecordAll()
         for i in self.DownInfosUpdateLabs:
-            self.DownGon(i)
+            self.DownGon(self.DownInfosUpdateLabs[i])
 
 
     def PauseAll(self):
         for i in self.DownInfosUpdateLabs:
-            self.DownCancel(i)
+            self.DownCancel(self.DownInfosUpdateLabs[i])
+        # dbManager = DBManager.DBManager()
+        # DownInfos = dbManager.GetUserDownRecordAll()
+        # for i in DownInfos:
+        #     self.DownCancel(i)
+        # dbManager.close()
     def CancelAll(self):
+        DownInfosUpdateLabs = {}
         for i in self.DownInfosUpdateLabs:
-            # self.dbManager.DelUserDownRecord(i['FilePath'], i['FileName'])
-            self.DelDowing(i,0)
-        # self.RefreshDowning()
+            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
+
+        for i in DownInfosUpdateLabs:
+            self.DelDowing(self.DownInfosUpdateLabs[i], 0)
+        # dbManager = DBManager.DBManager()
+        # DownInfos = dbManager.GetUserDownRecordAll()
+        # for i in DownInfos:
+        #     # self.dbManager.DelUserDownRecord(i['FilePath'], i['FileName'])
+        #     self.DelDowing(i,0)
+        # # self.RefreshDowning()
+        # dbManager.close()
 
     def ButtonBind(self):
         self.DownLayout = self.ui.TranspscrollArea['Down']
@@ -689,7 +714,6 @@ class TransShowUpdate(QThread):
         self.DownLayout[3].setText(str(len(DownInfos)))
 
         Downinginfoi = self.add1(scrollAreaWidgetContents_down,DownInfo)
-        self.DownInfosUpdateLabs.append(Downinginfoi)
         form = Downinginfoi['frame']
         DownverticalLayout.addWidget(form)
         line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
@@ -718,23 +742,36 @@ class TransShowUpdate(QThread):
         self.DownLayout[3].setText(str(len(DownInfos)))
         # print(66,DownInfos)
         for i in DownInfos:
-            if not self.checkAddFile(i):
-                Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
-                self.DownInfosUpdateLabs.append(Downinginfoi)
-                form = Downinginfoi['frame']
-                DownverticalLayout.addWidget(form)
-                line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
-                line_3.setMinimumSize(QtCore.QSize(649, 0))
-                line_3.setFrameShape(QtWidgets.QFrame.HLine)
-                line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-                line_3.setObjectName("line_3")
-                DownverticalLayout.addWidget(line_3)
-                Downinginfoi['line'] = line_3
-                # ThreadUpdatei = ThreadUpdate(self.ui)
-                # # ThreadUpdatei.setPar(Downinginfoi)
-                # ThreadUpdatei.Down(Downinginfoi)
-                self.Down(Downinginfoi)
-
+            Downinginfoi = self.add1(scrollAreaWidgetContents_down, i)
+            form = Downinginfoi['frame']
+            DownverticalLayout.addWidget(form)
+            line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
+            line_3.setMinimumSize(QtCore.QSize(649, 0))
+            line_3.setFrameShape(QtWidgets.QFrame.HLine)
+            line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+            line_3.setObjectName("line_3")
+            DownverticalLayout.addWidget(line_3)
+            Downinginfoi['line'] = line_3
+            # ThreadUpdatei = ThreadUpdate(self.ui)
+            # # ThreadUpdatei.setPar(Downinginfoi)
+            # ThreadUpdatei.Down(Downinginfoi)
+            self.Down(Downinginfoi)
+            # if not self.checkAddFile(i):
+            #     Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
+            #     form = Downinginfoi['frame']
+            #     DownverticalLayout.addWidget(form)
+            #     line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
+            #     line_3.setMinimumSize(QtCore.QSize(649, 0))
+            #     line_3.setFrameShape(QtWidgets.QFrame.HLine)
+            #     line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+            #     line_3.setObjectName("line_3")
+            #     DownverticalLayout.addWidget(line_3)
+            #     Downinginfoi['line'] = line_3
+            #     # ThreadUpdatei = ThreadUpdate(self.ui)
+            #     # # ThreadUpdatei.setPar(Downinginfoi)
+            #     # ThreadUpdatei.Down(Downinginfoi)
+            #     self.Down(Downinginfoi)
+            #
 
 
         dbManager.close()
@@ -744,30 +781,5 @@ class TransShowUpdate(QThread):
 
 
 # myLayout.count()
-    def AddDown(self,DownInfo):
-        self.RefreshDowning()
-        # self.ui.TranspscrollAreaformLayout.itemAt(0).widget().deleteLater()
-        DownLayout = self.ui.TranspscrollArea['Down']
-        self.DownLayout = DownLayout
-        DownformLayout = DownLayout[0]
-        DownverticalLayout = DownLayout[1]
-        scrollAreaWidgetContents_down = DownLayout[2]
-        # DownverticalLayout.itemAt(0).widget().deleteLater()
-        # DownverticalLayout.itemAt(0).widget().deleteLater()
 
-        if DownInfo not in self.DownInfos:
-            self.DownInfos.append(DownInfo)
-            Downinginfoi = self.add1(scrollAreaWidgetContents_down, DownInfo)
-            form = Downinginfoi['frame']
-            DownverticalLayout.addWidget(form)
-        # for i in range(10):
-        #     # self.line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
-        #     # self.line_3.setMinimumSize(QtCore.QSize(649, 0))
-        #     # self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
-        #     # self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        #     # self.line_3.setObjectName("line_3")
-        #     Downinginfoi = self.add1(scrollAreaWidgetContents_down)
-        #     form = Downinginfoi['frame']
-        #     DownverticalLayout.addWidget(form)
-        #     # DownverticalLayout.addWidget(self.line_3)
 
