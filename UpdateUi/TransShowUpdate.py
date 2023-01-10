@@ -3,6 +3,7 @@ import time,sip
 
 sys.path.append('..')
 from pack import DBManager
+from UpdateUi import TranspUp
 # from pack import SBCRequest
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -243,6 +244,7 @@ class TransShowUpdate(QThread):
         super().__init__()
         self.DownInfosUpdateLabs = {}
         self.ui = ui
+        self.TranspUp = TranspUp.TransUp(self.ui)
         self.DownInfos = []
         self.PriDown = None
         self.dbManager = DBManager.DBManager()
@@ -756,7 +758,8 @@ class TransShowUpdate(QThread):
 
         dbManager.close()
 
-
+    def AddUping(self,UpInfo):
+        self.TranspUp.AddUping(UpInfo)
     def AddDowning(self,DownInfo):
         self.signaladd.emit(DownInfo)
 

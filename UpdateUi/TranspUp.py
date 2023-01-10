@@ -69,12 +69,14 @@ def str_trans_to_md5(src):
     return myMd5_Digest
 class TransUp():
     signal = pyqtSignal()
+    signaladd = pyqtSignal(dict)
     def __init__(self,ui):
         super().__init__()
         self.ui = ui
         self.dbManager = DBManager.DBManager()
         self.ClientSetting = self.dbManager.GetClientSetting()
         self.UpInfosUpdateLabs = {}
+        # self.signaladd.connect(self.AddUping1)
 
     def add(self, scrollAreaWidgetContents, UpInfo):
         self.frame_22 = QtWidgets.QFrame(scrollAreaWidgetContents)
@@ -218,7 +220,7 @@ class TransUp():
 
         self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
         self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
-        # label_24.mousePressEvent = partial(self.OpenDownFile, Upinginfoi)
+
         return Upinginfoi
     def AddUping(self,UpInfo):
         self.signaladd.emit(UpInfo)
@@ -232,7 +234,6 @@ class TransUp():
         UpInfo['isDown'] =2
         UpInfos = dbManager.GetUserUpRecordAll()
         UpLayout[3].setText(str(len(UpInfos)))
-
         Upinginfoi = self.add(scrollAreaWidgetContents_up,UpInfo)
         form = Upinginfoi['frame']
         UpverticalLayout.addWidget(form)
