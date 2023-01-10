@@ -1,9 +1,11 @@
 
-import sys
+import sys,threading
+import time
+
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog
 from PyQt5.Qt import QThread
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
@@ -21,15 +23,23 @@ from UpdateUi import FileUpdate
 # from UpdateUi import TransShowUpdate
 
 
-class Mythread(QThread):
+class TranspAnithread(QThread):
     # 定义信号,定义参数为str类型
     Signal = pyqtSignal()
     # Signal = pyqtSignal(dict, str)
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, ui):
+        super().__init__()
         # 下面的初始化方法都可以，有的python版本不支持
         #  super(Mythread, self).__init__()
+        self.ui = ui
+        self.Signal.connect(self.AniUpdate)
+    def AniUpdate(self):
+        self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
+        self.anim.setDuration(2000)  # 设置动画间隔时间
+        self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
+        self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+        self.anim.start()  # 启动动画
 
     def SetPar(self,dictpar,strpar):
         self.dictpar = dictpar
@@ -75,6 +85,27 @@ class FileOperClick(QThread):
             DownFeInfo['RoFilePath'] = DownFile['fepath']
             # print(DownFeInfo)
             self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
+
+    def UpFile(self):
+        fname = QFileDialog.getOpenFileName(self.ui.MainWindow, "选择要上传的文件", "./")
+        FilePath = fname[0]
+        self.Up({'Path':FilePath,'isDir':0})
+    def UpFolder(self):
+        FolderPath = QFileDialog.getExistingDirectory(self.ui.MainWindow, "选择要上传的文件夹", "./")
+        self.Up({'Path': FolderPath, 'isDir': 1})
+    def Upact(self,Upinfo):
+        print(Upinfo)
+        # time.sleep(0.2)
+        # self.SignalTranspan.emit()
+
+    def Up(self,Upinfo):
+        # self.Transpanim()
+        # self.SignalTranspan.emit()
+        thread = TranspAnithread(self.ui)
+        thread.start()
+        t = threading.Thread(target=self.Upact,args=(Upinfo,))
+        t.setDaemon(True)
+        t.start()
 
     def Down(self,e):
         self.start()
@@ -243,6 +274,7 @@ class initWindow():
 
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
+        self.SBCMain.MainWindow = Main
         self.Main.setAcceptDrops(True)
         self.Main.dragEnterEvent = self.dragEnterEvent
         self.Main.dropEvent = self.dropEvent
@@ -338,6 +370,10 @@ class initWindow():
                                         "    color:blue;\n"
                                         "    font-size:18px;\n"
                                         "}\n")
+        fileoperclick = FileOperClick(self.SBCMain)
+        self.actionUpfile.triggered.connect(fileoperclick.UpFile)
+        self.actionUpfolder.triggered.connect(fileoperclick.UpFolder)
+        # self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down
     def creat_ChoseNetmenu(self,e):
         self.groupBox_ChoseNetmenu = QMenu()
         self.actionSBC = self.groupBox_ChoseNetmenu.addAction(u'小黑云')
