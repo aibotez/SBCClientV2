@@ -244,6 +244,7 @@ class TransShowUpdate(QThread):
         self.DownInfosUpdateLabs = {}
         self.ui = ui
         self.DownInfos = []
+        self.PriDown = None
         self.dbManager = DBManager.DBManager()
         self.ClientSetting = self.dbManager.GetClientSetting()
         self.signal.connect(self.RefreshDowning)
@@ -384,7 +385,12 @@ class TransShowUpdate(QThread):
         self.label_19.setText(DownInfo['FileName'])
         self.label_19.setFixedWidth(260)
         label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
+
         label_21.setText("--")
+        # print(66,DownInfo)
+        if int(DownInfo['isDown']) == 2:
+            label_21.setText("等待下载")
+
         label_22.setText(">")
         # QFrame  # frame_16::hover
         label_22.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
@@ -475,6 +481,7 @@ class TransShowUpdate(QThread):
         dbManager.close()
         # # self.signal.emit()
         self.signal1.emit()
+        self.DownManger()
 
 
 
@@ -485,6 +492,7 @@ class TransShowUpdate(QThread):
         dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 0)
         # info['isDown'] = 0
         dbManager.close()
+        self.DownManger()
     def DownGon(self,info):
         dbManager = DBManager.DBManager()
         info['statusButon'].setText("||")
@@ -492,12 +500,13 @@ class TransShowUpdate(QThread):
         # info['isDown'] = 1
         dbManager.close()
         self.Down(info)
+        self.DownManger(info)
 
 
     def DownSatusChange(self,info,e):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
-        if DownInfoi and int(DownInfoi['isDown']):
+        if DownInfoi and int(DownInfoi['isDown'])==1:
         # if int(info['isDown']):
             self.DownCancel(info)
             # info['statusButon'].setText(">")
@@ -517,7 +526,7 @@ class TransShowUpdate(QThread):
     def Downact(self,info):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
-        if DownInfoi and int(DownInfoi['isDown']):
+        if DownInfoi and int(DownInfoi['isDown'])==1:
         # if int(info['isDown']):
             info['statusButon'].setText("||")
             LoFileSatus = self.CheckLoFile(info)
@@ -544,7 +553,7 @@ class TransShowUpdate(QThread):
                     #     print(66,len(chunk1))
                     for chunk in r.iter_content(chunk_size=1024*1024):
                         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
-                        if DownInfoi and int(DownInfoi['isDown']):
+                        if DownInfoi and int(DownInfoi['isDown'])==1:
                             DownSpeed = 0
                             if chunk:
 
@@ -570,6 +579,7 @@ class TransShowUpdate(QThread):
                     self.DownFinsh(info)
         dbManager.close()
     def Down(self,info):
+
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']
@@ -710,6 +720,42 @@ class TransShowUpdate(QThread):
         self.DownLayout[6].clicked.connect(self.CancelAll)
 
 
+    def DownManger(self,Downinfo = None):
+        dbManager = DBManager.DBManager()
+        DownInfos = dbManager.GetUserDownRecordAll()
+
+        CurDownNums = 0
+        MaxDownNums = 2
+        WaitDown = []
+        CurDown = []
+        for i in DownInfos:
+            if int(i['isDown'])==1:
+                CurDownNums += 1
+                CurDown.append(i)
+            elif int(i['isDown']) == 2:
+                WaitDown.append(i)
+        if CurDownNums < MaxDownNums:
+            for i in range(MaxDownNums-CurDownNums):
+                if i < len(WaitDown):
+                    info = WaitDown[i]
+                    dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
+                    infoi = self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]
+                    self.Down(infoi)
+
+
+        if CurDownNums > MaxDownNums:
+            for i in CurDown:
+                if CurDownNums > MaxDownNums:
+                    if not Downinfo or Downinfo['FilePath']+Downinfo['FileName'] == i['FilePath']+i['FileName']:
+                        dbManager.UpdataUserDownRecord(i['FilePath'], i['FileName'],2)
+                        infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+                        infoi['statusButon'].setText(">")
+                        infoi['statusLabel'].setText("等待下载")
+                        CurDownNums -= 1
+
+
+        dbManager.close()
+
 
     def AddDowning(self,DownInfo):
         self.signaladd.emit(DownInfo)
@@ -720,6 +766,7 @@ class TransShowUpdate(QThread):
         scrollAreaWidgetContents_down = DownLayout[2]
         dbManager = DBManager.DBManager()
         dbManager.AddUserDownRecord(DownInfo)
+        DownInfo['isDown'] =2
         DownInfos = dbManager.GetUserDownRecordAll()
         self.DownLayout[3].setText(str(len(DownInfos)))
 
@@ -734,7 +781,8 @@ class TransShowUpdate(QThread):
         DownverticalLayout.addWidget(line_3)
         Downinginfoi['line'] = line_3
         dbManager.close()
-        self.Down(Downinginfoi)
+        self.DownManger()
+        # self.Down(Downinginfoi)
 
 
 
@@ -765,7 +813,8 @@ class TransShowUpdate(QThread):
             # ThreadUpdatei = ThreadUpdate(self.ui)
             # # ThreadUpdatei.setPar(Downinginfoi)
             # ThreadUpdatei.Down(Downinginfoi)
-            self.Down(Downinginfoi)
+        self.DownManger()
+            # self.Down(Downinginfoi)
             # if not self.checkAddFile(i):
             #     Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
             #     form = Downinginfoi['frame']
