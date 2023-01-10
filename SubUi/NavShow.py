@@ -340,6 +340,8 @@ class Ui_PhotoShow(QThread):
                                             transmitui.scrollAreaWidgetContents_8,
                                             transmitui.label_26,transmitui.pushButton_10,transmitui.pushButton_11,
                                             transmitui.pushButton_12]
+        transmitui.verticalLayout_13.itemAt(1).widget().deleteLater()
+        transmitui.verticalLayout_13.itemAt(0).widget().deleteLater()
         transmitui.verticalLayout_4.itemAt(1).widget().deleteLater()
         transmitui.verticalLayout_4.itemAt(0).widget().deleteLater()
         self.MainWindow.horizontalLayout.addWidget(self.frame_TranShow)

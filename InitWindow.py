@@ -1,5 +1,5 @@
 
-import sys,threading
+import sys,threading,os,hashlib
 import time
 
 sys.path.append('..')
@@ -13,6 +13,7 @@ from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
 from pack import TransFileManager
+from pack import FileType
 from pack import DBManager
 from pack.preview import ImgPreview
 
@@ -22,7 +23,18 @@ from SubUi import NavShow
 from UpdateUi import FileUpdate
 # from UpdateUi import TransShowUpdate
 
-
+def getfileMd5(filename):
+    if not os.path.isfile(filename):
+        return
+    myhash = hashlib.md5()
+    f = open(filename, "rb")
+    while True:
+        b = f.read(8096)
+        if not b:
+            break
+        myhash.update(b)
+    f.close()
+    return myhash.hexdigest()
 class TranspAnithread(QThread):
     # 定义信号,定义参数为str类型
     Signal = pyqtSignal()
@@ -93,17 +105,40 @@ class FileOperClick(QThread):
     def UpFolder(self):
         FolderPath = QFileDialog.getExistingDirectory(self.ui.MainWindow, "选择要上传的文件夹", "./")
         self.Up({'Path': FolderPath, 'isDir': 1})
-    def Upact(self,Upinfo):
-        print(Upinfo)
+
+    def Upact(self,LoPath,CurRopath):
+        LoFileMd5 = getfileMd5(LoPath)
+        Upinfo = {}
+        Upinfo['FileMd5'] = LoFileMd5
+        Upinfo['CurPath'] = CurRopath
+        Upinfo['webkitRelativePath'] = ''
+        Upinfo['FileName'] = os.path.basename(LoPath)
+        Upinfo['RoFilePath'] = CurRopath
+        Upinfo['LoFilePath'] = LoPath
+        fetypeObj = FileType.FileType()
+        fetype = fetypeObj.FileType(LoPath)
+        Upinfo['fetype'] = fetype[1]
+        Upinfo['Size'] = os.path.getsize(LoPath)
+        # print(Upinfo)
+        self.ui.TransFilesManager.AddUpRecord(Upinfo)
+
+    def UpChose(self,Upinfo):
+        nav = self.ui.nav[self.ui.CurNetChosed]
+        CurRopath = nav[-1]['path']
+        print('CurRoPath:',CurRopath)
         # time.sleep(0.2)
         # self.SignalTranspan.emit()
+        if Upinfo['isDir']:
+            pass
+        else:
+            self.Upact(Upinfo['Path'],CurRopath)
 
     def Up(self,Upinfo):
         # self.Transpanim()
         # self.SignalTranspan.emit()
         thread = TranspAnithread(self.ui)
         thread.start()
-        t = threading.Thread(target=self.Upact,args=(Upinfo,))
+        t = threading.Thread(target=self.UpChose,args=(Upinfo,))
         t.setDaemon(True)
         t.start()
 

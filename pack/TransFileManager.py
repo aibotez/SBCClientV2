@@ -21,6 +21,14 @@ class TransFileManager():
 
 
         # self.ui.TranspArrow.setText("↑↓")
+    def AddUpRecord(self,UpInfo):
+        dbManager = DBManager.DBManager()
+        AdW = dbManager.GetUserUpRecord(UpInfo['LoFilePath'],UpInfo['FileName'])
+        # AdW = self.dbManager.AddUserDownRecord(DownInfo)
+        if AdW:
+            return
+        dbManager.close()
+        # self.Transhow.AddUping(UpInfo)
     def AddDownRecord(self,DownInfo):
         dbManager = DBManager.DBManager()
         AdW = dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])

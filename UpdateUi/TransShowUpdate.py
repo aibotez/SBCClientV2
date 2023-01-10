@@ -759,6 +759,7 @@ class TransShowUpdate(QThread):
 
     def AddDowning(self,DownInfo):
         self.signaladd.emit(DownInfo)
+
     def AddDowning1(self,DownInfo):
         DownInfo['Size'] = DownInfo['size']
         DownLayout = self.ui.TranspscrollArea['Down']

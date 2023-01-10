@@ -46,7 +46,7 @@ class DBManager():
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserUpRecordform(self):
-        sql = "create table UserUp(FileMd5,FileName,FilePath,RoFilePath,isUp)"
+        sql = "create table UserUp(FileMd5,FileName,Size,LoFilePath,RoFilePath,isUp,fetype)"
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserTransFinshRecordform(self):
@@ -74,6 +74,17 @@ class DBManager():
         self.conn.commit()
         return 1
 
+    def AddUserUpRecord(self,UpInfo):
+        if self.GetUserDownRecord(UpInfo['RoFilePath'],UpInfo['FileName']):
+            print('Have Up')
+            return 'Have'
+        # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
+        sql = "insert into UserDown(FileMd5,FileName,Size,LoFilePath,RoFilePath,isUp,fetype) values (?,?,?,?,?,?,?)"
+        data = (UpInfo['FileMd5'],UpInfo['FileName'],UpInfo['size'],UpInfo['LoFilePath'],UpInfo['RoFilePath'],'2',UpInfo['fetype'])
+        self.cur.execute(sql, data)
+        self.conn.commit()
+        return 1
+
     def AddUserDownRecord(self,DownInfo):
         if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
             print('Have Down')
@@ -84,6 +95,16 @@ class DBManager():
         self.cur.execute(sql, data)
         self.conn.commit()
         return 1
+
+    def GetUserUpRecord(self,RoFilePath,FileName):
+        sql = "select * from UserUp where LoFilePath ='{}' and FileName='{}'".format(RoFilePath,FileName)
+        self.cur.execute(sql)
+        self.conn.commit()
+        Result = None
+        for i in self.cur:
+            info = list(i)
+            Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'LoFilePath':info[3],'RoFilePath':info[4],'isUp':int(info[5]),'fetype':info[6]}
+        return Result
     def GetUserDownRecord(self,FilePath,FileName):
         sql = "select * from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         self.cur.execute(sql)
@@ -111,6 +132,17 @@ class DBManager():
             info = list(i)
             Resulti = {'FileMd5':info[0],'FileName':info[1],'FilePath':info[2],'Size':info[3],'fetype':info[4],'fecheck':info[5],'timestamp':info[6]}
             Result.append(Resulti)
+        return Result
+    def GetUserUpRecordAll(self):
+        sql = "select * from UserUp"
+        self.cur.execute(sql)
+        self.conn.commit()
+        Result = []
+        for i in self.cur:
+            info = list(i)
+            Resulti = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'LoFilePath':info[3],'RoFilePath':info[4],'isUp':int(info[5]),'fetype':info[6]}
+            Result.append(Resulti)
+
         return Result
     def GetUserDownRecordAll(self):
         sql = "select * from UserDown"
