@@ -742,11 +742,11 @@ class TransShowUpdate(QThread):
                     infoi = self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]
                     self.Down(infoi)
 
-
         if CurDownNums > MaxDownNums:
             for i in CurDown:
                 if CurDownNums > MaxDownNums:
                     if not Downinfo or Downinfo['FilePath']+Downinfo['FileName'] == i['FilePath']+i['FileName']:
+                        # print(i)
                         dbManager.UpdataUserDownRecord(i['FilePath'], i['FileName'],2)
                         infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
                         infoi['statusButon'].setText(">")
@@ -813,8 +813,9 @@ class TransShowUpdate(QThread):
             # ThreadUpdatei = ThreadUpdate(self.ui)
             # # ThreadUpdatei.setPar(Downinginfoi)
             # ThreadUpdatei.Down(Downinginfoi)
+            self.Down(Downinginfoi)
         self.DownManger()
-            # self.Down(Downinginfoi)
+
             # if not self.checkAddFile(i):
             #     Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
             #     form = Downinginfoi['frame']
