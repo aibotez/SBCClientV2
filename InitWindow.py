@@ -243,6 +243,9 @@ class initWindow():
 
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
+        self.Main.setAcceptDrops(True)
+        self.Main.dragEnterEvent = self.dragEnterEvent
+        self.Main.dropEvent = self.dropEvent
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
 
         self.SBCMain.setupUi(Main)
@@ -263,6 +266,14 @@ class initWindow():
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
         self.init()
 
+    def dragEnterEvent(self, evn):
+        self.DrageFileIntoPath = evn.mimeData().text()
+        evn.accept()
+    # 鼠标放开执行
+    def dropEvent(self, evn):
+        print(self.DrageFileIntoPath)
+        fileoperclick = FileOperClick(self.SBCMain)
+        # fileoperclick.Down  # 下载
 
     def WindowReSize(self):
         # if ui.scrollArea.width() < 500:
