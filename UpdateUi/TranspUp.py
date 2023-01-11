@@ -1,5 +1,6 @@
 import sys,threading,os,hashlib,requests,json
 import time,sip
+from requests_toolbelt import MultipartEncoder,MultipartEncoderMonitor
 
 sys.path.append('..')
 from pack import DBManager
@@ -238,6 +239,29 @@ class TransUp():
         del self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath']+info['FileName'])]
         dbManager.close()
 
+
+    def Uping_callback(self,monitor):
+        progress = (monitor.bytes_read / monitor.len) * 100
+        print('UpProgress:',monitor.bytes_read , monitor.len)
+
+    def OpenFile(self,info):
+        fp = open(info['LoFilePath'], 'rb')
+        fp.seek(info['FileSeekStart'],os.SEEK_SET)
+        return fp
+
+    def chunked_file_reader(self,info,block_size=20*1024 * 1024):
+        """生成器函数：分块读取文件内容
+        """
+        file = info['LoFilePath']
+        FileSeekStart = info['FileSeekStart']
+        with open(file, 'rb') as f:
+            f.seek(FileSeekStart,os.SEEK_SET)
+            while True:
+                c = f.read(block_size)
+                if c:
+                    yield c
+                else:
+                    break
     def Upact(self, info):
         info['FileSize'] = info['Size']
         info['CurPath'] = info['RoFilePath']
@@ -248,10 +272,31 @@ class TransUp():
         del info['statusButon']
         del info['UpSizeLabel']
         del info['progressBar']
-
-
         RoCheckFile = self.ui.SBCRe.CheckRoFile(info)
         print(RoCheckFile)
+        print(info)
+        if RoCheckFile['exist']:
+            print('文件已存在')
+            return
+        FileSeekStart = RoCheckFile['FileStart']
+        info['FileSeekStart'] = FileSeekStart
+        url_fileUp = 'http://' + self.ClientSetting['host'] + '/Upfile1/'
+        headers = self.ui.SBCRe.headers
+        s = requests.Session()
+        for chunk in self.chunked_file_reader(info):
+            # res = s.post(url_fileUp, data=info, files={'file': chunk},headers=headers)
+            e = MultipartEncoder(
+                fields={
+                    'FileInfo':json.dumps(info),
+                    'file': (info['FileName'], chunk, 'application/octet-stream'),  # 文件1
+                        }
+            )
+            url_fileUp = 'http://' + self.ClientSetting['host'] + '/Upfile1/'
+            m = MultipartEncoderMonitor(e,self.Uping_callback)
+            headers = self.ui.SBCRe.headers
+            headers['Content-Type'] = m.content_type
+            r = s.post(url_fileUp, data=m, headers=headers)
+            print(r.text)
     def Up(self,info):
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
