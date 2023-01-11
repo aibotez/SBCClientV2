@@ -163,6 +163,11 @@ class DBManager():
         self.cur.execute(sql,data)
         self.conn.commit()
 
+
+    def DelUserUpRecord(self,FilePath,FileName):
+        sql = "delete from UserUp where LoFilePath ='{}' and FileName='{}'".format(FilePath, FileName)
+        self.cur.execute(sql)
+        self.conn.commit()
     def DelUserDownRecord(self,FilePath,FileName):
         sql = "delete from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
         self.cur.execute(sql)

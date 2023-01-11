@@ -30,7 +30,7 @@ def size_format(size):
 
 
 def CheckLoFile(UpInfo):
-    # print(self.ui.DownPath)
+    # print(self.ui.UpPath)
     FileLoPath = UpInfo['LoFilePath'] + UpInfo['FileName']
     LoFileSize = 0
     LoFileExist = 0
@@ -204,13 +204,13 @@ class TransUp():
         self.label_31.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_30.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         # label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        # Downinginfoi = {}
+        # Upinginfoi = {}
         Upinginfoi = UpInfo
         Upinginfoi['frame'] = self.frame_22
         Upinginfoi['statusButon'] = self.label_30
         Upinginfoi['statusLabel'] = self.label_29
         Upinginfoi['progressBar'] = self.progressBar_5
-        Upinginfoi['DownSizeLabel'] = self.label_28
+        Upinginfoi['UpSizeLabel'] = self.label_28
         # Upinginfoi['FilePath'] = UpInfo['FilePath']
         # Upinginfoi['FileName'] = UpInfo['FileName']
         # Upinginfoi['isUp'] = UpInfo['isUp']
@@ -221,9 +221,23 @@ class TransUp():
         self.UpInfosUpdateLabs[str_trans_to_md5(Upinginfoi['LoPath'])] = Upinginfoi
 
         # self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
-        # self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
+        self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
 
         return Upinginfoi
+    def DelUping(self,info,e):
+        dbManager = DBManager.DBManager()
+        dbManager.DelUserUpRecord(info['LoFilePath'],info['FileName'])
+        self.UpLayout[1].removeWidget(info['frame'])
+        sip.delete(info['frame'])
+        self.UpLayout[1].removeWidget(info['line'])
+        sip.delete(info['line'])
+        # self.RefreshUping()
+        UpInfos = dbManager.GetUserUpRecordAll()
+        # print('UpS',UpInfos)
+        self.UpLayout[3].setText(str(len(UpInfos)))
+        del self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath']+info['FileName'])]
+        dbManager.close()
+
     def AddUping(self,UpInfo):
         self.signaladdUp.emit(UpInfo)
     def AddUping1(self,UpInfo):
