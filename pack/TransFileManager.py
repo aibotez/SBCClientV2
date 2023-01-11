@@ -28,7 +28,7 @@ class TransFileManager():
         if AdW:
             return
         dbManager.close()
-        # self.Transhow.AddUping(UpInfo)
+        self.Transhow.AddUping(UpInfo)
     def AddDownRecord(self,DownInfo):
         dbManager = DBManager.DBManager()
         AdW = dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])

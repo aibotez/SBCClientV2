@@ -79,7 +79,7 @@ class DBManager():
             print('Have Up')
             return 'Have'
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
-        sql = "insert into UserDown(FileMd5,FileName,Size,LoFilePath,RoFilePath,isUp,fetype) values (?,?,?,?,?,?,?)"
+        sql = "insert into UserUp(FileMd5,FileName,Size,LoFilePath,RoFilePath,isUp,fetype) values (?,?,?,?,?,?,?)"
         data = (UpInfo['FileMd5'],UpInfo['FileName'],UpInfo['size'],UpInfo['LoFilePath'],UpInfo['RoFilePath'],'2',UpInfo['fetype'])
         self.cur.execute(sql, data)
         self.conn.commit()

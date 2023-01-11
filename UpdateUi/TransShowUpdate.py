@@ -240,11 +240,12 @@ class TransShowUpdate(QThread):
     signal = pyqtSignal()
     signal1 = pyqtSignal()
     signaladd = pyqtSignal(dict)
+    signaladdUp = pyqtSignal(dict)
     def __init__(self,ui):
         super().__init__()
         self.DownInfosUpdateLabs = {}
         self.ui = ui
-        self.TranspUp = TranspUp.TransUp(self.ui)
+        self.TranspUps = TranspUp.TransUp(self.ui,self.signaladdUp)
         self.DownInfos = []
         self.PriDown = None
         self.dbManager = DBManager.DBManager()
@@ -759,7 +760,7 @@ class TransShowUpdate(QThread):
         dbManager.close()
 
     def AddUping(self,UpInfo):
-        self.TranspUp.AddUping(UpInfo)
+        self.TranspUps.AddUping(UpInfo)
     def AddDowning(self,DownInfo):
         self.signaladd.emit(DownInfo)
 

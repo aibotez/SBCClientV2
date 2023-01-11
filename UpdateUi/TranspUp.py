@@ -31,7 +31,7 @@ def size_format(size):
 
 def CheckLoFile(UpInfo):
     # print(self.ui.DownPath)
-    FileLoPath = UpInfo['FilePath'] + UpInfo['FileName']
+    FileLoPath = UpInfo['LoFilePath'] + UpInfo['FileName']
     LoFileSize = 0
     LoFileExist = 0
     if os.path.exists(FileLoPath):
@@ -68,15 +68,17 @@ def str_trans_to_md5(src):
     myMd5_Digest = myMd5.hexdigest()
     return myMd5_Digest
 class TransUp():
-    signal = pyqtSignal()
-    signaladd = pyqtSignal(dict)
-    def __init__(self,ui):
+    # signal = pyqtSignal()
+    # signaladdUp = pyqtSignal(dict)
+    def __init__(self,ui,signaladdUp):
         super().__init__()
         self.ui = ui
+        self.signaladdUp = signaladdUp
         self.dbManager = DBManager.DBManager()
         self.ClientSetting = self.dbManager.GetClientSetting()
         self.UpInfosUpdateLabs = {}
-        # self.signaladd.connect(self.AddUping1)
+        self.signaladdUp.connect(self.AddUping1)
+        self.RefreshUping()
 
     def add(self, scrollAreaWidgetContents, UpInfo):
         self.frame_22 = QtWidgets.QFrame(scrollAreaWidgetContents)
@@ -190,7 +192,7 @@ class TransUp():
         self.label_30.setText(">")
         # QFrame  # frame_16::hover
         self.label_30.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
-                           "#label_22:hover{color:rgb(20, 90, 50);}")
+                           "#label_30:hover{color:rgb(20, 90, 50);}")
 
         self.label_31.setText("X")
         self.label_31.setStyleSheet("QLabel{font-size:26px;font-family:Roman times;}"
@@ -215,23 +217,24 @@ class TransUp():
         # Upinginfoi['size'] = UpInfo['Size']
         # Upinginfoi['RoFilePath'] = UpInfo['RoFilePath']
         Upinginfoi['LoFileSatus'] = LoFile
-        Upinginfoi['LoPath'] = UpInfo['FilePath']+UpInfo['FileName']
+        Upinginfoi['LoPath'] = UpInfo['LoFilePath']+UpInfo['FileName']
         self.UpInfosUpdateLabs[str_trans_to_md5(Upinginfoi['LoPath'])] = Upinginfoi
 
-        self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
-        self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
+        # self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
+        # self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
 
         return Upinginfoi
     def AddUping(self,UpInfo):
-        self.signaladd.emit(UpInfo)
+        self.signaladdUp.emit(UpInfo)
     def AddUping1(self,UpInfo):
-        UpInfo['Size'] = UpInfo['size']
+        print(UpInfo)
+        UpInfo['size'] = UpInfo['Size']
         UpLayout = self.ui.TranspscrollArea['Up']
         UpverticalLayout = UpLayout[1]
         scrollAreaWidgetContents_up = UpLayout[2]
         dbManager = DBManager.DBManager()
         dbManager.AddUserUpRecord(UpInfo)
-        UpInfo['isDown'] =2
+        UpInfo['isUp'] =2
         UpInfos = dbManager.GetUserUpRecordAll()
         UpLayout[3].setText(str(len(UpInfos)))
         Upinginfoi = self.add(scrollAreaWidgetContents_up,UpInfo)
@@ -245,5 +248,34 @@ class TransUp():
         UpverticalLayout.addWidget(line_3)
         Upinginfoi['line'] = line_3
         dbManager.close()
-        self.UpManger()
+        # self.UpManger()
+    def RefreshUping(self):
+        self.infos = []
+        UpLayout = self.ui.TranspscrollArea['Up']
+        self.UpLayout = UpLayout
+        UpformLayout = UpLayout[0]
+        UpverticalLayout = UpLayout[1]
+        scrollAreaWidgetContents_Up = UpLayout[2]
+        LaConts = UpverticalLayout.count()
+        dbManager = DBManager.DBManager()
+        UpInfos = dbManager.GetUserUpRecordAll()
+        # self.checkDelFile()
+        self.UpLayout[3].setText(str(len(UpInfos)))
+        # print(66,UpInfos)
+        for i in UpInfos:
+            Upinginfoi = self.add(scrollAreaWidgetContents_Up, i)
+            form = Upinginfoi['frame']
+            UpverticalLayout.addWidget(form)
+            line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_Up)
+            line_3.setMinimumSize(QtCore.QSize(649, 0))
+            line_3.setFrameShape(QtWidgets.QFrame.HLine)
+            line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+            line_3.setObjectName("line_3")
+            UpverticalLayout.addWidget(line_3)
+            Upinginfoi['line'] = line_3
+            # ThreadUpdatei = ThreadUpdate(self.ui)
+            # # ThreadUpdatei.setPar(Upinginfoi)
+            # ThreadUpdatei.Up(Upinginfoi)
+            # self.Up(Upinginfoi)
+        # self.UpManger()
 
