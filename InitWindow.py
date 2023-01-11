@@ -137,8 +137,8 @@ class FileOperClick(QThread):
     def Up(self,Upinfo):
         # self.Transpanim()
         # self.SignalTranspan.emit()
-        thread = TranspAnithread(self.ui)
-        thread.start()
+        self.ui.thread = TranspAnithread(self.ui)
+        self.ui.thread.start()
         t = threading.Thread(target=self.UpChose,args=(Upinfo,))
         t.setDaemon(True)
         t.start()
