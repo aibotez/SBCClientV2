@@ -35,6 +35,20 @@ def getfileMd5(filename):
         myhash.update(b)
     f.close()
     return myhash.hexdigest()
+def GetAllFiles(LoPath,RoPath):
+    Files = []
+    path = LoPath.replace('\\', '/')
+    for root, dirs, files in os.walk(path):
+        root += '/'
+        root = root.replace('\\', '/').replace('//','/')
+        Rofepath = RoPath + root.replace(path+'/', '')
+        for i in files:
+            FileInfo = {}
+            Lofepath = root + i
+            FileInfo['Lofepath'] = Lofepath
+            FileInfo['Rofepath'] = Rofepath
+            Files.append(FileInfo)
+    return Files
 class TranspAnithread(QThread):
     # 定义信号,定义参数为str类型
     Signal = pyqtSignal()
@@ -130,7 +144,9 @@ class FileOperClick(QThread):
         # time.sleep(0.2)
         # self.SignalTranspan.emit()
         if Upinfo['isDir']:
-            pass
+            FilesAll = GetAllFiles(Upinfo['Path'],CurRopath)
+            for i in FilesAll:
+                self.Upact(i['Lofepath'], i['Rofepath'])
         else:
             self.Upact(Upinfo['Path'],CurRopath)
 
@@ -339,9 +355,20 @@ class initWindow():
         evn.accept()
     # 鼠标放开执行
     def dropEvent(self, evn):
-        print(self.DrageFileIntoPath)
         fileoperclick = FileOperClick(self.SBCMain)
-        # fileoperclick.Down  # 下载
+        paths = self.DrageFileIntoPath.split('\n')
+        for i in paths:
+            if i:
+                FilePath = i.replace('file:///', '')
+                if os.path.isdir(FilePath):
+                    print('DragFolderPath',FilePath)
+                else:
+                    print('DragFilePath', FilePath)
+                    fileoperclick.Up({'Path': FilePath, 'isDir': 0})
+
+        # FilePath = self.DrageFileIntoPath.replace('file:///','')
+        # fileoperclick = FileOperClick(self.SBCMain)
+        # fileoperclick.Up({'Path':FilePath, 'isDir': 0})
 
     def WindowReSize(self):
         # if ui.scrollArea.width() < 500:
