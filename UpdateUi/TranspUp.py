@@ -238,6 +238,71 @@ class TransUp():
         del self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath']+info['FileName'])]
         dbManager.close()
 
+    def Upact(self, info):
+        info['FileSize'] = info['Size']
+        info['CurPath'] = info['RoFilePath']
+        info['webkitRelativePath'] = ''
+        del info['frame']
+        del info['line']
+        del info['statusLabel']
+        del info['statusButon']
+        del info['UpSizeLabel']
+        del info['progressBar']
+
+
+        RoCheckFile = self.ui.SBCRe.CheckRoFile(info)
+        print(RoCheckFile)
+    def Up(self,info):
+        Path = info['LoPath']
+        LoFileSatus = info['LoFileSatus']
+        LoFileSize = LoFileSatus['size']
+        LoFileExist = LoFileSatus['exist']
+        # print(info)
+        if not os.path.exists(info['LoFilePath']):
+            return
+        # qmut_1.lock()
+        t = threading.Thread(target=self.run1, args=(info,))
+        t.setDaemon(True)
+        t.start()
+        self.info = info
+            # self.start()
+            # qmut_1.unlock()
+    def run1(self,info):
+        # return
+        self.Upact(info)
+    def UpManger(self,Upinfo = None):
+        dbManager = DBManager.DBManager()
+        UpInfos = dbManager.GetUserUpRecordAll()
+
+        CurUpNums = 0
+        MaxUpNums = 2
+        WaitUp = []
+        CurUp = []
+        for i in UpInfos:
+            if int(i['isUp'])==1:
+                CurUpNums += 1
+                CurUp.append(i)
+            elif int(i['isUp']) == 2:
+                WaitUp.append(i)
+        if CurUpNums < MaxUpNums:
+            for i in range(MaxUpNums-CurUpNums):
+                if i < len(WaitUp):
+                    info = WaitUp[i]
+                    dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
+                    infoi = self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath'] + info['FileName'])]
+                    self.Up(infoi)
+
+        if CurUpNums > MaxUpNums:
+            for i in CurUp:
+                if CurUpNums > MaxUpNums:
+                    if not Upinfo or Upinfo['LoFilePath']+Upinfo['FileName'] == i['LoFilePath']+i['FileName']:
+                        # print(i)
+                        dbManager.UpdataUserUpRecord(i['LoFilePath'], i['FileName'],2)
+                        infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]
+                        infoi['statusButon'].setText(">")
+                        infoi['statusLabel'].setText("等待上传")
+                        CurUpNums -= 1
+        dbManager.close()
     def AddUping(self,UpInfo):
         self.signaladdUp.emit(UpInfo)
     def AddUping1(self,UpInfo):
@@ -262,7 +327,7 @@ class TransUp():
         UpverticalLayout.addWidget(line_3)
         Upinginfoi['line'] = line_3
         dbManager.close()
-        # self.UpManger()
+        self.UpManger()
     def RefreshUping(self):
         self.infos = []
         UpLayout = self.ui.TranspscrollArea['Up']
@@ -290,6 +355,6 @@ class TransUp():
             # ThreadUpdatei = ThreadUpdate(self.ui)
             # # ThreadUpdatei.setPar(Upinginfoi)
             # ThreadUpdatei.Up(Upinginfoi)
-            # self.Up(Upinginfoi)
-        # self.UpManger()
+            self.Up(Upinginfoi)
+        self.UpManger()
 

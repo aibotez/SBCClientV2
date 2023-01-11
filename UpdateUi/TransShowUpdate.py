@@ -755,8 +755,6 @@ class TransShowUpdate(QThread):
                         infoi['statusButon'].setText(">")
                         infoi['statusLabel'].setText("等待下载")
                         CurDownNums -= 1
-
-
         dbManager.close()
 
     def AddUping(self,UpInfo):

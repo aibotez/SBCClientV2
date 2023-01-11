@@ -119,6 +119,7 @@ class FileOperClick(QThread):
         fetype = fetypeObj.FileType(LoPath)
         Upinfo['fetype'] = fetype[1]
         Upinfo['Size'] = os.path.getsize(LoPath)
+        Upinfo['FileSize'] = Upinfo['Size']
         # print(Upinfo)
         self.ui.TransFilesManager.AddUpRecord(Upinfo)
 

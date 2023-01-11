@@ -32,6 +32,13 @@ class SBCRe():
         cookie = requests.utils.dict_from_cookiejar(cookies)
         if 'coks' in cookie:
             self.Cookie = 'coks='+cookie['coks']
+    def CheckRoFile(self,info):
+        url = 'http://' + self.host + '/CheckFile/'
+        data = info
+        res = requests.post(url, data=data,headers=self.headers)
+        # print(json.loads(res.text))
+        # FileDatas = json.loads(res.text)
+        return json.loads(res.text)
 
     def GetRoFileMd5(self,path):
         # print(path)

@@ -155,6 +155,13 @@ class DBManager():
             Result.append(Resulti)
 
         return Result
+    def UpdataUserUpRecord(self,FilePath,FileName,changeVaule):
+        # self.close()
+        # self.Connect()
+        sql = "update UserUp set isUp=? where LoFilePath ='{}' and FileName='{}'".format(FilePath,FileName)
+        data = (str(changeVaule))
+        self.cur.execute(sql,data)
+        self.conn.commit()
     def UpdataUserDownRecord(self,FilePath,FileName,changeVaule):
         # self.close()
         # self.Connect()
