@@ -221,10 +221,38 @@ class TransUp():
         Upinginfoi['LoPath'] = UpInfo['LoFilePath']+UpInfo['FileName']
         self.UpInfosUpdateLabs[str_trans_to_md5(Upinginfoi['LoPath'])] = Upinginfoi
 
-        # self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
+        self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
         self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
 
         return Upinginfoi
+
+
+    def UpCancel(self,info):
+        dbManager = DBManager.DBManager()
+
+        info['statusButon'].setText(">")
+        info['statusLabel'].setText("已暂停")
+        dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 0)
+        # info['isDown'] = 0
+        dbManager.close()
+        self.UpManger()
+    def UpGon(self,info):
+        dbManager = DBManager.DBManager()
+        info['statusButon'].setText("||")
+        dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
+        # info['isDown'] = 1
+        dbManager.close()
+        self.Up(info)
+        # self.Upact1(info)
+        self.UpManger(info)
+    def UpSatusChange(self,info,e):
+        # print(info)
+        dbManager = DBManager.DBManager()
+        UpInfoi = dbManager.GetUserUpRecord(info['LoFilePath'], info['FileName'])
+        if UpInfoi and int(UpInfoi['isUp'])==1:
+            self.UpCancel(info)
+        else:
+            self.UpGon(info)
     def DelUping(self,info,e):
         dbManager = DBManager.DBManager()
         dbManager.DelUserUpRecord(info['LoFilePath'],info['FileName'])
@@ -239,10 +267,6 @@ class TransUp():
         del self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath']+info['FileName'])]
         dbManager.close()
 
-
-    def Uping_callback(self,monitor):
-        progress = (monitor.bytes_read / monitor.len) * 100
-        print('UpProgress:',monitor.bytes_read , monitor.len)
 
     def OpenFile(self,info):
         fp = open(info['LoFilePath'], 'rb')
@@ -262,41 +286,97 @@ class TransUp():
                     yield c
                 else:
                     break
+    def UpFinsh(self,info):
+        # info['statusLabel'].setText("校验文件...")
+        # LofeMd5 = info['FileMd5']
+        # if LofeMd5 == RofeMd5:
+        #     info['statusLabel'].setText("校验通过")
+        #     info['FeCheck'] = 1
+        #     print('校验通过')
+        # else:
+        #     info['statusLabel'].setText("文件损坏")
+        #     info['FeCheck'] = 0
+        #     print('文件损坏')
+        # info['timestamp'] = time.time()     # 当前时间戳
+        self.DelUping(info,0)
+        self.UpManger()
     def Upact(self, info):
+
+        t0 = time.time()
+        CurFileSize = 0
+        CurFileSize0 = 0
+        def Uping_callback(monitor, info):
+            nonlocal t0,CurFileSize,CurFileSize0
+            FileSeekStart = info['FileSeekStart']
+            t1 = time.time()
+            deltat = t1-t0
+            if deltat >= 0.5:
+                CurFileSize1 = CurFileSize+monitor.bytes_read
+                FileTotSize = info['Size']
+                deltaFileSize = CurFileSize1 - CurFileSize0
+                progress = (CurFileSize1 / FileTotSize) * 100
+                Speed = size_format(deltaFileSize/(deltat))
+                # print(Speed, progress)
+                # print('Check:',CurFileSize1/1024/1024,FileTotSize/1024/1024,deltat,CurFileSize0/1024/1024)
+                # print('UpProgress:', monitor.bytes_read, monitor.len)
+                info['progressBar'].setProperty("value", progress)
+                info['UpSizeLabel'].setText(
+                    "{}/{}".format(size_format(CurFileSize1),size_format(FileTotSize)))
+                info['statusLabel'].setText("{}/S".format(Speed))
+                t0 = t1
+                CurFileSize0 = CurFileSize1
+
+
         info['FileSize'] = info['Size']
         info['CurPath'] = info['RoFilePath']
         info['webkitRelativePath'] = ''
-        del info['frame']
-        del info['line']
-        del info['statusLabel']
-        del info['statusButon']
-        del info['UpSizeLabel']
-        del info['progressBar']
-        RoCheckFile = self.ui.SBCRe.CheckRoFile(info)
-        print(RoCheckFile)
-        print(info)
+        info1 = {}
+        for i in info:
+            info1[i] = info[i]
+        del info1['frame']
+        del info1['line']
+        del info1['statusLabel']
+        del info1['statusButon']
+        del info1['UpSizeLabel']
+        del info1['progressBar']
+        RoCheckFile = self.ui.SBCRe.CheckRoFile(info1)
         if RoCheckFile['exist']:
             print('文件已存在')
+            self.UpFinsh(info)
             return
         FileSeekStart = RoCheckFile['FileStart']
         info['FileSeekStart'] = FileSeekStart
+
+        CurFileSize = FileSeekStart
+        CurFileSize0 = FileSeekStart
+
         url_fileUp = 'http://' + self.ClientSetting['host'] + '/Upfile1/'
         headers = self.ui.SBCRe.headers
         s = requests.Session()
+        dbManager = DBManager.DBManager()
         for chunk in self.chunked_file_reader(info):
             # res = s.post(url_fileUp, data=info, files={'file': chunk},headers=headers)
-            e = MultipartEncoder(
-                fields={
-                    'FileInfo':json.dumps(info),
-                    'file': (info['FileName'], chunk, 'application/octet-stream'),  # 文件1
-                        }
-            )
-            url_fileUp = 'http://' + self.ClientSetting['host'] + '/Upfile1/'
-            m = MultipartEncoderMonitor(e,self.Uping_callback)
-            headers = self.ui.SBCRe.headers
-            headers['Content-Type'] = m.content_type
-            r = s.post(url_fileUp, data=m, headers=headers)
-            print(r.text)
+            UpInfoi = dbManager.GetUserUpRecord(info['LoFilePath'], info['FileName'])
+            if UpInfoi and int(UpInfoi['isUp']) == 1:
+                info['statusButon'].setText("||")
+                e = MultipartEncoder(
+                    fields={
+                        'FileInfo':json.dumps(info1),
+                        'file': (info['FileName'], chunk, 'application/octet-stream'),  # 文件1
+                            }
+                )
+                url_fileUp = 'http://' + self.ClientSetting['host'] + '/Upfile1/'
+                m = MultipartEncoderMonitor(e,lambda e : Uping_callback(e,info))
+                headers = self.ui.SBCRe.headers
+                headers1 = {}
+                headers1['Cookie'] = headers['Cookie']
+                headers1['Content-Type'] = m.content_type
+                r = s.post(url_fileUp, data=m, headers=headers1)
+                CurFileSize += len(chunk)
+        self.UpFinsh(info)
+        dbManager.close()
+
+
     def Up(self,info):
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
@@ -309,12 +389,13 @@ class TransUp():
         t = threading.Thread(target=self.run1, args=(info,))
         t.setDaemon(True)
         t.start()
-        self.info = info
+        # self.run1(info)
             # self.start()
             # qmut_1.unlock()
     def run1(self,info):
         # return
         self.Upact(info)
+        # pass
     def UpManger(self,Upinfo = None):
         dbManager = DBManager.DBManager()
         UpInfos = dbManager.GetUserUpRecordAll()
@@ -350,6 +431,7 @@ class TransUp():
         dbManager.close()
     def AddUping(self,UpInfo):
         self.signaladdUp.emit(UpInfo)
+        # pass
     def AddUping1(self,UpInfo):
         print(UpInfo)
         UpInfo['size'] = UpInfo['Size']
