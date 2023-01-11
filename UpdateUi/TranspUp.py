@@ -373,7 +373,8 @@ class TransUp():
                 headers1['Content-Type'] = m.content_type
                 r = s.post(url_fileUp, data=m, headers=headers1)
                 CurFileSize += len(chunk)
-        self.UpFinsh(info)
+        if CurFileSize == info['Size']:
+            self.UpFinsh(info)
         dbManager.close()
 
 
