@@ -117,14 +117,19 @@ class Thread_LoadImg(QThread):
                 break
 class FileUpdate(QThread):
     signal = pyqtSignal()
+    signalRefresh = pyqtSignal()
     def __init__(self,ui):
         super().__init__()
         self.MainWindow = ui
         self.signal.connect(self.ScrollContentUpdate)
+        self.MainWindow.signalRefresh = self.signalRefresh
+        self.MainWindow.signalRefresh.connect(self.Refreshshow)
         self.path = '/home/'
         self.CurFileList = []
         self.Thread_LoadImgs = Thread_LoadImg(self.MainWindow)
 
+    def Refreshshow(self):
+        self.start()
     def FileConChose(self,fetype):
         if fetype == 'folder':
             return 'img/filecon/foldersm.png'
@@ -437,7 +442,7 @@ class FileUpdate(QThread):
                         CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
 
-    def UpdateShow(self,Show):
+    def UpdateShow(self,show):
         # self.CurShow = Show
         self.start()
 

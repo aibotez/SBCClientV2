@@ -286,7 +286,30 @@ class TransUp():
                     yield c
                 else:
                     break
+    def GetUpFileFaPath(self,info):
+        CurPath = info['CurPath']
+        nav = self.ui.nav[self.ui.CurNetChosed]
+        CurRopath = nav[-1]['path']
+        CurPathFa = CurPath.replace(CurRopath,'')
+        if CurPathFa:
+            CurPathFa = CurPathFa.split('/')[0]+'#1'
+        else:
+            CurPathFa = info['FileName'] + '#0'
+        return CurPathFa
+
+
     def UpFinsh(self,info):
+        CurNavChosed = self.ui.CurNavChosed
+        CurNetChosed = self.ui.CurNetChosed
+        CurFileList = self.ui.CurFileListOld[CurNetChosed][CurNavChosed]
+        CurPathFiles = []
+        # print(CurRopath,CurNavChosed,CurNetChosed,self.GetUpFileFaPath(info))
+        for i in CurFileList:
+            CurPathFiles.append(i['filename']+'#'+str(i['isdir']))
+        if self.GetUpFileFaPath(info) not in CurPathFiles:
+            print('UPdate')
+            self.ui.signalRefresh.emit()
+
         # info['statusLabel'].setText("校验文件...")
         # LofeMd5 = info['FileMd5']
         # if LofeMd5 == RofeMd5:

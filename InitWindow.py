@@ -140,7 +140,7 @@ class FileOperClick(QThread):
     def UpChose(self,Upinfo):
         nav = self.ui.nav[self.ui.CurNetChosed]
         CurRopath = nav[-1]['path']
-        print('CurRoPath:',CurRopath)
+        # print('CurRoPath:',CurRopath)
         # time.sleep(0.2)
         # self.SignalTranspan.emit()
         if Upinfo['isDir']:
