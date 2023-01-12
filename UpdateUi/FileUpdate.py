@@ -81,22 +81,18 @@ class Thread_LoadImg(QThread):
             # print('send',SendList)
             ConList = self.SBCRe.GetFileCon(SendList)
             # print(ConList)
-            try:
-                for num in range(len(ConList['src'])):
+            for num in range(len(ConList['src'])):
+                try:
                     coninfo = ConList['src'][num]
                     ConBase64 = coninfo.split(',')[-1]
                     # img_b64decode = base64.b64decode(ConBase64)  # [21:]
                     # print(i[num]['fename'])
                     # print(ConBase64)
                     img_b64decode = base64.urlsafe_b64decode(ConBase64)
-
                     # print(img_b64decode)
-
                     self.ShowCon(i[num]['con'], img_b64decode)
-            except Exception as e:
-                print('threderror',e)
-
-
+                except Exception as e:
+                    print(i[num]['fename'],'threderror', e)
     def runthread1(self):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
@@ -192,11 +188,14 @@ class FileUpdate(QThread):
     def Down(self,info):
         self.DelChoseFiles(info)
         self.fileoperclick.Down(0)
+    def Del(self,info):
+        self.DelChoseFiles(info)
+        self.fileoperclick.DelFile([info])
     def create_Filerightmenu(self,info):
         self.groupBox_Upmenu = QMenu()
         self.actionDownfile = self.groupBox_Upmenu.addAction(u'下载')
         self.groupBox_Upmenu.addSeparator()
-        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'删除')
+        self.actionDelfile = self.groupBox_Upmenu.addAction(u'删除')
         self.groupBox_Upmenu.addSeparator()
         self.actionUpfolder = self.groupBox_Upmenu.addAction(u'分享')
         self.groupBox_Upmenu.addSeparator()
@@ -213,10 +212,9 @@ class FileUpdate(QThread):
                                         "    color:blue;\n"
                                         "    font-size:18px;\n"
                                         "}\n")
-        # fileoperclick = FileOperClick(self.SBCMain)
         self.actionDownfile.triggered.connect(lambda e: self.Down(info))
-        # self.fileoperclick = FileOperClick(self.SBCMain)
-        # self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down
+        self.actionDelfile.triggered.connect(lambda e: self.Del(info))
+
 
     def Refresh(self,e):
         if e.buttons() == QtCore.Qt.LeftButton:
@@ -405,6 +403,7 @@ class FileUpdate(QThread):
             CurSBCFiles['fetype'] = FileInfo['fetype']
             CurSBCFiles['imgLoad'] = 0
             CurSBCFiles['big'] = FileInfo['big']
+            CurSBCFiles['isdir'] = FileInfo['isdir']
             # print(FileInfo)
             if 'size' in FileInfo:
                 CurSBCFiles['size'] = FileInfo['size']

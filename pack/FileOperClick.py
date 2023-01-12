@@ -68,6 +68,7 @@ class FileOperClick(QThread):
         super().__init__()
         self.Signal.connect(self.Downact)
         self.SignalTranspan.connect(self.Transpanim)
+        self.SBCRe = self.ui.SBCRe
 
 
     def GetChoseFiles(self):
@@ -144,6 +145,13 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.UpChose,args=(Upinfo,))
         t.setDaemon(True)
         t.start()
+    def DelFile(self,info):
+        DelFileInfo = []
+        for i in info:
+            print(i)
+            DelFileInfo.append({'fename':i['fename'],'fepath':i['fepath'],'feisdir':i['isdir'],'fileId':''})
+        self.SBCRe.DelFile({'data':DelFileInfo})
+        self.ui.signalRefresh.emit()
 
     def Down(self,e):
         self.start()

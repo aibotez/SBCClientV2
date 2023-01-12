@@ -307,7 +307,7 @@ class TransUp():
         for i in CurFileList:
             CurPathFiles.append(i['filename']+'#'+str(i['isdir']))
         if self.GetUpFileFaPath(info) not in CurPathFiles:
-            print('UPdate')
+            # print('UPdate')
             self.ui.signalRefresh.emit()
 
         # info['statusLabel'].setText("校验文件...")

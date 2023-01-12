@@ -77,6 +77,12 @@ class SBCRe():
         self.Nav = FileDatas['Nav']
         self.imgFiles = FileDatas['imgFiles']
 
+    def DelFile(self,fileinfo):
+        url = 'http://' + self.host + '/DelFiles/'
+        fileinfo['client'] = 'Windows'
+        print(fileinfo)
+        res = requests.post(url, data=json.dumps(fileinfo),headers=self.headers)
+
     def GetFileCon(self,Files):
         url = 'http://' + self.host + '/GetImgCon/'
         postdata = json.dumps(Files,ensure_ascii=False)
