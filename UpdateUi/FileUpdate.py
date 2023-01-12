@@ -190,7 +190,7 @@ class FileUpdate(QThread):
         self.fileoperclick.Down(0)
     def Del(self,info):
         self.DelChoseFiles(info)
-        self.fileoperclick.DelFile([info])
+        self.fileoperclick.DelFile()
     def create_Filerightmenu(self,info):
         self.groupBox_Upmenu = QMenu()
         self.actionDownfile = self.groupBox_Upmenu.addAction(u'下载')
@@ -403,7 +403,11 @@ class FileUpdate(QThread):
             CurSBCFiles['fetype'] = FileInfo['fetype']
             CurSBCFiles['imgLoad'] = 0
             CurSBCFiles['big'] = FileInfo['big']
-            CurSBCFiles['isdir'] = FileInfo['isdir']
+            # print(self.MainWindow.CurNavChosed)
+            if self.MainWindow.CurNavChosed != 'File':
+                CurSBCFiles['isdir'] = 1
+            else:
+                CurSBCFiles['isdir'] = FileInfo['isdir']
             # print(FileInfo)
             if 'size' in FileInfo:
                 CurSBCFiles['size'] = FileInfo['size']

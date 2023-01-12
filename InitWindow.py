@@ -156,6 +156,7 @@ class initWindow():
         self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main, self.SBCMain)
         # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
+        self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         self.init()
 
     def dragEnterEvent(self, evn):
@@ -262,6 +263,7 @@ class initWindow():
         self.actionShare = self.groupBox_Moremenu.addAction(u'分享')
         self.actionMove = self.groupBox_Moremenu.addAction(u'移动')
         self.actionCopy = self.groupBox_Moremenu.addAction(u'复制')
+        self.actionDel = self.groupBox_Moremenu.addAction(u'删除')
         self.actionPorper = self.groupBox_Moremenu.addAction(u'属性')
         self.actionNewFolders = self.groupBox_Moremenu.addAction(u'新建文件夹')
         self.groupBox_Moremenu.popup(QCursor.pos())
@@ -271,6 +273,7 @@ class initWindow():
                                         "    color:blue;\n"
                                         "    font-size:18px;\n"
                                         "}\n")
+        self.actionDel.triggered.connect(self.fileoperclick.DelFile)
     def initpopup(self):
         pass
 

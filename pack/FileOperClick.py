@@ -2,10 +2,11 @@
 import sys,threading,os,hashlib
 import time
 
+
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox
 from PyQt5.Qt import QThread
 from PyQt5.QtCore import *
 from . import FileType
@@ -79,7 +80,7 @@ class FileOperClick(QThread):
             if Filei['checkBox'].isChecked():
                 Filei['checkBox'].setChecked(False)
                 # print('InitWind',Filei)
-                ChosedFiles.append({'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
+                ChosedFiles.append({'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'isdir':Filei['isdir'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
         return ChosedFiles
 
     def Downact(self,DownFile,DownFaPath):
@@ -146,12 +147,25 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.UpChose,args=(Upinfo,))
         t.setDaemon(True)
         t.start()
-    def DelFile(self,info):
+    def DelFileMessage(self,info):
+        ShowInfo = ''
+        if len(info) == 1:
+            ShowInfo = '"{}"'.format(info[0]['fename'])
+        else:
+            ShowInfo = '{}个文件'.format(str(len(info)))
+        reply = QMessageBox.question(self.ui.MainWindow,'提示', '是否要删除{}？'.format(ShowInfo),
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            self.SBCRe.DelFile({'data': info})
+            self.ui.signalRefresh.emit()
+        else:
+            return
+    def DelFile(self):
+        ChosedFiles = self.GetChoseFiles()
         DelFileInfo = []
-        for i in info:
+        for i in ChosedFiles:
             DelFileInfo.append({'fename':i['fename'],'fepath':i['fepath'],'feisdir':i['isdir'],'fileId':''})
-        self.SBCRe.DelFile({'data':DelFileInfo})
-        self.ui.signalRefresh.emit()
+        self.DelFileMessage(DelFileInfo)
 
     def Down(self,e):
         self.start()

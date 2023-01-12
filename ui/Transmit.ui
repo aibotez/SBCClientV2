@@ -1224,6 +1224,9 @@
                </property>
                <item>
                 <widget class="QFrame" name="frame_10">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
