@@ -11,6 +11,7 @@ from PyQt5.QtCore import *
 import base64
 from pack import SBCRequest
 from pack.preview import ImgPreview
+from pack import FileOperClick
 
 
 class Thread_LoadImg(QThread):
@@ -79,17 +80,22 @@ class Thread_LoadImg(QThread):
             SendList = [{'fepath': j['fepath']} for j in i]
             # print('send',SendList)
             ConList = self.SBCRe.GetFileCon(SendList)
+            # print(ConList)
             try:
                 for num in range(len(ConList['src'])):
                     coninfo = ConList['src'][num]
                     ConBase64 = coninfo.split(',')[-1]
-                    img_b64decode = base64.b64decode(ConBase64)  # [21:]
+                    # img_b64decode = base64.b64decode(ConBase64)  # [21:]
+                    # print(i[num]['fename'])
                     # print(ConBase64)
+                    img_b64decode = base64.urlsafe_b64decode(ConBase64)
+
                     # print(img_b64decode)
+
                     self.ShowCon(i[num]['con'], img_b64decode)
-            except:
-                # print('threderror')
-                break
+            except Exception as e:
+                print('threderror',e)
+
 
     def runthread1(self):
         t = threading.Thread(target=self.run1)
@@ -118,6 +124,7 @@ class Thread_LoadImg(QThread):
 class FileUpdate(QThread):
     signal = pyqtSignal()
     signalRefresh = pyqtSignal()
+
     def __init__(self,ui):
         super().__init__()
         self.MainWindow = ui
@@ -127,6 +134,7 @@ class FileUpdate(QThread):
         self.path = '/home/'
         self.CurFileList = []
         self.Thread_LoadImgs = Thread_LoadImg(self.MainWindow)
+        self.fileoperclick = FileOperClick.FileOperClick(ui)
 
     def Refreshshow(self):
         self.start()
@@ -158,6 +166,7 @@ class FileUpdate(QThread):
         elif e.buttons() == QtCore.Qt.RightButton:
             self.create_Filerightmenu(FileInfo)
             # self.FileRightDeal(FileInfo)
+
     def FileLeftDeal(self,FileInfo):
         print('FileLeft',FileInfo)
         # ImgPreviews = ImgPreview.ImageViewer()
@@ -170,6 +179,44 @@ class FileUpdate(QThread):
         if FileInfo['fetype'] == 'folder':
             self.FileShow1(FileInfo['fepath'])
             return
+
+    def DelChoseFiles(self,info):
+        ChosedFiles = []
+        FileDicts = self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed][self.MainWindow.CurNavChosed]['File']
+        for i in FileDicts:
+            Filei = FileDicts[i]
+            if Filei['checkBox'].isChecked():
+                Filei['checkBox'].setChecked(False)
+        info['checkBox'].setChecked(True)
+
+    def Down(self,info):
+        self.DelChoseFiles(info)
+        self.fileoperclick.Down(0)
+    def create_Filerightmenu(self,info):
+        self.groupBox_Upmenu = QMenu()
+        self.actionDownfile = self.groupBox_Upmenu.addAction(u'下载')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'删除')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'分享')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'重命名')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'复制')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'移动')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'属性')
+        self.groupBox_Upmenu.popup(QCursor.pos())
+        self.groupBox_Upmenu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:18px;\n"
+                                        "}\n")
+        # fileoperclick = FileOperClick(self.SBCMain)
+        self.actionDownfile.triggered.connect(lambda e: self.Down(info))
+        # self.fileoperclick = FileOperClick(self.SBCMain)
+        # self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down
 
     def Refresh(self,e):
         if e.buttons() == QtCore.Qt.LeftButton:
@@ -239,7 +286,7 @@ class FileUpdate(QThread):
 
     def ScrollContentUpdate(self):
         self.NavUpdate()
-        print('CurNavChosed',self.MainWindow.CurNavChosed)
+        # print('CurNavChosed',self.MainWindow.CurNavChosed)
         if self.MainWindow.CurNavChosed in self.MainWindow.SBCFilesDict[self.MainWindow.CurNetChosed]:
             # print('pr',self.MainWindow.SBCFilesDict)
             # print(self.MainWindow.SBCFilesDict)
@@ -266,6 +313,7 @@ class FileUpdate(QThread):
         # self.scrollAreaWidgetContents.customContextMenuRequested.connect(self.create_rightmenu)
 
         # self.MainWindow.FilescheckBox = []
+        # print(self.CurFileList)
         for i in range(len(self.CurFileList)):
 
             CurSBCFiles = {}
@@ -358,9 +406,13 @@ class FileUpdate(QThread):
             CurSBCFiles['imgLoad'] = 0
             CurSBCFiles['big'] = FileInfo['big']
             # print(FileInfo)
-            CurSBCFiles['size'] = FileInfo['size']
+            if 'size' in FileInfo:
+                CurSBCFiles['size'] = FileInfo['size']
+            else:
+                CurSBCFiles['size'] = FileInfo['FileSize']
 
             if FileInfo['fetype'] == 'img':
+                # print(CurSBCFiles['fename'])
                 Filecon.append(CurSBCFiles)
             CurSBCFiles['con'].setText("")
             CurSBCFiles['con'].setPixmap(QtGui.QPixmap(self.FileConChose(FileInfo['fetype'])))
