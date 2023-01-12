@@ -77,6 +77,7 @@ class FileOperClick(QThread):
         for i in FileDicts:
             Filei = FileDicts[i]
             if Filei['checkBox'].isChecked():
+                Filei['checkBox'].setChecked(False)
                 # print('InitWind',Filei)
                 ChosedFiles.append({'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
         return ChosedFiles
@@ -148,7 +149,6 @@ class FileOperClick(QThread):
     def DelFile(self,info):
         DelFileInfo = []
         for i in info:
-            print(i)
             DelFileInfo.append({'fename':i['fename'],'fepath':i['fepath'],'feisdir':i['isdir'],'fileId':''})
         self.SBCRe.DelFile({'data':DelFileInfo})
         self.ui.signalRefresh.emit()
