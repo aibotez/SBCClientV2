@@ -434,7 +434,7 @@ class TransUp():
         self.signaladdUp.emit(UpInfo)
         # pass
     def AddUping1(self,UpInfo):
-        print(UpInfo)
+        # print(UpInfo)
         UpInfo['size'] = UpInfo['Size']
         UpLayout = self.ui.TranspscrollArea['Up']
         UpverticalLayout = UpLayout[1]

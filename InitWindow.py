@@ -37,11 +37,11 @@ def getfileMd5(filename):
     return myhash.hexdigest()
 def GetAllFiles(LoPath,RoPath):
     Files = []
-    path = LoPath.replace('\\', '/')
-    for root, dirs, files in os.walk(path):
+    FaPath0 = os.path.abspath(os.path.dirname(LoPath)).replace('\\', '/')
+    for root, dirs, files in os.walk(LoPath):
         root += '/'
         root = root.replace('\\', '/').replace('//','/')
-        Rofepath = RoPath + root.replace(path+'/', '')
+        Rofepath = RoPath + root.replace(FaPath0+'/', '')
         for i in files:
             FileInfo = {}
             Lofepath = root + i
@@ -145,7 +145,9 @@ class FileOperClick(QThread):
         # self.SignalTranspan.emit()
         if Upinfo['isDir']:
             FilesAll = GetAllFiles(Upinfo['Path'],CurRopath)
+            # print(FilesAll)
             for i in FilesAll:
+                # print(i)
                 self.Upact(i['Lofepath'], i['Rofepath'])
         else:
             self.Upact(Upinfo['Path'],CurRopath)
@@ -362,6 +364,7 @@ class initWindow():
                 FilePath = i.replace('file:///', '')
                 if os.path.isdir(FilePath):
                     print('DragFolderPath',FilePath)
+                    fileoperclick.Up({'Path': FilePath, 'isDir': 1})
                 else:
                     print('DragFilePath', FilePath)
                     fileoperclick.Up({'Path': FilePath, 'isDir': 0})
