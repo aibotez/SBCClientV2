@@ -314,9 +314,11 @@ class TransUp():
                     break
     def GetUpFileFaPath(self,info):
         CurPath = info['CurPath']
-        print(self.ui.nav)
-        nav = self.ui.nav[self.ui.CurNetChosed]
-        CurRopath = nav[-1]['path']
+        if 'SBC' not in self.ui.nav:
+            CurRopath = '/home/'
+        else:
+            nav = self.ui.nav[self.ui.CurNetChosed]
+            CurRopath = nav[-1]['path']
         CurPathFa = CurPath.replace(CurRopath,'')
         if CurPathFa:
             CurPathFa = CurPathFa.split('/')[0]+'#1'
