@@ -1,15 +1,43 @@
-import sys,sqlite3,os
+import sys,sqlite3,os,threading
 
+
+class DBManager1():
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.dbmanager = DBManager()
+        self.conn = self.dbmanager.conn
+    def setUpPar(self,FilePath,FileName,changeVaule):
+        self.UpFilePath = FilePath
+        self.UpFileName = FileName
+        self.UpchangeVaule = changeVaule
+    def WSQL(self,DownInfo,Oper):
+        dbmanager = DBManager()
+        self.lock.acquire(True)
+        if Oper == 'AddUserTranspFinshRecord':
+            return self.dbmanager.AddUserTranspFinshRecord(DownInfo)
+        elif Oper == 'AddUserUpRecords':
+            return self.dbmanager.AddUserUpRecords(DownInfo)
+        elif Oper == 'AddUserUpRecord':
+            return self.dbmanager.AddUserUpRecord(DownInfo)
+        elif Oper =='UpdataUserUpRecord':
+            return self.dbmanager.UpdataUserUpRecord(self.UpFilePath,self.UpFileName,self.UpchangeVaule)
+        elif Oper =='DelUserUpRecord':
+            FilePath = DownInfo['LoFilePath']
+            FileName = DownInfo['FileName']
+            return self.dbmanager.DelUserUpRecord(FilePath,FileName)
+        self.lock.release()
+        dbmanager.close()
 
 
 class DBManager():
     def __init__(self):
+        self.lock = threading.Lock()
         self.cur = None
         self.conn = None
         self.db_connect()
     def db_connect(self):
         if not os.path.exists('./UserDB.db'):
-            conn = sqlite3.connect('./UserDB.db')
+            conn = sqlite3.connect('./UserDB.db',check_same_thread=False)
             cur = conn.cursor()
             self.cur = cur
             self.conn = conn
@@ -21,13 +49,13 @@ class DBManager():
             # cur.close()
             # conn.close()
         else:
-            conn = sqlite3.connect('./UserDB.db')
+            conn = sqlite3.connect('./UserDB.db',check_same_thread=False)
             cur = conn.cursor()
             self.cur = cur
             self.conn = conn
 
     def Connect(self):
-        conn = sqlite3.connect('./UserDB.db')
+        conn = sqlite3.connect('./UserDB.db',check_same_thread=False)
         cur = conn.cursor()
         self.cur = cur
         self.conn = conn
@@ -52,12 +80,12 @@ class DBManager():
     def creatUserTransFinshRecordform(self):
         sql = "create table TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck,timestamp)"
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
 
     def GetClientSetting(self):
         sql = "select * from ClientSetting"
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
         Result = {}
         for i in self.cur:
             info = list(i)
@@ -70,21 +98,37 @@ class DBManager():
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
         sql = "insert into TransFinsh(FileMd5,FileName,FilePath,size,fetype,fecheck,timestamp) values (?,?,?,?,?,?,?)"
         data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['FilePath'],DownInfo['Size'],DownInfo['fetype'],DownInfo['FeCheck'],DownInfo['timestamp'])
+        self.lock.acquire(True)
         self.cur.execute(sql, data)
         self.conn.commit()
+        self.lock.release()
         return 1
 
-    def AddUserUpRecord(self,UpInfo):
-        if self.GetUserDownRecord(UpInfo['RoFilePath'],UpInfo['FileName']):
+    def AddUserUpRecords(self,UpInfo):
+        if self.GetUserUpRecord(UpInfo['RoFilePath'],UpInfo['FileName']):
             print('Have Up')
             return 'Have'
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
         sql = "insert into UserUp(FileMd5,FileName,Size,LoFilePath,RoFilePath,isUp,fetype) values (?,?,?,?,?,?,?)"
         data = (UpInfo['FileMd5'],UpInfo['FileName'],UpInfo['size'],UpInfo['LoFilePath'],UpInfo['RoFilePath'],'2',UpInfo['fetype'])
+        self.lock.acquire(True)
         self.cur.execute(sql, data)
-        self.conn.commit()
+        # self.conn.commit()
+        self.lock.release()
         return 1
 
+    def AddUserUpRecord(self,UpInfo):
+        if self.GetUserUpRecord(UpInfo['RoFilePath'],UpInfo['FileName']):
+            print('Have Up')
+            return 'Have'
+        # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
+        sql = "insert into UserUp(FileMd5,FileName,Size,LoFilePath,RoFilePath,isUp,fetype) values (?,?,?,?,?,?,?)"
+        data = (UpInfo['FileMd5'],UpInfo['FileName'],UpInfo['size'],UpInfo['LoFilePath'],UpInfo['RoFilePath'],'2',UpInfo['fetype'])
+        self.lock.acquire(True)
+        self.cur.execute(sql, data)
+        self.conn.commit()
+        self.lock.release()
+        return 1
     def AddUserDownRecord(self,DownInfo):
         if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
             print('Have Down')
@@ -92,14 +136,15 @@ class DBManager():
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
         sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype) values (?,?,?,?,?,?,?)"
         data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'2',DownInfo['fetype'])
+        self.lock.acquire(True)
         self.cur.execute(sql, data)
         self.conn.commit()
+        self.lock.release()
         return 1
-
     def GetUserUpRecord(self,RoFilePath,FileName):
         sql = "select * from UserUp where LoFilePath ='{}' and FileName='{}'".format(RoFilePath,FileName)
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
         Result = None
         for i in self.cur:
             info = list(i)
@@ -108,7 +153,7 @@ class DBManager():
     def GetUserDownRecord(self,FilePath,FileName):
         sql = "select * from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
         Result = None
         for i in self.cur:
             info = list(i)
@@ -117,7 +162,7 @@ class DBManager():
     def GetUserTranspFinshRecord(self,FilePath,FileName):
         sql = "select * from TransFinsh where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
         Result = None
         for i in self.cur:
             info = list(i)
@@ -126,7 +171,7 @@ class DBManager():
     def GetUserTranspFinshRecordAll(self):
         sql = "select * from TransFinsh"
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
         Result = []
         for i in self.cur:
             info = list(i)
@@ -136,7 +181,7 @@ class DBManager():
     def GetUserUpRecordAll(self):
         sql = "select * from UserUp"
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
         Result = []
         for i in self.cur:
             info = list(i)
@@ -147,7 +192,7 @@ class DBManager():
     def GetUserDownRecordAll(self):
         sql = "select * from UserDown"
         self.cur.execute(sql)
-        self.conn.commit()
+        # self.conn.commit()
         Result = []
         for i in self.cur:
             info = list(i)
@@ -160,29 +205,37 @@ class DBManager():
         # self.Connect()
         sql = "update UserUp set isUp=? where LoFilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         data = (str(changeVaule))
-        self.cur.execute(sql,data)
+        self.lock.acquire(True)
+        self.cur.execute(sql, data)
         self.conn.commit()
+        self.lock.release()
     def UpdataUserDownRecord(self,FilePath,FileName,changeVaule):
         # self.close()
         # self.Connect()
         sql = "update UserDown set isDown=? where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         data = (str(changeVaule))
-        self.cur.execute(sql,data)
+        self.lock.acquire(True)
+        self.cur.execute(sql, data)
         self.conn.commit()
-
-
+        self.lock.release()
     def DelUserUpRecord(self,FilePath,FileName):
         sql = "delete from UserUp where LoFilePath ='{}' and FileName='{}'".format(FilePath, FileName)
+        self.lock.acquire(True)
         self.cur.execute(sql)
         self.conn.commit()
+        self.lock.release()
     def DelUserDownRecord(self,FilePath,FileName):
         sql = "delete from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
+        self.lock.acquire(True)
         self.cur.execute(sql)
         self.conn.commit()
+        self.lock.release()
     def DelUserTranspFinshRecord(self,FilePath,FileName):
         sql = "delete from TransFinsh where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
+        self.lock.acquire(True)
         self.cur.execute(sql)
         self.conn.commit()
+        self.lock.release()
 
 
 #     sql = "update users set username=?,password=?,company=? where id=2"
