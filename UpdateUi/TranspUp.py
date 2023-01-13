@@ -268,9 +268,9 @@ class TransUp():
         dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
         # info['isDown'] = 1
         dbManager.close()
-        self.Up(info)
+        # self.Up(info)
         # self.Upact1(info)
-        self.UpManger(info)
+        # self.UpManger(info)
     def UpSatusChange(self,info,e):
         # print(info)
         dbManager = DBManager.DBManager()
