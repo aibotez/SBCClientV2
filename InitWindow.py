@@ -165,15 +165,16 @@ class initWindow():
     # 鼠标放开执行
     def dropEvent(self, evn):
         paths = self.DrageFileIntoPath.split('\n')
+        FileAll = []
         for i in paths:
             if i:
                 FilePath = i.replace('file:///', '')
                 if os.path.isdir(FilePath):
-                    print('DragFolderPath',FilePath)
-                    self.fileoperclick.Up({'Path': FilePath, 'isDir': 1})
+                    FileAll.append({'Path': FilePath, 'isDir': 1})
                 else:
-                    print('DragFilePath', FilePath)
-                    self.fileoperclick.Up({'Path': FilePath, 'isDir': 0})
+                    FileAll.append({'Path': FilePath, 'isDir': 0})
+        if FileAll:
+            self.fileoperclick.Up(FileAll)
 
         # FilePath = self.DrageFileIntoPath.replace('file:///','')
         # fileoperclick = FileOperClick(self.SBCMain)
@@ -327,7 +328,11 @@ class initWindow():
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down  # 下载
 
-
+    def AniUpdate(self):
+        self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
+        self.anim.setDuration(2000)  # 设置动画间隔时间
+        self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
+        self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
     def init(self):
         self.initBindSignal()
         self.FileUpdates.start()
@@ -337,6 +342,10 @@ class initWindow():
         self.SBCMain.TranspArrow1.setGeometry(200,20,0,0)
         self.SBCMain.TranspArrow1.setPixmap(QtGui.QPixmap('img/Transp2.jpg'))
         self.SBCMain.TranspArrow1.setScaledContents(True) # 图片随文本部件的大小变动
+        self.SBCMain.anim = QtCore.QPropertyAnimation(self.SBCMain.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
+        self.SBCMain.anim.setDuration(2000)  # 设置动画间隔时间
+        self.SBCMain.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
+        self.SBCMain.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
 
 
 

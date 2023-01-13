@@ -41,24 +41,17 @@ def GetAllFiles(LoPath,RoPath):
 class TranspAnithread(QThread):
     # 定义信号,定义参数为str类型
     Signal = pyqtSignal()
-    # Signal = pyqtSignal(dict, str)
-
     def __init__(self, ui):
         super().__init__()
-        # 下面的初始化方法都可以，有的python版本不支持
-        #  super(Mythread, self).__init__()
         self.ui = ui
         self.Signal.connect(self.AniUpdate)
     def AniUpdate(self):
-        self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
-        self.anim.setDuration(2000)  # 设置动画间隔时间
-        self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
-        self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
-        self.anim.start()  # 启动动画
-
-    def SetPar(self,dictpar,strpar):
-        self.dictpar = dictpar
-        self.strpar = strpar
+        # self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
+        # self.anim.setDuration(2000)  # 设置动画间隔时间
+        # self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
+        # self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+        # self.anim.start()  # 启动动画
+        self.ui.anim.start()
     def run(self):
         self.Signal.emit()
 class FileOperClick(QThread):
@@ -100,16 +93,16 @@ class FileOperClick(QThread):
             self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
 
     def UpFile(self):
-        print(66)
         fname = QFileDialog.getOpenFileName(self.ui.MainWindow, "选择要上传的文件", "./")
-        print(77)
         FilePath = fname[0]
-        self.Up({'Path':FilePath,'isDir':0})
+        if FilePath:
+            self.Up({'Path':FilePath,'isDir':0})
     def UpFolder(self):
         FolderPath = QFileDialog.getExistingDirectory(self.ui.MainWindow, "选择要上传的文件夹", "./")
-        self.Up({'Path': FolderPath, 'isDir': 1})
+        if FolderPath:
+            self.Up({'Path': FolderPath, 'isDir': 1})
 
-    def Upact(self,LoPath,CurRopath):
+    def GetMoreInfo(self,LoPath,CurRopath):
         LoFileMd5 = getfileMd5(LoPath)
         Upinfo = {}
         Upinfo['FileMd5'] = LoFileMd5
@@ -124,7 +117,8 @@ class FileOperClick(QThread):
         Upinfo['Size'] = os.path.getsize(LoPath)
         Upinfo['FileSize'] = Upinfo['Size']
         # print(Upinfo)
-        self.ui.TransFilesManager.AddUpRecord(Upinfo)
+        # self.ui.TransFilesManager.AddUpRecord(Upinfo)
+        return Upinfo
 
     def UpChose(self,Upinfo):
         nav = self.ui.nav[self.ui.CurNetChosed]
@@ -132,15 +126,24 @@ class FileOperClick(QThread):
         # print('CurRoPath:',CurRopath)
         # time.sleep(0.2)
         # self.SignalTranspan.emit()
-        if Upinfo['isDir']:
-            FilesAll = GetAllFiles(Upinfo['Path'],CurRopath)
-            # print(FilesAll)
-            for i in FilesAll:
-                # print(i)
-                self.Upact(i['Lofepath'], i['Rofepath'])
-        else:
-            self.Upact(Upinfo['Path'],CurRopath)
+        FileAll = []
+        for i in Upinfo:
+            if i['isDir']:
+                FilesAll = GetAllFiles(i['Path'],CurRopath)
+                # print(FilesAll)
+                for i in FilesAll:
+                    FileAll.append(self.GetMoreInfo(i['Lofepath'], i['Rofepath']))
+            else:
+                FileAll.append(self.GetMoreInfo(i['Path'],CurRopath))
+        self.ui.TransFilesManager.AddUpRecord(FileAll)
 
+    def UpChose1(self,e):
+        # self.ui.thread = TranspAnithread(self.ui)
+        while True:
+            # self.ui.thread = TranspAnithread(self.ui)
+            # self.ui.thread.start()
+            print(time.time())
+            time.sleep(1)
     def Up(self,Upinfo):
         # self.Transpanim()
         # self.SignalTranspan.emit()
@@ -149,6 +152,7 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.UpChose,args=(Upinfo,))
         t.setDaemon(True)
         t.start()
+        # self.UpChose(Upinfo)
     def DelFileMessage(self,info):
         ShowInfo = ''
         if len(info) == 1:
@@ -170,6 +174,8 @@ class FileOperClick(QThread):
         self.DelFileMessage(DelFileInfo)
 
     def Down(self,e):
+        # self.ui.thread = TranspAnithread(self.ui)
+        # self.ui.thread.start()
         self.start()
         # thread = Mythread()
         # # thread.SetPar(fei, DownFaPath)
@@ -177,16 +183,18 @@ class FileOperClick(QThread):
         # thread.start()
 
     def Transpanim(self):
-        self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
-        self.anim.setDuration(2000)  # 设置动画间隔时间
-        self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
-        self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
-        self.anim.start()  # 启动动画
+        self.ui.thread = TranspAnithread(self.ui)
+        self.ui.thread.start()
+        # self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
+        # self.anim.setDuration(2000)  # 设置动画间隔时间
+        # self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
+        # self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+        # self.anim.start()  # 启动动画
     def run(self):
         import threading
         ChosedFiles = self.GetChoseFiles()
-        if ChosedFiles:
-            self.SignalTranspan.emit()
+        # if ChosedFiles:
+        #     self.SignalTranspan.emit()
         for i in ChosedFiles:
             if i['fetype'] != 'folder':
                 DownFaPath = self.ui.DownPath

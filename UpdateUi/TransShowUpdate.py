@@ -240,7 +240,8 @@ class TransShowUpdate(QThread):
     signal = pyqtSignal()
     signal1 = pyqtSignal()
     signaladd = pyqtSignal(dict)
-    signaladdUp = pyqtSignal(dict)
+    signaladdUp = pyqtSignal(list)
+
     def __init__(self,ui):
         super().__init__()
         self.DownInfosUpdateLabs = {}
@@ -467,7 +468,7 @@ class TransShowUpdate(QThread):
         if LofeMd5 == RofeMd5:
             info['statusLabel'].setText("校验通过")
             info['FeCheck'] = 1
-            print('校验通过')
+            print('校验通过',info['FileName'])
         else:
             info['statusLabel'].setText("文件损坏")
             info['FeCheck'] = 0
@@ -631,6 +632,7 @@ class TransShowUpdate(QThread):
         return {'exist':LoFileExist,'size':LoFileSize}
 
     def DelDowing(self,info,e):
+        print('DelFile0', info['FileName'])
         dbManager = DBManager.DBManager()
         dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
         self.DownLayout[1].removeWidget(info['frame'])
@@ -638,7 +640,9 @@ class TransShowUpdate(QThread):
         self.DownLayout[1].removeWidget(info['line'])
         sip.delete(info['line'])
         # self.RefreshDowning()
+        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
         DownInfos = dbManager.GetUserDownRecordAll()
+        print('DelFile1', info['FileName'],DownInfoi)
         # print('DownS',DownInfos)
         self.DownLayout[3].setText(str(len(DownInfos)))
         del self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath']+info['FileName'])]
@@ -722,8 +726,11 @@ class TransShowUpdate(QThread):
         self.DownLayout[5].clicked.connect(self.PauseAll)
         self.DownLayout[6].clicked.connect(self.CancelAll)
 
-
     def DownManger(self,Downinfo = None):
+        qmut_1.lock()
+        self.DownManger1(Downinfo)
+        qmut_1.unlock()
+    def DownManger1(self,Downinfo = None):
         dbManager = DBManager.DBManager()
         DownInfos = dbManager.GetUserDownRecordAll()
 
@@ -737,13 +744,17 @@ class TransShowUpdate(QThread):
                 CurDown.append(i)
             elif int(i['isDown']) == 2:
                 WaitDown.append(i)
+        print(WaitDown)
         if CurDownNums < MaxDownNums:
             for i in range(MaxDownNums-CurDownNums):
                 if i < len(WaitDown):
-                    info = WaitDown[i]
-                    dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
-                    infoi = self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]
-                    self.Down(infoi)
+                    infoi = WaitDown[i]
+                    DownInfoi = dbManager.GetUserDownRecord(infoi['FilePath'], infoi['FileName'])
+                    dbManager.UpdataUserDownRecord(infoi['FilePath'], infoi['FileName'], 1)
+                    print('AddDown',infoi['FileName'],str_trans_to_md5(infoi['FilePath'] + infoi['FileName']),DownInfoi)
+                    infoii = self.DownInfosUpdateLabs[str_trans_to_md5(infoi['FilePath'] + infoi['FileName'])]
+                    self.Down(infoii)
+                    # time.sleep(0.01)
 
         if CurDownNums > MaxDownNums:
             for i in CurDown:
@@ -757,8 +768,8 @@ class TransShowUpdate(QThread):
                         CurDownNums -= 1
         dbManager.close()
 
-    def AddUping(self,UpInfo):
-        self.TranspUps.AddUping(UpInfo)
+    def AddUping(self,UpInfos):
+        self.TranspUps.AddUpFiles(UpInfos)
     def AddDowning(self,DownInfo):
         self.signaladd.emit(DownInfo)
 
@@ -784,6 +795,7 @@ class TransShowUpdate(QThread):
         DownverticalLayout.addWidget(line_3)
         Downinginfoi['line'] = line_3
         dbManager.close()
+
         self.DownManger()
         # self.Down(Downinginfoi)
 
