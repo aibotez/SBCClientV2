@@ -100,7 +100,9 @@ class FileOperClick(QThread):
             self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
 
     def UpFile(self):
+        print(66)
         fname = QFileDialog.getOpenFileName(self.ui.MainWindow, "选择要上传的文件", "./")
+        print(77)
         FilePath = fname[0]
         self.Up({'Path':FilePath,'isDir':0})
     def UpFolder(self):

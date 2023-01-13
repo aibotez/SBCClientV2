@@ -164,17 +164,16 @@ class initWindow():
         evn.accept()
     # 鼠标放开执行
     def dropEvent(self, evn):
-        fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         paths = self.DrageFileIntoPath.split('\n')
         for i in paths:
             if i:
                 FilePath = i.replace('file:///', '')
                 if os.path.isdir(FilePath):
                     print('DragFolderPath',FilePath)
-                    fileoperclick.Up({'Path': FilePath, 'isDir': 1})
+                    self.fileoperclick.Up({'Path': FilePath, 'isDir': 1})
                 else:
                     print('DragFilePath', FilePath)
-                    fileoperclick.Up({'Path': FilePath, 'isDir': 0})
+                    self.fileoperclick.Up({'Path': FilePath, 'isDir': 0})
 
         # FilePath = self.DrageFileIntoPath.replace('file:///','')
         # fileoperclick = FileOperClick(self.SBCMain)
@@ -243,9 +242,8 @@ class initWindow():
                                         "    color:blue;\n"
                                         "    font-size:18px;\n"
                                         "}\n")
-        fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
-        self.actionUpfile.triggered.connect(fileoperclick.UpFile)
-        self.actionUpfolder.triggered.connect(fileoperclick.UpFolder)
+        self.actionUpfile.triggered.connect(self.fileoperclick.UpFile)
+        self.actionUpfolder.triggered.connect(self.fileoperclick.UpFolder)
         # self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down
     def creat_ChoseNetmenu(self,e):
         self.groupBox_ChoseNetmenu = QMenu()
