@@ -466,6 +466,7 @@ class TransUp():
             # self.qmut_1.unlock()
             time.sleep(0.1)
     def UpManger(self):
+        return
         dbManager = DBManager.DBManager()
         UpInfos = dbManager.GetUserUpRecordAll()
         CurUpNums = 0

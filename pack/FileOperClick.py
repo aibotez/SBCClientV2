@@ -27,6 +27,8 @@ def getfileMd5(filename):
 def GetAllFiles(LoPath,RoPath):
     Files = []
     FaPath0 = os.path.abspath(os.path.dirname(LoPath)).replace('\\', '/')
+    if FaPath0[-1] == '/':
+         FaPath0 = FaPath0[0:-1]
     for root, dirs, files in os.walk(LoPath):
         root += '/'
         root = root.replace('\\', '/').replace('//','/')
@@ -37,6 +39,7 @@ def GetAllFiles(LoPath,RoPath):
             FileInfo['Lofepath'] = Lofepath
             FileInfo['Rofepath'] = Rofepath
             Files.append(FileInfo)
+
     return Files
 class TranspAnithread(QThread):
     # 定义信号,定义参数为str类型
@@ -96,11 +99,11 @@ class FileOperClick(QThread):
         fname = QFileDialog.getOpenFileName(self.ui.MainWindow, "选择要上传的文件", "./")
         FilePath = fname[0]
         if FilePath:
-            self.Up({'Path':FilePath,'isDir':0})
+            self.Up([{'Path':FilePath,'isDir':0}])
     def UpFolder(self):
         FolderPath = QFileDialog.getExistingDirectory(self.ui.MainWindow, "选择要上传的文件夹", "./")
         if FolderPath:
-            self.Up({'Path': FolderPath, 'isDir': 1})
+            self.Up([{'Path': FolderPath, 'isDir': 1}])
 
     def GetMoreInfo(self,LoPath,CurRopath):
         LoFileMd5 = getfileMd5(LoPath)
