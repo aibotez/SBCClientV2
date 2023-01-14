@@ -241,12 +241,14 @@ class TransShowUpdate(QThread):
     signal1 = pyqtSignal()
     signaladd = pyqtSignal(dict)
     signaladdUp = pyqtSignal(list)
+    signalaDelUp = pyqtSignal(dict)
+    signalaUpdateUpProgress = pyqtSignal(dict,dict)
 
     def __init__(self,ui):
         super().__init__()
         self.DownInfosUpdateLabs = {}
         self.ui = ui
-        self.TranspUps = TranspUp.TransUp(self.ui,self.signaladdUp)
+        self.TranspUps = TranspUp.TransUp(self.ui,self.signaladdUp,self.signalaDelUp,self.signalaUpdateUpProgress)
         self.DownInfos = []
         self.PriDown = None
         self.dbManager = DBManager.DBManager()

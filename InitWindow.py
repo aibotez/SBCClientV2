@@ -344,7 +344,7 @@ class initWindow():
         self.SBCMain.TranspArrow1.setPixmap(QtGui.QPixmap('img/Transp2.jpg'))
         self.SBCMain.TranspArrow1.setScaledContents(True) # 图片随文本部件的大小变动
         self.SBCMain.anim = QtCore.QPropertyAnimation(self.SBCMain.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
-        self.SBCMain.anim.setDuration(2000)  # 设置动画间隔时间
+        self.SBCMain.anim.setDuration(1000)  # 设置动画间隔时间
         self.SBCMain.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         self.SBCMain.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
 
