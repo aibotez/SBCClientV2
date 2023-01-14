@@ -137,10 +137,14 @@ class FileOperClick(QThread):
                 FilesAll = GetAllFiles(i['Path'],CurRopath)
                 # print(FilesAll)
                 for i in FilesAll:
-                    FileAll.append(self.GetMoreInfo(i['Lofepath'], i['Rofepath']))
+                    FileInfo = self.GetMoreInfo(i['Lofepath'], i['Rofepath'])
+                    if FileInfo['Size'] != 0:
+                        FileAll.append(self.GetMoreInfo(i['Lofepath'], i['Rofepath']))
             else:
                 # print(66, i)
-                FileAll.append(self.GetMoreInfo(i['Path'],CurRopath))
+                FileInfo = self.GetMoreInfo(i['Path'],CurRopath)
+                if FileInfo['Size'] != 0:
+                    FileAll.append(self.GetMoreInfo(i['Path'],CurRopath))
 
 
         self.ui.TransFilesManager.AddUpRecord(FileAll)

@@ -277,6 +277,7 @@ class TransUp():
     def UpCancel(self,info):
         info['statusButon'].setText(">")
         info['statusLabel'].setText("已暂停")
+        self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]['isUp'] = 0
         self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 0)
         self.dbManager1.WSQL(info, 'UpdataUserUpRecord')
         # self.dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 0)
@@ -284,6 +285,7 @@ class TransUp():
         self.UpManger()
     def UpGon(self,info):
         info['statusButon'].setText("||")
+        self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]['isUp'] = 1
         self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 1)
         self.dbManager1.WSQL(info, 'UpdataUserUpRecord')
         # self.dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
@@ -410,6 +412,7 @@ class TransUp():
         # progressinfo = {'bar': progress, 'CurFileSize': CurFileSize1, 'FileTotSize': FileTotSize, 'Speed': Speed}
         # print(Labelinfo)
         try:
+            # Labelinfo['statusButon'].setEnabled(False)
             Labelinfo['progressBar'].setProperty("value",info['bar'])
             Labelinfo['UpSizeLabel'].setText(
                 "{}/{}".format(size_format(info['CurFileSize']),size_format(info['FileTotSize'])))
@@ -429,6 +432,8 @@ class TransUp():
         dbManager = DBManager.DBManager()
         def Uping_callback(monitor, info):
             nonlocal t0,CurFileSize,CurFileSize0,ShowProgress
+            if self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]['isUp'] == 0:
+                info['statusButon'].setEnabled(False)
             try:
                 FileSeekStart = info['FileSeekStart']
                 t1 = time.time()
@@ -524,7 +529,7 @@ class TransUp():
                     CurFileSize += len(chunk)
                 except Exception as e:
                     print('上传出错',e)
-
+        info['statusButon'].setEnabled(True)
         ShowProgress = 0
         dbManager.close()
         if CurFileSize == info['Size']:
@@ -623,6 +628,7 @@ class TransUp():
                     # dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
                     infoi = self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]
                     self.Up(infoi)
+        # print(CurUpNums,MaxUpNums)
         if CurUpNums > MaxUpNums:
             for i in CurUp:
                 if CurUpNums > MaxUpNums:
@@ -641,6 +647,7 @@ class TransUp():
         # t.start()
 
     def AddUping(self,UpInfos=None):
+        print(UpInfos)
         if not UpInfos:
             UpInfos = self.dbManager.GetUserUpRecordAll()
 
