@@ -106,6 +106,7 @@ class TransUp():
     def __init__(self,ui,signaladdUp,signalaDelUp,signalaUpdateUpProgress):
         super().__init__()
         self.ui = ui
+        self.MaxUpNums = 2
         self.UpLayout = self.ui.TranspscrollArea['Up']
         self.qmut_1 = QMutex()
         self.s = requests.Session()
@@ -373,7 +374,7 @@ class TransUp():
         # sip.delete(infoi['frame'])
         # self.UpLayout[1].removeWidget(infoi['line'])
         # sip.delete(infoi['line'])
-        print('DEL')
+        # print('DEL')
         # QApplication.processEvents()
         # del self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
         # print(66)
@@ -580,7 +581,7 @@ class TransUp():
         UpInfos = dbManager.GetUserUpRecordAll()
         # self.UpLayout[3].setText(str(len(UpInfos)))
         CurUpNums = 0
-        MaxUpNums = 2
+        MaxUpNums = self.MaxUpNums
         WaitUp = []
         CurUp = []
         DelUp = []
@@ -642,6 +643,7 @@ class TransUp():
     def AddUping(self,UpInfos=None):
         if not UpInfos:
             UpInfos = self.dbManager.GetUserUpRecordAll()
+
         self.signaladdUp.emit(UpInfos)
         # pass
     def UpdateDOwnNums(self,infos):
@@ -680,14 +682,14 @@ class TransUp():
             # QApplication.processEvents()
 
         if FilesSQL:
-            # self.ui.MainWindow.WSQLUpThread = threading.Thread(target=self.WSQL,args=(FilesSQL,))
-            # self.ui.MainWindow.WSQLUpThread.setDaemon(True)
-            # self.ui.MainWindow.WSQLUpThread.start()
+            self.WSQLUpThread = threading.Thread(target=self.WSQL,args=(FilesSQL,))
+            self.WSQLUpThread.setDaemon(True)
+            self.WSQLUpThread.start()
 
-            self.ui.MainWindow.WSQLUpThread = WSQLThread(self.ui,FilesSQL,self.dbManager1)
-            self.ui.MainWindow.WSQLUpThread.Signal.connect(self.UpdateDOwnNums)
-            # self.ui.MainWindow.WSQLUpThread.Signal.connect(self.UpManger)
-            self.ui.MainWindow.WSQLUpThread.start()
+            # self.ui.MainWindow.WSQLUpThread = WSQLThread(self.ui,FilesSQL,self.dbManager1)
+            # self.ui.MainWindow.WSQLUpThread.Signal.connect(self.UpdateDOwnNums)
+            # # self.ui.MainWindow.WSQLUpThread.Signal.connect(self.UpManger)
+            # self.ui.MainWindow.WSQLUpThread.start()
         else:
             self.UpManger()
 
