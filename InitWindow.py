@@ -166,6 +166,7 @@ class initWindow():
     def dropEvent(self, evn):
         paths = self.DrageFileIntoPath.split('\n')
         FileAll = []
+        # print(paths)
         for i in paths:
             if i:
                 FilePath = i.replace('file:///', '')

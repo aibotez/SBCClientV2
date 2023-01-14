@@ -14,18 +14,22 @@ class DBManager1():
         dbmanager = DBManager()
         self.lock.acquire(True)
         if Oper == 'AddUserTranspFinshRecord':
-            self.dbmanager.AddUserTranspFinshRecord(DownInfo)
+            dbmanager.AddUserTranspFinshRecord(DownInfo)
         elif Oper == 'AddUserUpRecords':
-            self.dbmanager.AddUserUpRecords(DownInfo)
+            for i in DownInfo:
+                dbmanager.AddUserUpRecords(i)
+            dbmanager.conn.commit()
         elif Oper == 'AddUserUpRecord':
             dbmanager.AddUserUpRecord(DownInfo)
         elif Oper =='UpdataUserUpRecord':
-            self.dbmanager.UpdataUserUpRecord(self.UpFilePath,self.UpFileName,self.UpchangeVaule)
+            dbmanager.UpdataUserUpRecord(self.UpFilePath,self.UpFileName,self.UpchangeVaule)
         elif Oper =='DelUserUpRecord':
             FilePath = DownInfo['LoFilePath']
             FileName = DownInfo['FileName']
-            self.dbmanager.DelUserUpRecord(FilePath,FileName)
+            dbmanager.DelUserUpRecord(FilePath,FileName)
         self.lock.release()
+
+
         dbmanager.close()
 
 

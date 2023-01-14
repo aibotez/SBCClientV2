@@ -17,7 +17,7 @@ import threading
 
 
 
-
+qmut_1 = QMutex()
 def size_format(size):
     if size < 1024:
         return '%i' % size + 'size'
@@ -87,12 +87,11 @@ class WSQLThread(QThread):
         # self.dbManager = self.dbManager.self.dbManager()
         # self.dbManager.AddUserUpRecord(self.info)
         # self.dbManager.close()
-        for i in self.info:
-            print('AddSQL',i)
-            # self.dbManager.AddUserUpRecords(i)
-            self.dbManager.WSQL(i, 'AddUserUpRecord')
 
-        self.dbManager.conn.commit()
+            # self.dbManager.AddUserUpRecords(i)
+        self.dbManager.WSQL(self.info, 'AddUserUpRecords')
+
+        # self.dbManager.conn.commit()
         self.Signal.emit(self.info)
 class TransUp():
     # signalWSQL = pyqtSignal(list)
@@ -102,6 +101,7 @@ class TransUp():
         self.ui = ui
         self.UpLayout = self.ui.TranspscrollArea['Up']
         self.qmut_1 = QMutex()
+        self.s = requests.Session()
         self.signaladdUp = signaladdUp
         self.dbManager = DBManager.DBManager()
         self.dbManager1 = DBManager.DBManager1()
@@ -109,7 +109,7 @@ class TransUp():
         self.UpInfosUpdateLabs = {}
         self.signaladdUp.connect(self.AddUping1)
         self.AddUping()
-        self.LoopRunStart()
+        # self.LoopRunStart()
         # self.RefreshUping()
 
     def add(self, scrollAreaWidgetContents, UpInfo):
@@ -250,7 +250,7 @@ class TransUp():
         # Upinginfoi['RoFilePath'] = UpInfo['RoFilePath']
         Upinginfoi['LoFileSatus'] = LoFile
         Upinginfoi['LoPath'] = UpInfo['LoFilePath']+UpInfo['FileName']
-        self.UpInfosUpdateLabs[str_trans_to_md5(Upinginfoi['LoPath'])] = Upinginfoi
+        self.UpInfosUpdateLabs[str_trans_to_md5(Upinginfoi['RoFilePath']+UpInfo['FileName'])] = Upinginfoi
 
         self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
         self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
@@ -290,7 +290,7 @@ class TransUp():
         UpInfos = self.dbManager.GetUserUpRecordAll()
         # print('UpS',UpInfos)
         self.UpLayout[3].setText(str(len(UpInfos)))
-        del self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath']+info['FileName'])]
+        del self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath']+info['FileName'])]
 
 
     def OpenFile(self,info):
@@ -327,21 +327,23 @@ class TransUp():
 
 
     def UpFinsh(self,info):
-        print('Finsh')
+        print('Finsh',info['FileName'])
         self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 3)
         self.dbManager1.WSQL(0,'UpdataUserUpRecord')
+        self.UpManger()
         # self.dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 3)
         # self.dbManager.conn.commit()
-        CurNavChosed = self.ui.CurNavChosed
-        CurNetChosed = self.ui.CurNetChosed
-        CurFileList = self.ui.CurFileListOld['SBC']['File']
-        CurPathFiles = []
-        # print(CurRopath,CurNavChosed,CurNetChosed,self.GetUpFileFaPath(info))
-        for i in CurFileList:
-            CurPathFiles.append(i['filename']+'#'+str(i['isdir']))
-        if self.GetUpFileFaPath(info) not in CurPathFiles:
-            # print('UPdate')
-            self.ui.signalRefresh.emit()
+        # CurNavChosed = self.ui.CurNavChosed
+        # CurNetChosed = self.ui.CurNetChosed
+        # CurFileList = self.ui.CurFileListOld['SBC']['File']
+        # CurPathFiles = []
+        # # print(CurRopath,CurNavChosed,CurNetChosed,self.GetUpFileFaPath(info))
+        # for i in CurFileList:
+        #     CurPathFiles.append(i['filename']+'#'+str(i['isdir']))
+        # if self.GetUpFileFaPath(info) not in CurPathFiles:
+        #     self.ui.signalRefresh.emit()
+        # self.UpManger()
+
 
         # info['statusLabel'].setText("校验文件...")
         # LofeMd5 = info['FileMd5']
@@ -355,16 +357,18 @@ class TransUp():
         #     print('文件损坏')
         # info['timestamp'] = time.time()     # 当前时间戳
     def Upact(self, info):
-
+        print('StartDown:',info['FileName'])
         t0 = time.time()
         CurFileSize = 0
         CurFileSize0 = 0
+        ShowProgress = 1
+        dbManager = DBManager.DBManager()
         def Uping_callback(monitor, info):
-            nonlocal t0,CurFileSize,CurFileSize0
+            nonlocal t0,CurFileSize,CurFileSize0,ShowProgress
             FileSeekStart = info['FileSeekStart']
             t1 = time.time()
             deltat = t1-t0
-            if deltat >= 0.5:
+            if deltat >= 0.5 and ShowProgress:
                 CurFileSize1 = CurFileSize+monitor.bytes_read
                 FileTotSize = info['Size']
                 deltaFileSize = CurFileSize1 - CurFileSize0
@@ -373,10 +377,15 @@ class TransUp():
                 # print(Speed, progress)
                 # print('Check:',CurFileSize1/1024/1024,FileTotSize/1024/1024,deltat,CurFileSize0/1024/1024)
                 # print('UpProgress:', monitor.bytes_read, monitor.len)
+                if progress >100:
+                    progress =100
+
+                print(info['FileName'],progress,info['progressBar'])
                 info['progressBar'].setProperty("value", progress)
                 info['UpSizeLabel'].setText(
                     "{}/{}".format(size_format(CurFileSize1),size_format(FileTotSize)))
                 info['statusLabel'].setText("{}/S".format(Speed))
+
                 t0 = t1
                 CurFileSize0 = CurFileSize1
 
@@ -409,7 +418,7 @@ class TransUp():
         s = requests.Session()
         for chunk in self.chunked_file_reader(info):
             # res = s.post(url_fileUp, data=info, files={'file': chunk},headers=headers)
-            UpInfoi = self.dbManager.GetUserUpRecord(info['LoFilePath'], info['FileName'])
+            UpInfoi = dbManager.GetUserUpRecord(info['LoFilePath'], info['FileName'])
             if UpInfoi and int(UpInfoi['isUp']) == 1:
                 info['statusButon'].setText("||")
                 e = MultipartEncoder(
@@ -420,14 +429,17 @@ class TransUp():
                 )
                 url_fileUp = 'http://' + self.ClientSetting['host'] + '/Upfile1/'
                 m = MultipartEncoderMonitor(e,lambda e : Uping_callback(e,info))
+                # m = MultipartEncoderMonitor(e)
                 headers = self.ui.SBCRe.headers
                 headers1 = {}
                 headers1['Cookie'] = headers['Cookie']
                 headers1['Content-Type'] = m.content_type
                 r = s.post(url_fileUp, data=m, headers=headers1)
                 CurFileSize += len(chunk)
+        ShowProgress = 0
         if CurFileSize == info['Size']:
             self.UpFinsh(info)
+        dbManager.close()
 
 
     def Up(self,info):
@@ -440,9 +452,11 @@ class TransUp():
             return
 
         # qmut_1.lock()
+
         t = threading.Thread(target=self.run1, args=(info,))
         t.setDaemon(True)
         t.start()
+
         # self.run1(info)
             # self.start()
             # qmut_1.unlock()
@@ -465,18 +479,26 @@ class TransUp():
             self.UpManger()
             # self.qmut_1.unlock()
             time.sleep(0.1)
+
     def UpManger(self):
-        return
+        qmut_1.lock()
+        self.UpManger1()
+        qmut_1.unlock()
+    def UpManger1(self):
+        # return
         dbManager = DBManager.DBManager()
         UpInfos = dbManager.GetUserUpRecordAll()
+        # self.UpLayout[3].setText(str(len(UpInfos)))
         CurUpNums = 0
         MaxUpNums = 2
         WaitUp = []
         CurUp = []
         DelUp = []
         for i in UpInfos:
-
             if int(i['isUp'])==1:
+                # if self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]['isUp'] != 1:
+                #     self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]['isUp'] = 1
+                #     self.Up(self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])])
                 CurUpNums += 1
                 CurUp.append(i)
             elif int(i['isUp']) == 2:
@@ -484,18 +506,22 @@ class TransUp():
             elif int(i['isUp']) == 3:
                 DelUp.append(i)
         for i in DelUp:
-            infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]
+            print('Del',i['FileName'])
+            infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
             self.dbManager1.WSQL(i,'DelUserUpRecord')
-            # self.dbManager.DelUserUpRecord(i['LoFilePath'], i['FileName'])
-            self.UpLayout[1].removeWidget(infoi['frame'])
-            sip.delete(infoi['frame'])
-            self.UpLayout[1].removeWidget(infoi['line'])
-            sip.delete(infoi['line'])
-            # self.RefreshUping()
-            UpInfos = dbManager.GetUserUpRecordAll()
-            # print('UpS',UpInfos)
-            self.UpLayout[3].setText(str(len(UpInfos)))
-            del self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]
+            UpLayout = self.ui.TranspscrollArea['Up']
+            infoi['frame'].setParent(None)
+            infoi['line'].setParent(None)
+            UpLayout[1].removeWidget(infoi['frame'])
+            # sip.delete(infoi['frame'])
+            UpLayout[1].removeWidget(infoi['line'])
+            # sip.delete(infoi['line'])
+            # QApplication.processEvents()
+
+            print('Del1', i['FileName'])
+            del self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+        UpInfos = dbManager.GetUserUpRecordAll()
+        self.UpLayout[3].setText(str(len(UpInfos)))
         if CurUpNums < MaxUpNums:
             for i in range(MaxUpNums-CurUpNums):
                 if i < len(WaitUp):
@@ -503,15 +529,15 @@ class TransUp():
                     self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 1)
                     self.dbManager1.WSQL(info,'UpdataUserUpRecord')
                     # dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
-                    infoi = self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath'] + info['FileName'])]
+                    infoi = self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]
                     self.Up(infoi)
         if CurUpNums > MaxUpNums:
             for i in CurUp:
                 if CurUpNums > MaxUpNums:
-                    self.dbManager1.setUpPar(i['LoFilePath'], i['FileName'], 1)
+                    self.dbManager1.setUpPar(i['LoFilePath'], i['FileName'], 2)
                     self.dbManager1.WSQL(i, 'UpdataUserUpRecord')
                     # self.dbManager.UpdataUserUpRecord(i['LoFilePath'], i['FileName'], 2)
-                    infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]
+                    infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
                     infoi['statusButon'].setText(">")
                     infoi['statusLabel'].setText("等待上传")
                     CurUpNums -= 1
@@ -522,44 +548,46 @@ class TransUp():
         self.signaladdUp.emit(info)
         # t.start()
 
-    def UpManger1(self,Upinfo = None):
-        UpInfos = self.dbManager.GetUserUpRecordAll()
-        CurUpNums = 0
-        MaxUpNums = 2
-        WaitUp = []
-        CurUp = []
-        for i in UpInfos:
-            if int(i['isUp'])==1:
-                CurUpNums += 1
-                CurUp.append(i)
-            elif int(i['isUp']) == 2:
-                WaitUp.append(i)
-        if CurUpNums < MaxUpNums:
-            for i in range(MaxUpNums-CurUpNums):
-                if i < len(WaitUp):
-                    info = WaitUp[i]
-                    self.dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
-                    infoi = self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath'] + info['FileName'])]
-                    self.Up(infoi)
-
-        if CurUpNums > MaxUpNums:
-            for i in CurUp:
-                if CurUpNums > MaxUpNums:
-                    if not Upinfo or Upinfo['LoFilePath']+Upinfo['FileName'] == i['LoFilePath']+i['FileName']:
-                        # print(i)
-                        self.dbManager.UpdataUserUpRecord(i['LoFilePath'], i['FileName'],2)
-                        infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]
-                        infoi['statusButon'].setText(">")
-                        infoi['statusLabel'].setText("等待上传")
-                        CurUpNums -= 1
+    # def UpManger1(self,Upinfo = None):
+    #     UpInfos = self.dbManager.GetUserUpRecordAll()
+    #     CurUpNums = 0
+    #     MaxUpNums = 2
+    #     WaitUp = []
+    #     CurUp = []
+    #     for i in UpInfos:
+    #         if int(i['isUp'])==1:
+    #             CurUpNums += 1
+    #             CurUp.append(i)
+    #         elif int(i['isUp']) == 2:
+    #             WaitUp.append(i)
+    #     if CurUpNums < MaxUpNums:
+    #         for i in range(MaxUpNums-CurUpNums):
+    #             if i < len(WaitUp):
+    #                 info = WaitUp[i]
+    #                 self.dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
+    #                 infoi = self.UpInfosUpdateLabs[str_trans_to_md5(info['LoFilePath'] + info['FileName'])]
+    #                 self.Up(infoi)
+    #
+    #     if CurUpNums > MaxUpNums:
+    #         for i in CurUp:
+    #             if CurUpNums > MaxUpNums:
+    #                 if not Upinfo or Upinfo['LoFilePath']+Upinfo['FileName'] == i['LoFilePath']+i['FileName']:
+    #                     # print(i)
+    #                     self.dbManager.UpdataUserUpRecord(i['LoFilePath'], i['FileName'],2)
+    #                     infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['LoFilePath'] + i['FileName'])]
+    #                     infoi['statusButon'].setText(">")
+    #                     infoi['statusLabel'].setText("等待上传")
+    #                     CurUpNums -= 1
 
     def AddUping(self,UpInfos=None):
+
         if not UpInfos:
             UpInfos = self.dbManager.GetUserUpRecordAll()
         self.signaladdUp.emit(UpInfos)
         # pass
     def UpdateDOwnNums(self,infos):
         self.UpLayout[3].setText(str(len(infos)))
+        self.UpManger()
     def AddUping1(self,UpInfos):
         # time.sleep(10)
         FilesSQL = []
@@ -581,7 +609,7 @@ class TransUp():
                 line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
                 line_3.setObjectName("line_3")
                 UpverticalLayout.addWidget(line_3)
-                self.UpInfosUpdateLabs[str_trans_to_md5(UpInfo['LoPath'])]['line'] = line_3
+                self.UpInfosUpdateLabs[str_trans_to_md5(UpInfo['RoFilePath'] + UpInfo['FileName'])]['line'] = line_3
                 if not UpInfoExist:
                     FilesSQL.append(UpInfo)
                 #     self.ui.t = WSQLThread(self.ui,UpInfo)
@@ -592,39 +620,42 @@ class TransUp():
             # QApplication.processEvents()
 
 
+
         if FilesSQL:
             self.ui.MainWindow.WSQLUpThread = WSQLThread(self.ui,FilesSQL,self.dbManager1)
             self.ui.MainWindow.WSQLUpThread.Signal.connect(self.UpdateDOwnNums)
             self.ui.MainWindow.WSQLUpThread.start()
+        else:
+            self.UpManger()
         # self.signalWSQL.emit(FilesSQL)
-        # self.UpManger()
-    def RefreshUping(self):
-        self.infos = []
-        UpLayout = self.ui.TranspscrollArea['Up']
-        self.UpLayout = UpLayout
-        UpformLayout = UpLayout[0]
-        UpverticalLayout = UpLayout[1]
-        scrollAreaWidgetContents_Up = UpLayout[2]
-        LaConts = UpverticalLayout.count()
-        UpInfos = self.dbManager.GetUserUpRecordAll()
-        # self.checkDelFile()
-        self.UpLayout[3].setText(str(len(UpInfos)))
-        # print(66,UpInfos)
-        for i in UpInfos:
-            Upinginfoi = self.add(scrollAreaWidgetContents_Up, i)
-            form = Upinginfoi['frame']
-            UpverticalLayout.addWidget(form)
-            line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_Up)
-            line_3.setMinimumSize(QtCore.QSize(649, 0))
-            line_3.setFrameShape(QtWidgets.QFrame.HLine)
-            line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-            line_3.setObjectName("line_3")
-            UpverticalLayout.addWidget(line_3)
-            self.UpInfosUpdateLabs[str_trans_to_md5(i['LoPath'])]['line'] = line_3
-            # Upinginfoi['line'] = line_3
-            # ThreadUpdatei = ThreadUpdate(self.ui)
-            # # ThreadUpdatei.setPar(Upinginfoi)
-            # ThreadUpdatei.Up(Upinginfoi)
-            # self.Up(Upinginfoi)
+
+    # def RefreshUping(self):
+    #     self.infos = []
+    #     UpLayout = self.ui.TranspscrollArea['Up']
+    #     self.UpLayout = UpLayout
+    #     UpformLayout = UpLayout[0]
+    #     UpverticalLayout = UpLayout[1]
+    #     scrollAreaWidgetContents_Up = UpLayout[2]
+    #     LaConts = UpverticalLayout.count()
+    #     UpInfos = self.dbManager.GetUserUpRecordAll()
+    #     # self.checkDelFile()
+    #     self.UpLayout[3].setText(str(len(UpInfos)))
+    #     # print(66,UpInfos)
+    #     for i in UpInfos:
+    #         Upinginfoi = self.add(scrollAreaWidgetContents_Up, i)
+    #         form = Upinginfoi['frame']
+    #         UpverticalLayout.addWidget(form)
+    #         line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_Up)
+    #         line_3.setMinimumSize(QtCore.QSize(649, 0))
+    #         line_3.setFrameShape(QtWidgets.QFrame.HLine)
+    #         line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+    #         line_3.setObjectName("line_3")
+    #         UpverticalLayout.addWidget(line_3)
+    #         self.UpInfosUpdateLabs[str_trans_to_md5(i['LoPath'])]['line'] = line_3
+    #         # Upinginfoi['line'] = line_3
+    #         # ThreadUpdatei = ThreadUpdate(self.ui)
+    #         # # ThreadUpdatei.setPar(Upinginfoi)
+    #         # ThreadUpdatei.Up(Upinginfoi)
+    #         # self.Up(Upinginfoi)
 
 

@@ -18,7 +18,7 @@ def getfileMd5(filename):
     myhash = hashlib.md5()
     f = open(filename, "rb")
     while True:
-        b = f.read(8096)
+        b = f.read(10*1024*1024)
         if not b:
             break
         myhash.update(b)
@@ -124,6 +124,7 @@ class FileOperClick(QThread):
         return Upinfo
 
     def UpChose(self,Upinfo):
+
         nav = self.ui.nav[self.ui.CurNetChosed]
         CurRopath = nav[-1]['path']
         # print('CurRoPath:',CurRopath)
@@ -131,13 +132,17 @@ class FileOperClick(QThread):
         # self.SignalTranspan.emit()
         FileAll = []
         for i in Upinfo:
+
             if i['isDir']:
                 FilesAll = GetAllFiles(i['Path'],CurRopath)
                 # print(FilesAll)
                 for i in FilesAll:
                     FileAll.append(self.GetMoreInfo(i['Lofepath'], i['Rofepath']))
             else:
+                # print(66, i)
                 FileAll.append(self.GetMoreInfo(i['Path'],CurRopath))
+
+
         self.ui.TransFilesManager.AddUpRecord(FileAll)
 
     def UpChose1(self,e):

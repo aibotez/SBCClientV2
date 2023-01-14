@@ -42,6 +42,7 @@ class TransFileManager():
             # else:
             #     return
         dbManager.close()
+
         self.Transhow.AddDowning(DownInfo)
         # self.Transhow.RefreshDowning()
 
