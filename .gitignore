@@ -1,0 +1,7 @@
+__pycache__
+.idea
+SubUi/__pycache__
+pack/__pycache__
+pack/preview/__pycache__
+UpdateUi/__pycache__
+ui/__pycache__
