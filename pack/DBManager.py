@@ -23,10 +23,22 @@ class DBManager1():
             dbmanager.AddUserUpRecord(DownInfo)
         elif Oper =='UpdataUserUpRecord':
             dbmanager.UpdataUserUpRecord(self.UpFilePath,self.UpFileName,self.UpchangeVaule)
+        elif Oper =='UpdataUserUpRecords':
+            for i in DownInfo:
+                FilePath = i['LoFilePath']
+                FileName = i['FileName']
+                dbmanager.UpdataUserUpRecords(FilePath,FileName,self.UpchangeVaule)
+            dbmanager.conn.commit()
         elif Oper =='DelUserUpRecord':
             FilePath = DownInfo['LoFilePath']
             FileName = DownInfo['FileName']
             dbmanager.DelUserUpRecord(FilePath,FileName)
+        elif Oper =='DelUserUpRecords':
+            for i in DownInfo:
+                FilePath = i['LoFilePath']
+                FileName = i['FileName']
+                dbmanager.DelUserUpRecords(FilePath,FileName)
+            dbmanager.conn.commit()
         self.lock.release()
 
 
@@ -204,6 +216,12 @@ class DBManager():
             Result.append(Resulti)
 
         return Result
+    def UpdataUserUpRecords(self,FilePath,FileName,changeVaule):
+        # self.close()
+        # self.Connect()
+        sql = "update UserUp set isUp=? where LoFilePath ='{}' and FileName='{}'".format(FilePath,FileName)
+        data = (str(changeVaule))
+        self.cur.execute(sql, data)
     def UpdataUserUpRecord(self,FilePath,FileName,changeVaule):
         # self.close()
         # self.Connect()
@@ -222,6 +240,11 @@ class DBManager():
         self.cur.execute(sql, data)
         self.conn.commit()
         self.lock.release()
+
+    def DelUserUpRecords(self,FilePath,FileName):
+        sql = "delete from UserUp where LoFilePath ='{}' and FileName='{}'".format(FilePath, FileName)
+        self.cur.execute(sql)
+        # self.conn.commit()
     def DelUserUpRecord(self,FilePath,FileName):
         sql = "delete from UserUp where LoFilePath ='{}' and FileName='{}'".format(FilePath, FileName)
         self.lock.acquire(True)

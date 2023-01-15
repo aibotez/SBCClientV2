@@ -109,6 +109,7 @@ class TransUp():
         self.MaxUpNums = 2
         self.UpLayout = self.ui.TranspscrollArea['Up']
         self.qmut_1 = QMutex()
+        self.ButtonBind()
         self.s = requests.Session()
         self.signaladdUp = signaladdUp
         self.signalaDelUp = signalaDelUp
@@ -121,8 +122,7 @@ class TransUp():
         self.signalaDelUp.connect(self.DelUp)
         self.signalaUpdateUpProgress.connect(self.UpdateUpProgress)
         self.AddUping()
-        # self.LoopRunStart()
-        # self.RefreshUping()
+
 
     def add(self, scrollAreaWidgetContents, UpInfo):
         self.frame_22 = QtWidgets.QFrame(scrollAreaWidgetContents)
@@ -269,12 +269,12 @@ class TransUp():
         self.UpInfosUpdateLabs[str_trans_to_md5(Upinginfoi['RoFilePath']+UpInfo['FileName'])] = Upinginfoi
 
         self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
-        self.label_31.mousePressEvent = partial(self.DelUping,Upinginfoi)
+        self.label_31.mousePressEvent = partial(self.DelUp,Upinginfoi)
 
         return Upinginfoi
 
 
-    def UpCancel(self,info):
+    def UpPause(self,info):
         info['statusButon'].setText(">")
         info['statusLabel'].setText("已暂停")
         self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]['isUp'] = 0
@@ -298,20 +298,20 @@ class TransUp():
         # print(info)
         UpInfoi = self.dbManager.GetUserUpRecord(info['LoFilePath'], info['FileName'])
         if UpInfoi and int(UpInfoi['isUp'])==1:
-            self.UpCancel(info)
+            self.UpPause(info)
         else:
             self.UpGon(info)
-    def DelUping(self,info,e):
-        self.dbManager.DelUserUpRecord(info['LoFilePath'],info['FileName'])
-        self.UpLayout[1].removeWidget(info['frame'])
-        sip.delete(info['frame'])
-        self.UpLayout[1].removeWidget(info['line'])
-        sip.delete(info['line'])
-        # self.RefreshUping()
-        UpInfos = self.dbManager.GetUserUpRecordAll()
-        # print('UpS',UpInfos)
-        self.UpLayout[3].setText(str(len(UpInfos)))
-        del self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath']+info['FileName'])]
+    # def DelUping(self,info,e):
+    #     self.dbManager.DelUserUpRecord(info['LoFilePath'],info['FileName'])
+    #     self.UpLayout[1].removeWidget(info['frame'])
+    #     sip.delete(info['frame'])
+    #     self.UpLayout[1].removeWidget(info['line'])
+    #     sip.delete(info['line'])
+    #     # self.RefreshUping()
+    #     UpInfos = self.dbManager.GetUserUpRecordAll()
+    #     # print('UpS',UpInfos)
+    #     self.UpLayout[3].setText(str(len(UpInfos)))
+    #     del self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath']+info['FileName'])]
 
 
     def OpenFile(self,info):
@@ -563,19 +563,83 @@ class TransUp():
         #     print(time.time())
         #     time.sleep(1)
         # pass
+    def StartAll1(self):
+        UpInfosUpdateLabs = {}
+        infos = []
+        for i in self.UpInfosUpdateLabs:
+            UpInfosUpdateLabs[i] = self.UpInfosUpdateLabs[i]
+        # self.PauseAll()
+        # self.DownInfos = self.dbManager.GetUserDownRecordAll()
+        for keyi in UpInfosUpdateLabs:
+            i = UpInfosUpdateLabs[keyi]
+            infos.append(i)
+            i['statusButon'].setText(">")
+            i['statusLabel'].setText("等待下载")
+            self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]['isUp'] = 2
+        self.dbManager1.setUpPar(0,0, 2)
+        self.dbManager1.WSQL(infos, 'UpdataUserUpRecords')
+        self.UpManger()
+    def StartAll(self):
+        t = threading.Thread(target=self.StartAll1)
+        t.setDaemon(True)
+        t.start()
 
-    def LoopRunStart(self):
-        self.LoopRunStartThread = threading.Thread(target=self.LoopRun)
-        self.LoopRunStartThread.setDaemon(True)
-        self.LoopRunStartThread.start()
-    def LoopRun(self):
-        while True:
-            # QApplication.processEvents()
-            # self.qmut_1.lock()
-            self.UpManger()
-            # self.qmut_1.unlock()
-            time.sleep(0.1)
+    def PauseAll1(self):
+        UpInfosUpdateLabs={}
+        infos = []
+        for i in self.UpInfosUpdateLabs:
+            UpInfosUpdateLabs[i] = self.UpInfosUpdateLabs[i]
+        try:
+            for keyi in UpInfosUpdateLabs:
+                i = UpInfosUpdateLabs[keyi]
+                infos.append(i)
+                i['statusButon'].setText(">")
+                i['statusLabel'].setText("已暂停")
+                self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]['isUp'] = 0
+            self.dbManager1.setUpPar(0, 0, 0)
+            self.dbManager1.WSQL(infos, 'UpdataUserUpRecords')
+        except Exception as e:
+            print('PauseError',e)
+    def PauseAll(self):
+        t = threading.Thread(target=self.PauseAll1)
+        t.setDaemon(True)
+        t.start()
+        # dbManager = DBManager.DBManager()
+        # DownInfos = dbManager.GetUserDownRecordAll()
+        # for i in DownInfos:
+        #     self.DownCancel(i)
+        # dbManager.close()
 
+    def CancelAll1(self):
+        infos = []
+        UpInfosUpdateLabs={}
+        for i in self.UpInfosUpdateLabs:
+            UpInfosUpdateLabs[i] = self.UpInfosUpdateLabs[i]
+
+        for keyi in UpInfosUpdateLabs:
+            i = UpInfosUpdateLabs[keyi]
+            infos.append(i)
+            infoi = UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+            # print('Finsh', info['FileName'])
+            # UpLayout = self.ui.TranspscrollArea['Up']
+            # infoi['frame'].setParent(None)
+            # infoi['line'].setParent(None)
+            self.UpLayout[1].removeWidget(infoi['frame'])
+            sip.delete(infoi['frame'])
+            self.UpLayout[1].removeWidget(infoi['line'])
+            sip.delete(infoi['line'])
+        self.dbManager1.WSQL(infos,'DelUserUpRecords')
+        self.UpInfosUpdateLabs = {}
+        self.UpLayout[3].setText(str(0))
+    def CancelAll(self):
+        t = threading.Thread(target=self.CancelAll1)
+        t.setDaemon(True)
+        t.start()
+    def ButtonBind(self):
+        self.DownLayout = self.ui.TranspscrollArea['Up']
+        self.DownLayout[4].clicked.connect(self.StartAll)
+        self.DownLayout[5].clicked.connect(self.PauseAll)
+        self.DownLayout[6].clicked.connect(self.CancelAll)
     def UpManger(self):
         qmut_1.lock()
         self.UpManger1()
