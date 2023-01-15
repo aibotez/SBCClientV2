@@ -160,8 +160,8 @@ class FileUpdate(QThread):
         if e.buttons() == QtCore.Qt.LeftButton:
             self.FileLeftDeal(FileInfo)
         elif e.buttons() == QtCore.Qt.RightButton:
-            self.create_Filerightmenu(FileInfo)
-            # self.FileRightDeal(FileInfo)
+            # return
+            self.create_Filerightmenu(FileInfo,None)
 
     def FileLeftDeal(self,FileInfo):
         print('FileLeft',FileInfo)
@@ -191,7 +191,9 @@ class FileUpdate(QThread):
     def Del(self,info):
         self.DelChoseFiles(info)
         self.fileoperclick.DelFile()
-    def create_Filerightmenu(self,info):
+    def create_Filerightmenu(self,info,e):
+        if e and e.buttons() == QtCore.Qt.LeftButton:
+            return
         self.groupBox_Upmenu = QMenu()
         self.actionDownfile = self.groupBox_Upmenu.addAction(u'下载')
         self.groupBox_Upmenu.addSeparator()
@@ -423,6 +425,8 @@ class FileUpdate(QThread):
 
             label_29.setText(FileInfo['date'])
             label_30.setText(FileInfo['big'])
+
+            CurSBCFiles['frame'].mousePressEvent = partial(self.create_Filerightmenu, CurSBCFiles)
             # CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.ClickEventDeals.FileClickDeal, CurSBCFiles)
             CurSBCFiles['FileNameLabel'].mousePressEvent = partial(self.FileClickDeal, CurSBCFiles)
             # print(6)
