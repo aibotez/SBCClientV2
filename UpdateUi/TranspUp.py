@@ -103,7 +103,7 @@ class UpdateShowThread(QThread):
 class TransUp():
     # signalWSQL = pyqtSignal(list)
     # signaladdUp = pyqtSignal(dict)
-    def __init__(self,ui,signaladdUp,signalaDelUp,signalaUpdateUpProgress):
+    def __init__(self,ui,signaladdUp,signalaDelUp,signalaDelUp1,signalaUpdateUpProgress):
         super().__init__()
         self.ui = ui
         self.MaxUpNums = 2
@@ -113,6 +113,7 @@ class TransUp():
         self.s = requests.Session()
         self.signaladdUp = signaladdUp
         self.signalaDelUp = signalaDelUp
+        self.signalaDelUp1 = signalaDelUp1
         self.signalaUpdateUpProgress = signalaUpdateUpProgress
         self.dbManager = DBManager.DBManager()
         self.dbManager1 = DBManager.DBManager1()
@@ -120,6 +121,7 @@ class TransUp():
         self.UpInfosUpdateLabs = {}
         self.signaladdUp.connect(self.AddUping1)
         self.signalaDelUp.connect(self.DelUp)
+        self.signalaDelUp1.connect(self.DelUpact)
         self.signalaUpdateUpProgress.connect(self.UpdateUpProgress)
         self.AddUping()
 
@@ -278,16 +280,16 @@ class TransUp():
         info['statusButon'].setText(">")
         info['statusLabel'].setText("已暂停")
         self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]['isUp'] = 0
-        self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 0)
-        self.dbManager1.WSQL(info, 'UpdataUserUpRecord')
+        # self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 0)
+        self.dbManager1.WSQL(info, 'UpdataUserUpRecord',0)
         # self.dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 0)
         # info['isDown'] = 0
         self.UpManger()
     def UpGon(self,info):
         info['statusButon'].setText("||")
         self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]['isUp'] = 1
-        self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 1)
-        self.dbManager1.WSQL(info, 'UpdataUserUpRecord')
+        # self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 1)
+        self.dbManager1.WSQL(info, 'UpdataUserUpRecord',1)
         # self.dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
         # info['isDown'] = 1
         self.Up(info)
@@ -346,24 +348,33 @@ class TransUp():
             CurPathFa = info['FileName'] + '#0'
         return CurPathFa
 
-    def DelUp(self,info):
-        t = threading.Thread(target=self.DelUp1,args=(info,))
-        t.setDaemon(True)
-        t.start()
-    def DelUp1(self,info):
+    def DelUpact(self,info):
         i = info
         infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
-        self.dbManager1.WSQL(i, 'DelUserUpRecord')
-        # print('Finsh', info['FileName'])
-        # UpLayout = self.ui.TranspscrollArea['Up']
-        # infoi['frame'].setParent(None)
-        # infoi['line'].setParent(None)
         self.UpLayout[1].removeWidget(infoi['frame'])
         sip.delete(infoi['frame'])
         self.UpLayout[1].removeWidget(infoi['line'])
         sip.delete(infoi['line'])
         del self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
-
+    def DelUp(self,info):
+        t = threading.Thread(target=self.DelUp1,args=(info,))
+        t.setDaemon(True)
+        t.start()
+        return
+    def DelUp1(self,info):
+        i = info
+        infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+        self.dbManager1.WSQL(i, 'DelUserUpRecord')
+        # # print('Finsh', info['FileName'])
+        # # UpLayout = self.ui.TranspscrollArea['Up']
+        # # infoi['frame'].setParent(None)
+        # # infoi['line'].setParent(None)
+        # self.UpLayout[1].removeWidget(infoi['frame'])
+        # sip.delete(infoi['frame'])
+        # self.UpLayout[1].removeWidget(infoi['line'])
+        # sip.delete(infoi['line'])
+        # del self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+        self.signalaDelUp1.emit(info)
         CurFileList = self.ui.CurFileListOld['SBC']['File']
         CurPathFiles = []
         # print(CurRopath,CurNavChosed,CurNetChosed,self.GetUpFileFaPath(info))
@@ -588,8 +599,8 @@ class TransUp():
             i['statusButon'].setText(">")
             i['statusLabel'].setText("等待下载")
             self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]['isUp'] = 2
-        self.dbManager1.setUpPar(0,0, 2)
-        self.dbManager1.WSQL(infos, 'UpdataUserUpRecords')
+        # self.dbManager1.setUpPar(0,0, 2)
+        self.dbManager1.WSQL(infos, 'UpdataUserUpRecords',2)
         self.UpManger()
     def StartAll(self):
         t = threading.Thread(target=self.StartAll1)
@@ -608,8 +619,8 @@ class TransUp():
                 i['statusButon'].setText(">")
                 i['statusLabel'].setText("已暂停")
                 self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]['isUp'] = 0
-            self.dbManager1.setUpPar(0, 0, 0)
-            self.dbManager1.WSQL(infos, 'UpdataUserUpRecords')
+            # self.dbManager1.setUpPar(0, 0, 0)
+            self.dbManager1.WSQL(infos, 'UpdataUserUpRecords',0)
         except Exception as e:
             print('PauseError',e)
     def PauseAll(self):
@@ -699,8 +710,8 @@ class TransUp():
             for i in range(MaxUpNums-CurUpNums):
                 if i < len(WaitUp):
                     info = WaitUp[i]
-                    self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 1)
-                    self.dbManager1.WSQL(info,'UpdataUserUpRecord')
+                    # self.dbManager1.setUpPar(info['LoFilePath'], info['FileName'], 1)
+                    self.dbManager1.WSQL(info,'UpdataUserUpRecord',1)
                     # dbManager.UpdataUserUpRecord(info['LoFilePath'], info['FileName'], 1)
                     infoi = self.UpInfosUpdateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]
                     self.Up(infoi)
@@ -708,8 +719,8 @@ class TransUp():
         if CurUpNums > MaxUpNums:
             for i in CurUp:
                 if CurUpNums > MaxUpNums:
-                    self.dbManager1.setUpPar(i['LoFilePath'], i['FileName'], 2)
-                    self.dbManager1.WSQL(i, 'UpdataUserUpRecord')
+                    # self.dbManager1.setUpPar(i['LoFilePath'], i['FileName'], 2)
+                    self.dbManager1.WSQL(i, 'UpdataUserUpRecord',2)
                     # self.dbManager.UpdataUserUpRecord(i['LoFilePath'], i['FileName'], 2)
                     infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
                     infoi['statusButon'].setText(">")
@@ -723,7 +734,6 @@ class TransUp():
         # t.start()
 
     def AddUping(self,UpInfos=None):
-        print(UpInfos)
         if not UpInfos:
             UpInfos = self.dbManager.GetUserUpRecordAll()
 

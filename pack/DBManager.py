@@ -10,7 +10,7 @@ class DBManager1():
         self.UpFilePath = FilePath
         self.UpFileName = FileName
         self.UpchangeVaule = changeVaule
-    def WSQL(self,DownInfo,Oper):
+    def WSQL(self,DownInfo,Oper,UpchangeVaule=None):
         dbmanager = DBManager()
         self.lock.acquire(True)
         if Oper == 'AddUserTranspFinshRecord':
@@ -19,15 +19,21 @@ class DBManager1():
             for i in DownInfo:
                 dbmanager.AddUserUpRecords(i)
             dbmanager.conn.commit()
+        elif Oper == 'AddUserDownRecords':
+            for i in DownInfo:
+                dbmanager.AddUserDownRecord(i)
+            dbmanager.conn.commit()
         elif Oper == 'AddUserUpRecord':
             dbmanager.AddUserUpRecord(DownInfo)
         elif Oper =='UpdataUserUpRecord':
-            dbmanager.UpdataUserUpRecord(self.UpFilePath,self.UpFileName,self.UpchangeVaule)
+            FilePath = DownInfo['LoFilePath']
+            FileName = DownInfo['FileName']
+            dbmanager.UpdataUserUpRecord(FilePath,FileName,UpchangeVaule)
         elif Oper =='UpdataUserUpRecords':
             for i in DownInfo:
                 FilePath = i['LoFilePath']
                 FileName = i['FileName']
-                dbmanager.UpdataUserUpRecords(FilePath,FileName,self.UpchangeVaule)
+                dbmanager.UpdataUserUpRecords(FilePath,FileName,UpchangeVaule)
             dbmanager.conn.commit()
         elif Oper =='DelUserUpRecord':
             FilePath = DownInfo['LoFilePath']
