@@ -347,6 +347,10 @@ class TransUp():
         return CurPathFa
 
     def DelUp(self,info):
+        t = threading.Thread(target=self.DelUp1,args=(info,))
+        t.setDaemon(True)
+        t.start()
+    def DelUp1(self,info):
         i = info
         infoi = self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
         self.dbManager1.WSQL(i, 'DelUserUpRecord')
@@ -359,6 +363,14 @@ class TransUp():
         self.UpLayout[1].removeWidget(infoi['line'])
         sip.delete(infoi['line'])
         del self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+
+        CurFileList = self.ui.CurFileListOld['SBC']['File']
+        CurPathFiles = []
+        # print(CurRopath,CurNavChosed,CurNetChosed,self.GetUpFileFaPath(info))
+        for i in CurFileList:
+            CurPathFiles.append(i['filename']+'#'+str(i['isdir']))
+        if self.GetUpFileFaPath(info) not in CurPathFiles:
+            self.ui.signalRefresh.emit()
         self.UpManger()
     def UpFinsh(self,info):
         # print('Finsh',info['FileName'])
@@ -529,7 +541,8 @@ class TransUp():
                     CurFileSize += len(chunk)
                 except Exception as e:
                     print('上传出错',e)
-        info['statusButon'].setEnabled(True)
+        if str_trans_to_md5(info['RoFilePath'] + info['FileName']) in self.UpInfosUpdateLabs:
+            info['statusButon'].setEnabled(True)
         ShowProgress = 0
         dbManager.close()
         if CurFileSize == info['Size']:
@@ -545,7 +558,6 @@ class TransUp():
         # print(info)
         if not os.path.exists(info['LoFilePath']):
             return
-
         # qmut_1.lock()
 
         t = threading.Thread(target=self.run1, args=(info,))
@@ -753,6 +765,7 @@ class TransUp():
             # QApplication.processEvents()
 
         if FilesSQL:
+            # pass
             self.WSQLUpThread = threading.Thread(target=self.WSQL,args=(FilesSQL,))
             self.WSQLUpThread.setDaemon(True)
             self.WSQLUpThread.start()
