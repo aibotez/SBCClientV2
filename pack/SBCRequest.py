@@ -141,8 +141,8 @@ class SBCRe():
             'client':'windows'
         }
         res = requests.post(url, data=json.dumps(data),headers=self.headers)
-        # print(res.text)
-        return res.text
+        # print(res)
+        return res.content
 
 
 # def Login():

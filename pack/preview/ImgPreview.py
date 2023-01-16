@@ -31,6 +31,7 @@ class ImageViewer(QGraphicsView):
 
 
     def Previewact(self,imgbase64):
+        print('PreviewImg')
         # self.close()
         # graphicsScene = QGraphicsScene()
         self.show()
@@ -39,7 +40,7 @@ class ImageViewer(QGraphicsView):
         self.pixmap = QPixmap()
         self.pixmap.loadFromData(imgbase64)
         self.pixmapItem = QGraphicsPixmapItem(self.pixmap)
-        self.displayedImageSize = QSize(0, 0)
+        self.displayedImageSize = QSize(600, 500)
         # self.__initWidget(graphicsScene)
         # self.show()
         self.__initWidget()

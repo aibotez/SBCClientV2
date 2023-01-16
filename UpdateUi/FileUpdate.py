@@ -169,8 +169,8 @@ class FileUpdate(QThread):
         # self.FileShow1(FileInfo['fepath'])
         if FileInfo['fetype'] == 'img':
             imfdata = self.SBCRe.getImgdata(FileInfo['fepath'])
-            # self.ImgPreviews = ImgPreview.ImageViewer()
-            self.ImgPreviews.Previewact(base64.b64decode(imfdata))
+            self.ImgPreviews = ImgPreview.ImageViewer()
+            self.ImgPreviews.Previewact(imfdata)
             return
         if FileInfo['fetype'] == 'folder':
             self.FileShow1(FileInfo['fepath'])
