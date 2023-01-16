@@ -8,7 +8,7 @@ from PyQt5.Qt import QThread
 import SBCMainWindow
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
-import base64
+import base64,time
 from pack import SBCRequest
 from pack.preview import ImgPreview
 from pack import FileOperClick
@@ -314,6 +314,12 @@ class FileUpdate(QThread):
 
         # self.MainWindow.FilescheckBox = []
         # print(self.CurFileList)
+
+
+        self.CurFileList.sort(key=lambda x: x['date0'],reverse=True)
+        cur1 = [i for i in self.CurFileList if i['isdir']]
+        cur2 = [i for i in self.CurFileList if not i['isdir']]
+        self.CurFileList = cur1+cur2
         for i in range(len(self.CurFileList)):
 
             CurSBCFiles = {}
