@@ -245,7 +245,11 @@ class TransShowUpdate(QThread):
     signalaDelUp1 = pyqtSignal(dict)
     signalaUpdateUpProgress = pyqtSignal(dict,dict)
 
+
     signaladdDown = pyqtSignal(list)
+    signalaDowndateUpProgress = pyqtSignal(dict,dict)
+    signalaDelDown = pyqtSignal(dict)
+
 
     def __init__(self,ui):
         super().__init__()
@@ -260,14 +264,16 @@ class TransShowUpdate(QThread):
         self.ClientSetting = self.dbManager.GetClientSetting()
         # self.signal.connect(self.RefreshDowning)
         self.signaladdDown.connect(self.AddDowning1)
-        self.DownLayout = self.ui.TranspscrollArea['Down']
+        self.DownLayout = ui.TranspscrollArea['Down']
+        self.signalaDowndateUpProgress.connect(self.UpdateDownProgress)
+        self.signalaDelDown.connect(self.DelDownact)
 
 
         # self.ButtonBind()
         # self.RefreshDowning()
 
 
-        self.TransFinishShow = TransFinishShowUpdate(self.ui)
+        self.TransFinishShow = TransFinishShowUpdate(ui)
         self.TransFinishShow.Refresh()
         self.signal1.connect(self.TransFinishShow.Refresh)
         # self.SBCRequest = SBCRequest.SBCRe()
@@ -421,8 +427,6 @@ class TransShowUpdate(QThread):
         label_24.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
                            "QLabel:hover{color:rgb(20, 90, 50);}")
 
-
-
         label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -433,36 +437,40 @@ class TransShowUpdate(QThread):
         Downinginfoi['statusLabel'] = label_21
         Downinginfoi['progressBar'] = progressBar_4
         Downinginfoi['DownSizeLabel'] = label_20
-        # Downinginfoi['FilePath'] = DownInfo['FilePath']
-        # Downinginfoi['FileName'] = DownInfo['FileName']
-        # Downinginfoi['isDown'] = DownInfo['isDown']
-        # Downinginfoi['size'] = DownInfo['Size']
-        # Downinginfoi['RoFilePath'] = DownInfo['RoFilePath']
         Downinginfoi['LoFileSatus'] = LoFile
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
         self.DownInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
 
         label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
         label_23.mousePressEvent = partial(self.DelDown,Downinginfoi)
-        # label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
+        label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
+    def OpenDownFile(self,info,e):
+        Path = info['LoPath'].replace('/','\\')
+        os.system(r"explorer /select,{}".format(Path))
     def DelDownact(self,info):
         i = info
         infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
-        self.UpLayout[1].removeWidget(infoi['frame'])
+        self.DownLayout[1].removeWidget(infoi['frame'])
         sip.delete(infoi['frame'])
-        self.UpLayout[1].removeWidget(infoi['line'])
+        self.DownLayout[1].removeWidget(infoi['line'])
         sip.delete(infoi['line'])
-        del self.DOwnInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
-    def DelDown(self,e,info):
-        self.DelDownact(info)
-        self.dbManager1.WSQL(info, 'DelUserDownRecord')
-        # t = threading.Thread(target=self.DelUp1,args=(info,))
-        # t.setDaemon(True)
-        # t.start()
-        del self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]
+        del self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+    def DelDown(self,info,e=None):
+        t = threading.Thread(target=self.DelDown1,args=(info,))
+        t.setDaemon(True)
+        t.start()
         return
+    def DelDown1(self,info):
+        i = info
+        infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+        self.dbManager1.WSQL(info, 'DelUserDownRecord')
+        self.signalaDelDown.emit(info)
+        self.DownManger()
 
+    def DownFinsh(self,info):
+        self.DelDown(info)
+        return
     def DownSatusChange(self,info,e):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
@@ -476,13 +484,22 @@ class TransShowUpdate(QThread):
             # info['isDown'] = 0
         else:
             self.DownGon(info)
+    def UpdateDownProgress(self,Labelinfo,info):
+        try:
+            # Labelinfo['statusButon'].setEnabled(False)
+            Labelinfo['progressBar'].setProperty("value",info['bar'])
+            Labelinfo['DownSizeLabel'].setText(
+                "{}/{}".format(size_format(info['CurFileSize']),size_format(info['FileTotSize'])))
+            Labelinfo['statusLabel'].setText("{}/S".format(info['Speed']))
+        except Exception as e:
+            print('UpdateProgessError',e)
     def Downact(self,info):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
         if DownInfoi and int(DownInfoi['isDown'])==1:
         # if int(info['isDown']):
             info['statusButon'].setText("||")
-            LoFileSatus = self.CheckLoFile(info)
+            LoFileSatus = CheckLoFile(info)
             # LoFileSatus = info['LoFileSatus']
             LoFileSize = LoFileSatus['size']
             RoFileSize = info['Size']
@@ -517,14 +534,9 @@ class TransShowUpdate(QThread):
                                 if deltat ==0:
                                     deltat = 0.001
                                 DownSpeed = len(chunk)/deltat
-                                try:
-                                    info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
-                                    info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
-                                    info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
-                                except Exception as e:
-                                    print(e)
-                                    print(info)
-
+                                progressinfo = {'bar': (LoFileSize/RoFileSize)*100, 'CurFileSize': LoFileSize,
+                                                'FileTotSize': RoFileSize, 'Speed': size_format(DownSpeed)}
+                                self.signalaDowndateUpProgress.emit(info, progressinfo)
                         else:
                             # self.DownCancel(info)
                             break
@@ -532,7 +544,6 @@ class TransShowUpdate(QThread):
                     self.DownFinsh(info)
         dbManager.close()
     def Down(self,info):
-
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']
