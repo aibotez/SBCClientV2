@@ -9,6 +9,7 @@ from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.Qt import QThread,QMutex
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont
 import threading
 
@@ -489,6 +490,12 @@ class TransShowUpdate(QThread):
         dbManager = DBManager.DBManager()
         LofeMd5 = getfileMd5(info['LoPath'])
         RofeMd5 = info['FileMd5']
+        try:
+            info['statusLabel'].setText("校验文件...")
+            RofeMd5_ = self.ui.SBCRe.GetRoFileMd5(info['RoFilePath'])
+            RofeMd5 = RofeMd5_['md5']
+        except:
+            pass
         if LofeMd5 == RofeMd5:
             info['FeCheck'] = 1
         else:
@@ -497,6 +504,7 @@ class TransShowUpdate(QThread):
         dbManager.AddUserTranspFinshRecord(info)
         dbManager.close()
         self.signal1.emit()
+        time.sleep(0.5)
         self.DelDown(info)
         return
     def DownPause(self,info):
@@ -732,6 +740,7 @@ class TransShowUpdate(QThread):
                     CurDownNums -= 1
         # dbManager.close()
     def AddDowning1(self,DownInfos):
+
         FilesSQL = []
         for DownInfo in DownInfos:
             DownInfoExist = self.dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
@@ -756,6 +765,7 @@ class TransShowUpdate(QThread):
                 if not DownInfoExist:
                     FilesSQL.append(DownInfo)
             # QApplication.processEvents()
+            # print(DownInfo)
 
         if FilesSQL:
             # pass

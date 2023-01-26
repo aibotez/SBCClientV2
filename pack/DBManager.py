@@ -59,6 +59,12 @@ class DBManager1():
                 FileName = i['FileName']
                 dbmanager.DelUserUpRecords(FilePath,FileName)
             dbmanager.conn.commit()
+        elif Oper =='DelUserDownRecords':
+            for i in DownInfo:
+                FilePath = i['FilePath']
+                FileName = i['FileName']
+                dbmanager.DelUserDownRecords(FilePath,FileName)
+            dbmanager.conn.commit()
         self.lock.release()
 
 
@@ -290,6 +296,9 @@ class DBManager():
         self.cur.execute(sql)
         self.conn.commit()
         self.lock.release()
+    def DelUserDownRecords(self,FilePath,FileName):
+        sql = "delete from UserDown where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
+        self.cur.execute(sql)
     def DelUserTranspFinshRecord(self,FilePath,FileName):
         sql = "delete from TransFinsh where FilePath ='{}' and FileName='{}'".format(FilePath, FileName)
         self.lock.acquire(True)

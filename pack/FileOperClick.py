@@ -80,14 +80,19 @@ class FileOperClick(QThread):
         return ChosedFiles
 
     def Downact(self,Downinfos):
+        DownNums = len(Downinfos)
+        if DownNums >= 50:
+
         DownFeInfos = []
+        # DownFePath = [i[0]['fepath'] for i in Downinfos]
         for i in Downinfos:
             DownFile = i[0]
             DownFaPath = i[1]
-            FeMd5req = self.ui.SBCRe.GetRoFileMd5(DownFile['fepath'])
             Femd5 = None
-            if not FeMd5req['error']:
-                Femd5 = FeMd5req['md5']
+            # FeMd5req = self.ui.SBCRe.GetRoFileMd5(DownFile['fepath'])
+            # if not FeMd5req['error']:
+            #     Femd5 = FeMd5req['md5']
+
             DownFeInfo ={}
 
             if DownFile['fetype'] != 'folder':
