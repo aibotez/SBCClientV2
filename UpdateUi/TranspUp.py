@@ -598,7 +598,7 @@ class TransUp():
             i = UpInfosUpdateLabs[keyi]
             infos.append(i)
             i['statusButon'].setText(">")
-            i['statusLabel'].setText("等待下载")
+            i['statusLabel'].setText("等待上传")
             self.UpInfosUpdateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]['isUp'] = 2
         # self.dbManager1.setUpPar(0,0, 2)
         self.dbManager1.WSQL(infos, 'UpdataUserUpRecords',2)

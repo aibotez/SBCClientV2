@@ -259,6 +259,7 @@ class TransShowUpdate(QThread):
         self.TranspUps = TranspUp.TransUp(self.ui,self.signaladdUp,self.signalaDelUp,self.signalaDelUp1,self.signalaUpdateUpProgress)
         self.DownInfos = []
         self.PriDown = None
+        self.ButtonBind()
         self.dbManager = DBManager.DBManager()
         self.dbManager1 = DBManager.DBManager1()
         self.ClientSetting = self.dbManager.GetClientSetting()
@@ -277,6 +278,7 @@ class TransShowUpdate(QThread):
         self.TransFinishShow.Refresh()
         self.signal1.connect(self.TransFinishShow.Refresh)
         # self.SBCRequest = SBCRequest.SBCRe()
+        self.AddDowning()
 
     def AddUping(self,UpInfos):
         self.TranspUps.AddUping(UpInfos)
@@ -471,19 +473,99 @@ class TransShowUpdate(QThread):
     def DownFinsh(self,info):
         self.DelDown(info)
         return
+    def DownPause(self,info):
+        info['statusButon'].setText(">")
+        info['statusLabel'].setText("已暂停")
+        self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]['isDown'] = 0
+        self.dbManager1.WSQL(info, 'UpdataUserDownRecord',0)
+        self.DownManger()
+    def DownGon(self,info):
+        info['statusButon'].setText("||")
+        self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]['isUp'] = 1
+        self.dbManager1.WSQL(info, 'UpdataUserDownRecord',1)
+        self.Down(info)
+        self.DownManger()
     def DownSatusChange(self,info,e):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
         if DownInfoi and int(DownInfoi['isDown'])==1:
-        # if int(info['isDown']):
-            self.DownCancel(info)
-            # info['statusButon'].setText(">")
-            # info['statusLabel'].setText("已暂停")
-            # dbManager.UpdataUserDownRecord(info['FilePath'],info['FileName'],0)
-            #
-            # info['isDown'] = 0
+            self.DownPause(info)
         else:
             self.DownGon(info)
+    def StartAll1(self):
+        DownInfosUpdateLabs = {}
+        infos = []
+        for i in self.DownInfosUpdateLabs:
+            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
+        for keyi in DownInfosUpdateLabs:
+            i = DownInfosUpdateLabs[keyi]
+            infos.append(i)
+            i['statusButon'].setText(">")
+            i['statusLabel'].setText("等待下载")
+            self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]['isDown'] = 2
+        self.dbManager1.WSQL(infos, 'UpdataUserDownRecords',2)
+        self.DownManger()
+    def StartAll(self):
+        t = threading.Thread(target=self.StartAll1)
+        t.setDaemon(True)
+        t.start()
+
+    def PauseAll1(self):
+        DownInfosUpdateLabs={}
+        infos = []
+        for i in self.DownInfosUpdateLabs:
+            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
+        try:
+            for keyi in DownInfosUpdateLabs:
+                i = DownInfosUpdateLabs[keyi]
+                infos.append(i)
+                i['statusButon'].setText(">")
+                i['statusLabel'].setText("已暂停")
+                self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]['isDown'] = 0
+            # self.dbManager1.setUpPar(0, 0, 0)
+            self.dbManager1.WSQL(infos, 'UpdataUserDownRecords',0)
+        except Exception as e:
+            print('PauseError',e)
+    def PauseAll(self):
+        t = threading.Thread(target=self.PauseAll1)
+        t.setDaemon(True)
+        t.start()
+        # dbManager = DBManager.DBManager()
+        # DownInfos = dbManager.GetUserDownRecordAll()
+        # for i in DownInfos:
+        #     self.DownCancel(i)
+        # dbManager.close()
+
+    def CancelAll1(self):
+        infos = []
+        DownInfosUpdateLabs={}
+        for i in self.DownInfosUpdateLabs:
+            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
+
+        for keyi in DownInfosUpdateLabs:
+            i = DownInfosUpdateLabs[keyi]
+            infos.append(i)
+            infoi = DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+            # print('Finsh', info['FileName'])
+            # UpLayout = self.ui.TranspscrollArea['Up']
+            # infoi['frame'].setParent(None)
+            # infoi['line'].setParent(None)
+            self.DownLayout[1].removeWidget(infoi['frame'])
+            sip.delete(infoi['frame'])
+            self.DownLayout[1].removeWidget(infoi['line'])
+            sip.delete(infoi['line'])
+        self.dbManager1.WSQL(infos,'DelUserDownRecords')
+        self.DownInfosUpdateLabs = {}
+        self.DownLayout[3].setText(str(0))
+    def CancelAll(self):
+        t = threading.Thread(target=self.CancelAll1)
+        t.setDaemon(True)
+        t.start()
+    def ButtonBind(self):
+        self.DownLayout = self.ui.TranspscrollArea['Down']
+        self.DownLayout[4].clicked.connect(self.StartAll)
+        self.DownLayout[5].clicked.connect(self.PauseAll)
+        self.DownLayout[6].clicked.connect(self.CancelAll)
     def UpdateDownProgress(self,Labelinfo,info):
         try:
             # Labelinfo['statusButon'].setEnabled(False)
