@@ -443,9 +443,25 @@ class TransShowUpdate(QThread):
         self.DownInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
 
         label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
-        # label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
+        label_23.mousePressEvent = partial(self.DelDown,Downinginfoi)
         # label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
+    def DelDownact(self,info):
+        i = info
+        infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+        self.UpLayout[1].removeWidget(infoi['frame'])
+        sip.delete(infoi['frame'])
+        self.UpLayout[1].removeWidget(infoi['line'])
+        sip.delete(infoi['line'])
+        del self.DOwnInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+    def DelDown(self,e,info):
+        self.DelDownact(info)
+        self.dbManager1.WSQL(info, 'DelUserDownRecord')
+        # t = threading.Thread(target=self.DelUp1,args=(info,))
+        # t.setDaemon(True)
+        # t.start()
+        del self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]
+        return
 
     def DownSatusChange(self,info,e):
         dbManager = DBManager.DBManager()
@@ -624,6 +640,7 @@ class TransShowUpdate(QThread):
 
         if FilesSQL:
             # pass
+
             self.WSQLDownThread = threading.Thread(target=self.WSQL,args=(FilesSQL,))
             self.WSQLDownThread.setDaemon(True)
             self.WSQLDownThread.start()
