@@ -66,7 +66,18 @@ def str_trans_to_md5(src):
     myMd5.update(src)
     myMd5_Digest = myMd5.hexdigest()
     return myMd5_Digest
-
+def getfileMd5(filename):
+    if not os.path.isfile(filename):
+        return
+    myhash = hashlib.md5()
+    f = open(filename, "rb")
+    while True:
+        b = f.read(8096)
+        if not b:
+            break
+        myhash.update(b)
+    f.close()
+    return myhash.hexdigest()
 class TransFinishShowUpdate():
     signal = pyqtSignal()
     def __init__(self,ui):
@@ -270,6 +281,7 @@ class TransShowUpdate(QThread):
         self.signalaDelDown.connect(self.DelDownact)
 
 
+
         # self.ButtonBind()
         # self.RefreshDowning()
 
@@ -470,7 +482,21 @@ class TransShowUpdate(QThread):
         self.signalaDelDown.emit(info)
         self.DownManger()
 
+
+    # def UpadateDownFinish(self,info):
+
     def DownFinsh(self,info):
+        dbManager = DBManager.DBManager()
+        LofeMd5 = getfileMd5(info['LoPath'])
+        RofeMd5 = info['FileMd5']
+        if LofeMd5 == RofeMd5:
+            info['FeCheck'] = 1
+        else:
+            info['FeCheck'] = 0
+        info['timestamp'] = time.time()     # 当前时间戳
+        dbManager.AddUserTranspFinshRecord(info)
+        dbManager.close()
+        self.signal1.emit()
         self.DelDown(info)
         return
     def DownPause(self,info):
