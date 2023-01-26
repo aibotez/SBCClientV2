@@ -79,25 +79,28 @@ class FileOperClick(QThread):
                 ChosedFiles.append({'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'isdir':Filei['isdir'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
         return ChosedFiles
 
-    def Downact(self,DownFile,DownFaPath):
-        FeMd5req = self.ui.SBCRe.GetRoFileMd5(DownFile['fepath'])
-        Femd5 = None
+    def Downact(self,Downinfos):
         DownFeInfos = []
-        if not FeMd5req['error']:
-            Femd5 = FeMd5req['md5']
-        DownFeInfo ={}
+        for i in Downinfos:
+            DownFile = i[0]
+            DownFaPath = i[1]
+            FeMd5req = self.ui.SBCRe.GetRoFileMd5(DownFile['fepath'])
+            Femd5 = None
+            if not FeMd5req['error']:
+                Femd5 = FeMd5req['md5']
+            DownFeInfo ={}
 
-        if DownFile['fetype'] != 'folder':
-            DownFeInfo['FileMd5'] = Femd5
-            DownFeInfo['FileName'] = DownFile['fename']
-            DownFeInfo['size'] = DownFile['size']
-            DownFeInfo['Size'] = DownFile['size']
-            DownFeInfo['fetype'] = DownFile['fetype']
-            DownFeInfo['FilePath'] = DownFaPath
-            DownFeInfo['RoFilePath'] = DownFile['fepath']
-            # print(DownFeInfo)
-            DownFeInfos.append(DownFeInfo)
-            self.ui.TransFilesManager.AddDownRecord(DownFeInfos)
+            if DownFile['fetype'] != 'folder':
+                DownFeInfo['FileMd5'] = Femd5
+                DownFeInfo['FileName'] = DownFile['fename']
+                DownFeInfo['size'] = DownFile['size']
+                DownFeInfo['Size'] = DownFile['size']
+                DownFeInfo['fetype'] = DownFile['fetype']
+                DownFeInfo['FilePath'] = DownFaPath
+                DownFeInfo['RoFilePath'] = DownFile['fepath']
+                # print(DownFeInfo)
+                DownFeInfos.append(DownFeInfo)
+        self.ui.TransFilesManager.AddDownRecord(DownFeInfos)
 
     def UpFile(self):
         fname = QFileDialog.getOpenFileName(self.ui.MainWindow, "选择要上传的文件", "./")
@@ -209,12 +212,14 @@ class FileOperClick(QThread):
     def run(self):
         import threading
         ChosedFiles = self.GetChoseFiles()
+        DownInfos = []
         # if ChosedFiles:
         #     self.SignalTranspan.emit()
         for i in ChosedFiles:
             if i['fetype'] != 'folder':
                 DownFaPath = self.ui.DownPath
-                self.Downact(i,DownFaPath)
+                DownInfos.append([i,DownFaPath])
+                # self.Downact(i,DownFaPath)
             else:
                 # FatherPath0 = self.ui.DownPath+i['fename']+'/'
                 CurPath = i['fepath']
@@ -229,4 +234,6 @@ class FileOperClick(QThread):
                         # t = threading.Thread(target=self.Downact, args=(fei, DownFaPath,))
                         # t.setDaemon(True)
                         # t.start()
-                        self.Downact(fei, DownFaPath)
+                        DownInfos.append([fei, DownFaPath])
+                        # self.Downact(fei, DownFaPath)
+        self.Downact(DownInfos)
