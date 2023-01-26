@@ -464,6 +464,59 @@ class TransShowUpdate(QThread):
         DownLayout = self.ui.TranspscrollArea['Down']
         DownLayout[3].setText(str(len(info)))
         self.DownManger()
+    def DownManger(self):
+        qmut_1.lock()
+        self.DownManger1()
+        qmut_1.unlock()
+    def DownManger1(self):
+        # return
+        dbManager = DBManager.DBManager()
+        DownInfos = dbManager.GetUserDownRecordAll()
+        # self.DownLayout[3].setText(str(len(DownInfos)))
+        CurDownNums = 0
+        MaxDownNums = self.MaxDownNums
+        WaitDown = []
+        CurDown = []
+        DelDown = []
+        for i in DownInfos:
+            if int(i['isDown'])==1:
+                CurDownNums += 1
+                CurDown.append(i)
+            elif int(i['isDown']) == 2:
+                WaitDown.append(i)
+            elif int(i['isDown']) == 3:
+                DelDown.append(i)
+        for i in DelDown:
+            # print('Del',i['FileName'])
+            infoi = self.DownInfosDowndateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+            self.dbManager1.WSQL(i,'DelUserDownRecord')
+            self.DownLayout[1].removeWidget(infoi['frame'])
+            sip.delete(infoi['frame'])
+            self.DownLayout[1].removeWidget(infoi['line'])
+            sip.delete(infoi['line'])
+            # QApplication.processEvents()
+
+            # print('Del1', i['FileName'])
+            del self.DownInfosDowndateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+        DownInfos = dbManager.GetUserDownRecordAll()
+        self.DownLayout[3].setText(str(len(DownInfos)))
+        dbManager.close()
+        if CurDownNums < MaxDownNums:
+            for i in range(MaxDownNums-CurDownNums):
+                if i < len(WaitDown):
+                    info = WaitDown[i]
+                    self.dbManager1.WSQL(info,'DowndataUserDownRecord',1)
+                    infoi = self.DownInfosDowndateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]
+                    self.Down(infoi)
+        if CurDownNums > MaxDownNums:
+            for i in CurDown:
+                if CurDownNums > MaxDownNums:
+                    self.dbManager1.WSQL(i, 'DowndataUserDownRecord',2)
+                    infoi = self.DownInfosDowndateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+                    infoi['statusButon'].setText(">")
+                    infoi['statusLabel'].setText("等待上传")
+                    CurDownNums -= 1
+        # dbManager.close()
     def AddDowning1(self,DownInfos):
         FilesSQL = []
         for DownInfo in DownInfos:
