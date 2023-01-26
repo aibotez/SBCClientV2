@@ -80,9 +80,6 @@ class FileOperClick(QThread):
         return ChosedFiles
 
     def Downact(self,Downinfos):
-        DownNums = len(Downinfos)
-        if DownNums >= 50:
-
         DownFeInfos = []
         # DownFePath = [i[0]['fepath'] for i in Downinfos]
         for i in Downinfos:
@@ -200,11 +197,16 @@ class FileOperClick(QThread):
     def Down(self,e):
         # self.ui.thread = TranspAnithread(self.ui)
         # self.ui.thread.start()
-        self.start()
+        # self.start()
         # thread = Mythread()
         # # thread.SetPar(fei, DownFaPath)
         # thread.Signal.connect(self.Down1)
         # thread.start()
+        self.ui.thread = TranspAnithread(self.ui)
+        self.ui.thread.start()
+        t = threading.Thread(target=self.run1)
+        t.setDaemon(True)
+        t.start()
 
     def Transpanim(self):
         self.ui.thread = TranspAnithread(self.ui)
@@ -214,12 +216,12 @@ class FileOperClick(QThread):
         # self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         # self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
         # self.anim.start()  # 启动动画
-    def run(self):
+    def run1(self):
         import threading
         ChosedFiles = self.GetChoseFiles()
         DownInfos = []
-        # if ChosedFiles:
-        #     self.SignalTranspan.emit()
+        if ChosedFiles:
+            self.SignalTranspan.emit()
         for i in ChosedFiles:
             if i['fetype'] != 'folder':
                 DownFaPath = self.ui.DownPath
@@ -241,4 +243,10 @@ class FileOperClick(QThread):
                         # t.start()
                         DownInfos.append([fei, DownFaPath])
                         # self.Downact(fei, DownFaPath)
+        # DownNums = len(DownInfos)
+        # if DownNums >= 50:
+        #     reply = QMessageBox.question(self.ui.MainWindow, '提示', '下载的文件数超过50个，是否继续？',
+        #                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        #     if reply == QMessageBox.Yes:
+        #         return
         self.Downact(DownInfos)

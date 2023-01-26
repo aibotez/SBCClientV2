@@ -463,7 +463,12 @@ class TransShowUpdate(QThread):
     def OpenDownFile(self,info,e):
         Path = info['LoPath'].replace('/','\\')
         os.system(r"explorer /select,{}".format(Path))
+
     def DelDownact(self,info):
+        t = threading.Thread(target=self.DelDownact1,args=(info,))
+        t.setDaemon(True)
+        t.start()
+    def DelDownact1(self,info):
         i = info
         infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
         self.DownLayout[1].removeWidget(infoi['frame'])
@@ -476,7 +481,7 @@ class TransShowUpdate(QThread):
         t.setDaemon(True)
         t.start()
         return
-    def DelDown1(self,info):
+    def DelDown1(self,info,e=None):
         i = info
         infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
         self.dbManager1.WSQL(info, 'DelUserDownRecord')
@@ -601,6 +606,7 @@ class TransShowUpdate(QThread):
         self.DownLayout[5].clicked.connect(self.PauseAll)
         self.DownLayout[6].clicked.connect(self.CancelAll)
     def UpdateDownProgress(self,Labelinfo,info):
+        # return
         try:
             # Labelinfo['statusButon'].setEnabled(False)
             Labelinfo['progressBar'].setProperty("value",info['bar'])
