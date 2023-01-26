@@ -46,7 +46,7 @@ class DBManager1():
                 dbmanager.UpdataUserDownRecords(FilePath,FileName,UpchangeVaule)
             dbmanager.conn.commit()
         elif Oper =='DelUserUpRecord':
-            FilePath = DownInfo['FilePath']
+            FilePath = DownInfo['LoFilePath']
             FileName = DownInfo['FileName']
             dbmanager.DelUserUpRecord(FilePath,FileName)
         elif Oper =='DelUserDownRecord':

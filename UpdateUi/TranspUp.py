@@ -271,7 +271,8 @@ class TransUp():
         self.UpInfosUpdateLabs[str_trans_to_md5(Upinginfoi['RoFilePath']+UpInfo['FileName'])] = Upinginfoi
 
         self.label_30.mousePressEvent = partial(self.UpSatusChange,Upinginfoi)
-        self.label_31.mousePressEvent = partial(self.DelUp,Upinginfoi)
+        self.label_31.mousePressEvent = lambda e: self.DelUp(Upinginfoi)
+        # self.label_31.mousePressEvent = partial(self.DelUp,Upinginfoi)
 
         return Upinginfoi
 

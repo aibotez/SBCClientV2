@@ -460,6 +460,80 @@ class TransShowUpdate(QThread):
             # info['isDown'] = 0
         else:
             self.DownGon(info)
+    def Downact(self,info):
+        dbManager = DBManager.DBManager()
+        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
+        if DownInfoi and int(DownInfoi['isDown'])==1:
+        # if int(info['isDown']):
+            info['statusButon'].setText("||")
+            LoFileSatus = self.CheckLoFile(info)
+            # LoFileSatus = info['LoFileSatus']
+            LoFileSize = LoFileSatus['size']
+            RoFileSize = info['Size']
+            if LoFileSize >= RoFileSize:
+                self.DownFinsh(info)
+            else:
+                downinfo = {
+                    'fename':info['FileName'],
+                    'fepath':info['RoFilePath'],
+                    'feseek':LoFileSize
+                }
+                data = {
+                    'downinfo':downinfo
+                }
+                url_fileDown = 'http://'+self.ClientSetting['host']+'/FileDown1/'
+                # dbManager = DBManager.DBManager()
+                r = requests.post(url_fileDown,data=json.dumps(data),headers=self.ui.SBCRe.headers,stream=True)
+                with open(info['LoPath'], 'ab') as f:
+                    t0 = time.time()
+                    # for chunk1 in r.iter_content(chunk_size=1*1024*1024):
+                    #     print(66,len(chunk1))
+                    for chunk in r.iter_content(chunk_size=1024*1024):
+                        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
+                        if DownInfoi and int(DownInfoi['isDown'])==1:
+                            DownSpeed = 0
+                            if chunk:
+
+                                f.write(chunk)
+                                LoFileSize += len(chunk)
+                                deltat = time.time()-t0
+                                t0 = time.time()
+                                if deltat ==0:
+                                    deltat = 0.001
+                                DownSpeed = len(chunk)/deltat
+                                try:
+                                    info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
+                                    info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
+                                    info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
+                                except Exception as e:
+                                    print(e)
+                                    print(info)
+
+                        else:
+                            # self.DownCancel(info)
+                            break
+                if LoFileSize >= RoFileSize:
+                    self.DownFinsh(info)
+        dbManager.close()
+    def Down(self,info):
+
+        Path = info['LoPath']
+        LoFileSatus = info['LoFileSatus']
+        LoFileSize = LoFileSatus['size']
+        LoFileExist = LoFileSatus['exist']
+        # print(info)
+        if not os.path.isdir(info['FilePath']):
+            os.makedirs(info['FilePath'])
+        # qmut_1.lock()
+        t = threading.Thread(target=self.run1, args=(info,))
+        t.setDaemon(True)
+        t.start()
+        self.info = info
+            # self.start()
+            # qmut_1.unlock()
+    def run1(self,info):
+        # return
+        self.Downact(info)
     def AddDowning(self,DownInfos=None):
         if not DownInfos:
             DownInfos = self.dbManager.GetUserDownRecordAll()
