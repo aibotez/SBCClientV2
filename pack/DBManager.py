@@ -21,7 +21,7 @@ class DBManager1():
             dbmanager.conn.commit()
         elif Oper == 'AddUserDownRecords':
             for i in DownInfo:
-                dbmanager.AddUserDownRecord(i)
+                dbmanager.AddUserDownRecords(i)
             dbmanager.conn.commit()
         elif Oper == 'AddUserUpRecord':
             dbmanager.AddUserUpRecord(DownInfo)
@@ -35,10 +35,24 @@ class DBManager1():
                 FileName = i['FileName']
                 dbmanager.UpdataUserUpRecords(FilePath,FileName,UpchangeVaule)
             dbmanager.conn.commit()
+        elif Oper =='UpdataUserDownRecord':
+            FilePath = DownInfo['FilePath']
+            FileName = DownInfo['FileName']
+            dbmanager.UpdataUserDownRecord(FilePath,FileName,UpchangeVaule)
+        elif Oper =='UpdataUserDownRecords':
+            for i in DownInfo:
+                FilePath = i['FilePath']
+                FileName = i['FileName']
+                dbmanager.UpdataUserDownRecords(FilePath,FileName,UpchangeVaule)
+            dbmanager.conn.commit()
         elif Oper =='DelUserUpRecord':
-            FilePath = DownInfo['LoFilePath']
+            FilePath = DownInfo['FilePath']
             FileName = DownInfo['FileName']
             dbmanager.DelUserUpRecord(FilePath,FileName)
+        elif Oper =='DelUserDownRecord':
+            FilePath = DownInfo['FilePath']
+            FileName = DownInfo['FileName']
+            dbmanager.DelUserDownRecord(FilePath,FileName)
         elif Oper =='DelUserUpRecords':
             for i in DownInfo:
                 FilePath = i['LoFilePath']
@@ -163,6 +177,15 @@ class DBManager():
         self.conn.commit()
         self.lock.release()
         return 1
+    def AddUserDownRecords(self,DownInfo):
+        if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
+            # print('Have Down')
+            return 'Have'
+        # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
+        sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype) values (?,?,?,?,?,?,?)"
+        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'2',DownInfo['fetype'])
+        self.cur.execute(sql, data)
+        return 1
     def GetUserUpRecord(self,RoFilePath,FileName):
         sql = "select * from UserUp where LoFilePath ='{}' and FileName='{}'".format(RoFilePath,FileName)
         self.cur.execute(sql)
@@ -237,6 +260,10 @@ class DBManager():
         self.cur.execute(sql, data)
         self.conn.commit()
         self.lock.release()
+    def UpdataUserDownRecords(self,FilePath,FileName,changeVaule):
+        sql = "update UserDown set isDown=? where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
+        data = (str(changeVaule))
+        self.cur.execute(sql, data)
     def UpdataUserDownRecord(self,FilePath,FileName,changeVaule):
         # self.close()
         # self.Connect()

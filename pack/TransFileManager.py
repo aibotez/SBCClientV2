@@ -30,18 +30,18 @@ class TransFileManager():
         # dbManager.close()
         self.Transhow.AddUping(UpInfos)
     def AddDownRecord(self,DownInfo):
-        dbManager = DBManager.DBManager()
-        AdW = dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
-        # AdW = self.dbManager.AddUserDownRecord(DownInfo)
-        if AdW:
-            return
-            # reply = QMessageBox.question(self.MainUi,'提示', '该文件正在下载，重新下载？',
-            #                              QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-            # if reply == QMessageBox.Yes:
-            #     pass
-            # else:
-            #     return
-        dbManager.close()
+        # dbManager = DBManager.DBManager()
+        # AdW = dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
+        # # AdW = self.dbManager.AddUserDownRecord(DownInfo)
+        # if AdW:
+        #     return
+        #     # reply = QMessageBox.question(self.MainUi,'提示', '该文件正在下载，重新下载？',
+        #     #                              QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        #     # if reply == QMessageBox.Yes:
+        #     #     pass
+        #     # else:
+        #     #     return
+        # dbManager.close()
 
         self.Transhow.AddDowning(DownInfo)
         # self.Transhow.RefreshDowning()

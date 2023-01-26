@@ -245,17 +245,23 @@ class TransShowUpdate(QThread):
     signalaDelUp1 = pyqtSignal(dict)
     signalaUpdateUpProgress = pyqtSignal(dict,dict)
 
+    signaladdDown = pyqtSignal(list)
+
     def __init__(self,ui):
         super().__init__()
+        self.MaxDownNums = 2
         self.DownInfosUpdateLabs = {}
         self.ui = ui
         self.TranspUps = TranspUp.TransUp(self.ui,self.signaladdUp,self.signalaDelUp,self.signalaDelUp1,self.signalaUpdateUpProgress)
         self.DownInfos = []
         self.PriDown = None
         self.dbManager = DBManager.DBManager()
+        self.dbManager1 = DBManager.DBManager1()
         self.ClientSetting = self.dbManager.GetClientSetting()
         # self.signal.connect(self.RefreshDowning)
-        # self.signaladd.connect(self.AddDowning1)
+        self.signaladdDown.connect(self.AddDowning1)
+        self.DownLayout = self.ui.TranspscrollArea['Down']
+
 
         # self.ButtonBind()
         # self.RefreshDowning()
@@ -291,7 +297,7 @@ class TransShowUpdate(QThread):
             return 'img/filecon/htmlcon.jpg'
         else:
             return 'img/filecon/wj.jfif'
-    def add1(self,scrollAreaWidgetContents,DownInfo):
+    def add(self,scrollAreaWidgetContents,DownInfo):
 
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
         self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -379,10 +385,10 @@ class TransShowUpdate(QThread):
         self.horizontalLayout_11.setStretch(6, 5)
         self.horizontalLayout_11.setStretch(7, 1)
 
-        LoFile = self.CheckLoFile(DownInfo)
-        LoSize = self.size_format(LoFile['size'])
+        LoFile = CheckLoFile(DownInfo)
+        LoSize = size_format(LoFile['size'])
 
-        progressBar_4.setProperty("value", (LoFile['size']/DownInfo['Size'])*100)
+        progressBar_4.setProperty("value", (LoFile['size']/DownInfo['size'])*100)
 
 
         self.label_33.setText("")
@@ -395,7 +401,7 @@ class TransShowUpdate(QThread):
 
         self.label_19.setText(DownInfo['FileName'])
         self.label_19.setFixedWidth(260)
-        label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
+        label_20.setText("{}/{}".format(LoSize,size_format(DownInfo['Size'])))
 
         label_21.setText("--")
         # print(66,DownInfo)
@@ -417,19 +423,6 @@ class TransShowUpdate(QThread):
 
 
 
-        # label_23.setText("")
-        # label_23.setMaximumSize(20,20)
-        # label_23.setPixmap(QtGui.QPixmap('./img/del1.png'))
-        # label_23.setScaledContents(True)
-        # label_22.setText("")
-        # label_22.setMaximumSize(22,23)
-        # label_22.setPixmap(QtGui.QPixmap('./img/start1.png'))
-        # label_22.setScaledContents(True)
-        # label_22.setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 2px;")
-
-
-        # label_23.setStyleSheet("border:1px groove gray;border-radius:10px;padding:0px 0px;")
-
         label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -447,14 +440,26 @@ class TransShowUpdate(QThread):
         # Downinginfoi['RoFilePath'] = DownInfo['RoFilePath']
         Downinginfoi['LoFileSatus'] = LoFile
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
-        self.DownInfosDowndateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
+        self.DownInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
 
         label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
-        label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
-        label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
+        # label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
+        # label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
 
-
+    def DownSatusChange(self,info,e):
+        dbManager = DBManager.DBManager()
+        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
+        if DownInfoi and int(DownInfoi['isDown'])==1:
+        # if int(info['isDown']):
+            self.DownCancel(info)
+            # info['statusButon'].setText(">")
+            # info['statusLabel'].setText("已暂停")
+            # dbManager.UpdataUserDownRecord(info['FilePath'],info['FileName'],0)
+            #
+            # info['isDown'] = 0
+        else:
+            self.DownGon(info)
     def AddDowning(self,DownInfos=None):
         if not DownInfos:
             DownInfos = self.dbManager.GetUserDownRecordAll()
@@ -488,7 +493,7 @@ class TransShowUpdate(QThread):
                 DelDown.append(i)
         for i in DelDown:
             # print('Del',i['FileName'])
-            infoi = self.DownInfosDowndateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+            infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
             self.dbManager1.WSQL(i,'DelUserDownRecord')
             self.DownLayout[1].removeWidget(infoi['frame'])
             sip.delete(infoi['frame'])
@@ -497,7 +502,7 @@ class TransShowUpdate(QThread):
             # QApplication.processEvents()
 
             # print('Del1', i['FileName'])
-            del self.DownInfosDowndateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+            del self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
         DownInfos = dbManager.GetUserDownRecordAll()
         self.DownLayout[3].setText(str(len(DownInfos)))
         dbManager.close()
@@ -505,14 +510,14 @@ class TransShowUpdate(QThread):
             for i in range(MaxDownNums-CurDownNums):
                 if i < len(WaitDown):
                     info = WaitDown[i]
-                    self.dbManager1.WSQL(info,'DowndataUserDownRecord',1)
-                    infoi = self.DownInfosDowndateLabs[str_trans_to_md5(info['RoFilePath'] + info['FileName'])]
+                    self.dbManager1.WSQL(info,'UpdataUserDownRecord',1)
+                    infoi = self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]
                     self.Down(infoi)
         if CurDownNums > MaxDownNums:
             for i in CurDown:
                 if CurDownNums > MaxDownNums:
-                    self.dbManager1.WSQL(i, 'DowndataUserDownRecord',2)
-                    infoi = self.DownInfosDowndateLabs[str_trans_to_md5(i['RoFilePath'] + i['FileName'])]
+                    self.dbManager1.WSQL(i, 'UpdataUserDownRecord',2)
+                    infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
                     infoi['statusButon'].setText(">")
                     infoi['statusLabel'].setText("等待上传")
                     CurDownNums -= 1
@@ -520,7 +525,7 @@ class TransShowUpdate(QThread):
     def AddDowning1(self,DownInfos):
         FilesSQL = []
         for DownInfo in DownInfos:
-            DownInfoExist = self.dbManager.GetUserDownRecord(DownInfo['LoFilePath'],DownInfo['FileName'])
+            DownInfoExist = self.dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
             if not DownInfoExist or 'statusButon' not in DownInfo:
                 DownInfo['size'] = DownInfo['Size']
                 DownverticalLayout = self.DownLayout[1]
@@ -538,7 +543,7 @@ class TransShowUpdate(QThread):
                 line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
                 line_3.setObjectName("line_3")
                 DownverticalLayout.addWidget(line_3)
-                self.DownInfosDowndateLabs[str_trans_to_md5(DownInfo['RoFilePath'] + DownInfo['FileName'])]['line'] = line_3
+                self.DownInfosUpdateLabs[str_trans_to_md5(DownInfo['FilePath'] + DownInfo['FileName'])]['line'] = line_3
                 if not DownInfoExist:
                     FilesSQL.append(DownInfo)
             # QApplication.processEvents()

@@ -82,18 +82,22 @@ class FileOperClick(QThread):
     def Downact(self,DownFile,DownFaPath):
         FeMd5req = self.ui.SBCRe.GetRoFileMd5(DownFile['fepath'])
         Femd5 = None
+        DownFeInfos = []
         if not FeMd5req['error']:
             Femd5 = FeMd5req['md5']
         DownFeInfo ={}
+
         if DownFile['fetype'] != 'folder':
             DownFeInfo['FileMd5'] = Femd5
             DownFeInfo['FileName'] = DownFile['fename']
             DownFeInfo['size'] = DownFile['size']
+            DownFeInfo['Size'] = DownFile['size']
             DownFeInfo['fetype'] = DownFile['fetype']
             DownFeInfo['FilePath'] = DownFaPath
             DownFeInfo['RoFilePath'] = DownFile['fepath']
             # print(DownFeInfo)
-            self.ui.TransFilesManager.AddDownRecord(DownFeInfo)
+            DownFeInfos.append(DownFeInfo)
+            self.ui.TransFilesManager.AddDownRecord(DownFeInfos)
 
     def UpFile(self):
         fname = QFileDialog.getOpenFileName(self.ui.MainWindow, "选择要上传的文件", "./")
