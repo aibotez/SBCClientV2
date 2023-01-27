@@ -5,6 +5,7 @@ import time
 
 sys.path.append('..')
 from functools import partial
+import pyperclip
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog
 from PyQt5.Qt import QThread
@@ -12,6 +13,7 @@ from PyQt5.QtCore import *
 from . import FileType
 from SubUi import ReNameui
 from SubUi import Shareui
+from SubUi import ShowShareLinkui
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 
@@ -234,6 +236,9 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+    def CopyLink(self,sharelink):
+        pyperclip.copy(sharelink)
+        self.ui.SBCShowShareLinkuiWindowDialog.destroy()
     def SBCShareact(self,ChosedFiles):
         self.ui.SBCShareWindowDialog.destroy()
         DuringTime = self.ui.SBCShareWindow.label_4.text()
@@ -244,7 +249,14 @@ class FileOperClick(QThread):
             'SharePass':Password
         }
         res = self.ui.SBCRe.SBCShare(ShareFile)
-        print(res)
+        self.ui.SBCShowShareLinkuiWindow = ShowShareLinkui.Ui_Dialog()
+        self.ui.SBCShowShareLinkuiWindowDialog = QDialog()
+        self.ui.SBCShowShareLinkuiWindow.setupUi(self.ui.SBCShowShareLinkuiWindowDialog)
+        # self.ui.SBCNewWindowDialog.setWindowTitle("新建文件夹")
+        self.ui.SBCShowShareLinkuiWindow.lineEdit.setText(res['res'])
+        self.ui.SBCShowShareLinkuiWindow.lineEdit.selectAll()
+        self.ui.SBCShowShareLinkuiWindow.pushButton.clicked.connect(lambda: self.CopyLink(res['res']))
+        self.ui.SBCShowShareLinkuiWindowDialog.show()
     def ShareMenu(self,e):
         self.groupBox_Moremenu = QMenu()
         self.actionShare1 = self.groupBox_Moremenu.addAction(u'1天内有效')
