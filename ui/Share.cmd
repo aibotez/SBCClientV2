@@ -1,0 +1,1 @@
+pyuic5 -o Shareui.py Share.ui
