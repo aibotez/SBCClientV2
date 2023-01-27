@@ -39,6 +39,13 @@ class SBCRe():
         # print(json.loads(res.text))
         # FileDatas = json.loads(res.text)
         return json.loads(res.text)
+
+    def SBCShare(self,info):
+        # print(path)
+        url = 'http://' + self.host + '/CreatShareFile/'
+        data = json.dumps(info)
+        res = requests.post(url, data=data,headers=self.headers)
+        return json.loads(res.text)
     def NewFolder(self,info):
         # print(path)
         url = 'http://' + self.host + '/netOper/'

@@ -235,7 +235,28 @@ class FileOperClick(QThread):
         t.setDaemon(True)
         t.start()
     def SBCShareact(self,ChosedFiles):
-        pass
+        self.ui.SBCShareWindowDialog.destroy()
+        DuringTime = self.ui.SBCShareWindow.label_4.text()
+        Password = self.ui.SBCShareWindow.lineEdit.text()
+        ShareFile = {
+            'ShareFile':ChosedFiles,
+            'ShareDateDur':DuringTime,
+            'SharePass':Password
+        }
+        res = self.ui.SBCRe.SBCShare(ShareFile)
+        print(res)
+    def ShareMenu(self,e):
+        self.groupBox_Moremenu = QMenu()
+        self.actionShare1 = self.groupBox_Moremenu.addAction(u'1天内有效')
+        self.actionShare2 = self.groupBox_Moremenu.addAction(u'7天内有效')
+        self.actionShare3 = self.groupBox_Moremenu.addAction(u'1个月内有效')
+        self.actionShare4 = self.groupBox_Moremenu.addAction(u'永久有效')
+        self.groupBox_Moremenu.popup(QCursor.pos())
+        self.groupBox_Moremenu.setStyleSheet("QMenu{margin:0px 10px 10px 0px;color:blue;font-size:15px;}")
+        self.actionShare1.triggered.connect(lambda: self.ui.SBCShareWindow.label_4.setText('1天内有效'))
+        self.actionShare2.triggered.connect(lambda: self.ui.SBCShareWindow.label_4.setText('7天内有效'))
+        self.actionShare3.triggered.connect(lambda: self.ui.SBCShareWindow.label_4.setText('1个月内有效'))
+        self.actionShare4.triggered.connect(lambda: self.ui.SBCShareWindow.label_4.setText('永久有效'))
     def SBCShare(self):
         ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
@@ -256,6 +277,7 @@ class FileOperClick(QThread):
                 self.ui.SBCShareWindow.label.setScaledContents(True)
                 self.ui.SBCShareWindow.label_2.setText('{}'.format(str(ChosedFiles[0]['fename'])))
             self.ui.SBCShareWindowDialog.show()
+            self.ui.SBCShareWindow.label_4.mousePressEvent = self.ShareMenu
             self.ui.SBCShareWindow.pushButton.clicked.connect(lambda: self.SBCShareact(ChosedFiles))
     def NewFolderact(self,info):
         self.ui.SBCNewWindowDialog.destroy()
