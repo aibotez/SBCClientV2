@@ -1,1 +1,1 @@
-pyuic5 -o ReNameui.py ReName.ui
+pyuic5 -o ReNameui.py ReName1.ui

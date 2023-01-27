@@ -23,6 +23,7 @@ from SubUi import NavShow
 # from SubUi import Transmitui
 from UpdateUi import FileUpdate
 # from UpdateUi import TransShowUpdate
+from SubUi import ReNameui
 
 
 
@@ -135,12 +136,14 @@ class initWindow():
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.MainWindow = Main
+        self.SBCReNameWindow = ReNameui.Ui_Form()
         self.Main.setAcceptDrops(True)
         self.Main.dragEnterEvent = self.dragEnterEvent
         self.Main.dropEvent = self.dropEvent
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
 
         self.SBCMain.setupUi(Main)
+        self.SBCReNameWindow.setupUi(Main)
 
         self.SBCMain.TranspArrow = self.SBCMain.label_23
 

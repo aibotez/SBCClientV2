@@ -91,17 +91,4 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "重命名"))
         self.label.setText(_translate("Form", "TextLabel"))
         self.pushButton.setText(_translate("Form", "确定"))
-from PyQt5.QtWidgets import QApplication, QMainWindow
-import sys
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    Main = QMainWindow()
-    Ui = Ui_Form()
-    Ui.setupUi(Main)
 
-
-
-
-    # SBCMain = SBCMain.initFrame()
-    Main.show()
-    sys.exit(app.exec_())
