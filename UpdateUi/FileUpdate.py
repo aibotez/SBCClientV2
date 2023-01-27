@@ -320,6 +320,7 @@ class FileUpdate(QThread):
         cur1 = [i for i in self.CurFileList if i['isdir']]
         cur2 = [i for i in self.CurFileList if not i['isdir']]
         self.CurFileList = cur1+cur2
+
         for i in range(len(self.CurFileList)):
 
             CurSBCFiles = {}
@@ -463,10 +464,11 @@ class FileUpdate(QThread):
         #     return
         CurNavChosed = self.MainWindow.CurNavChosed
         CurNetChosed = self.MainWindow.CurNetChosed
+
         if CurNavChosed == 'File':
             if CurNetChosed == 'SBC':
                 self.SBCRe.GetFileList(self.path)
-                if self.MainWindow.CurFileListOld[CurNetChosed][CurNavChosed] != self.SBCRe.CurFileList:
+                if self.MainWindow.CurFileListOld[CurNetChosed][CurNavChosed] != self.SBCRe.CurFileList or not self.SBCRe.CurFileList:
                     self.CurFileList = self.SBCRe.CurFileList
                     self.MainWindow.nav[CurNetChosed] = self.SBCRe.Nav
                     # self.signal.emit()
