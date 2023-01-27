@@ -6,10 +6,11 @@ import time
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog
 from PyQt5.Qt import QThread
 from PyQt5.QtCore import *
 from . import FileType
+from SubUi import ReNameui
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 
@@ -232,16 +233,24 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+    def ReNameact(self,info):
+        print(info)
+        self.ui.SBCReNameWindowDialog.destroy()
     def ReName(self,e):
         ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
             ChosedFile = ChosedFiles[0]
-            self.ui.SBCReNameWindowDialog.show()
+            self.ui.SBCReNameWindow = ReNameui.Ui_Dialog()
+            self.ui.SBCReNameWindowDialog = QDialog()
+            self.ui.SBCReNameWindow.setupUi(self.ui.SBCReNameWindowDialog)
             self.ui.SBCReNameWindow.lineEdit.setText(ChosedFile['fename'])
             self.ui.SBCReNameWindow.lineEdit.selectAll()
             self.ui.SBCReNameWindow.label.setText('')
             self.ui.SBCReNameWindow.label.setPixmap(QtGui.QPixmap(FileConChose(ChosedFile['fetype'])))
             self.ui.SBCReNameWindow.label.setScaledContents(True)
+            self.ui.SBCReNameWindowDialog.show()
+            self.ui.SBCReNameWindow.pushButton.clicked.connect(lambda: self.ReNameact(ChosedFile))
+
 
 
     def Transpanim(self):

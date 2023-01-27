@@ -70,6 +70,7 @@ class Ui_Dialog(object):
 "    border:1px groove #566573;\n"
 "    border-style: outset;\n"
 "    border-radius:12px;\n"
+"    font-size:23px;\n"
 "}\n"
 "")
         self.lineEdit.setObjectName("lineEdit")

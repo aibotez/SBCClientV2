@@ -23,7 +23,7 @@ from SubUi import NavShow
 # from SubUi import Transmitui
 from UpdateUi import FileUpdate
 # from UpdateUi import TransShowUpdate
-from SubUi import ReNameui
+# from SubUi import ReNameui
 
 
 
@@ -142,11 +142,11 @@ class initWindow():
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         self.SBCMain.setupUi(Main)
 
-        self.SBCReNameWindow = ReNameui.Ui_Dialog()
-        self.SBCReNameWindowDialog = QDialog()
-        self.SBCReNameWindow.setupUi(self.SBCReNameWindowDialog)
-        self.SBCMain.SBCReNameWindow = self.SBCReNameWindow
-        self.SBCMain.SBCReNameWindowDialog = self.SBCReNameWindowDialog
+        # self.SBCReNameWindow = ReNameui.Ui_Dialog()
+        # self.SBCReNameWindowDialog = QDialog()
+        # self.SBCReNameWindow.setupUi(self.SBCReNameWindowDialog)
+        # self.SBCMain.SBCReNameWindow = self.SBCReNameWindow
+        # self.SBCMain.SBCReNameWindowDialog = self.SBCReNameWindowDialog
 
 
         self.SBCMain.TranspArrow = self.SBCMain.label_23
