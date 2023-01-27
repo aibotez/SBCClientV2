@@ -11,6 +11,7 @@ from PyQt5.Qt import QThread
 from PyQt5.QtCore import *
 from . import FileType
 from SubUi import ReNameui
+from SubUi import Shareui
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 
@@ -233,10 +234,29 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+    def SBCShareact(self,ChosedFiles):
+        pass
     def SBCShare(self):
         ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
-            pass
+            self.ui.SBCShareWindow = Shareui.Ui_Dialog()
+            self.ui.SBCShareWindowDialog = QDialog()
+            self.ui.SBCShareWindow.setupUi(self.ui.SBCShareWindowDialog)
+            self.ui.SBCShareWindow.label_5.setPixmap(QtGui.QPixmap('img/filecon/drop.jpg'))
+            self.ui.SBCShareWindow.label_5.setScaledContents(True)
+            # self.ui.SBCShareWindowDialog.setWindowTitle("新建文件夹")
+            if len(ChosedFiles)>1:
+                self.ui.SBCShareWindow.label.setText('')
+                self.ui.SBCShareWindow.label.setPixmap(QtGui.QPixmap('img/filecon/folder2.jfif'))
+                self.ui.SBCShareWindow.label.setScaledContents(True)
+                self.ui.SBCShareWindow.label_2.setText('共{}个文件'.format(str(len(ChosedFiles))))
+            else:
+                self.ui.SBCShareWindow.label.setText('')
+                self.ui.SBCShareWindow.label.setPixmap(QtGui.QPixmap('img/filecon/folder1.png'))
+                self.ui.SBCShareWindow.label.setScaledContents(True)
+                self.ui.SBCShareWindow.label_2.setText('{}'.format(str(ChosedFiles[0]['fename'])))
+            self.ui.SBCShareWindowDialog.show()
+            self.ui.SBCShareWindow.pushButton.clicked.connect(lambda: self.SBCShareact(ChosedFiles))
     def NewFolderact(self,info):
         self.ui.SBCNewWindowDialog.destroy()
         NewNameValue = self.ui.SBCNewWindow.lineEdit.text()
