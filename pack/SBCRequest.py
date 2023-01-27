@@ -40,6 +40,14 @@ class SBCRe():
         # FileDatas = json.loads(res.text)
         return json.loads(res.text)
 
+    def ReName(self,info):
+        # print(path)
+        url = 'http://' + self.host + '/ReName/'
+        data = {
+            'NewName': info['NewName'],
+            'OldNamePath':info['fepath'],
+        }
+        res = requests.post(url, data=data,headers=self.headers)
     def GetRoFileMd5(self,path):
         # print(path)
         url = 'http://' + self.host + '/GetFileMd5/'

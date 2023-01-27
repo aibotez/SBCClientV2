@@ -234,8 +234,12 @@ class FileOperClick(QThread):
         t.setDaemon(True)
         t.start()
     def ReNameact(self,info):
-        print(info)
         self.ui.SBCReNameWindowDialog.destroy()
+        reNameValue = self.ui.SBCReNameWindow.lineEdit.text()
+        if reNameValue and reNameValue != info['fename']:
+            info['NewName'] = reNameValue
+            self.ui.SBCRe.ReName(info)
+            self.ui.signalRefresh.emit()
     def ReName(self,e):
         ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
