@@ -202,26 +202,34 @@ class FileOperClick(QThread):
         # # thread.SetPar(fei, DownFaPath)
         # thread.Signal.connect(self.Down1)
         # thread.start()
-        self.ui.thread = TranspAnithread(self.ui)
-        self.ui.thread.start()
+        # self.SignalTranspan.emit()
+        # self.ui.thread = TranspAnithread(self.ui)
+        # self.ui.thread.start()
+        # self.ui.thread.wait()
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
 
     def Transpanim(self):
-        self.ui.thread = TranspAnithread(self.ui)
-        self.ui.thread.start()
+        self.ui.anim.start()
+        # self.ui.thread = TranspAnithread(self.ui)
+        # self.ui.thread.start()
+
         # self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
         # self.anim.setDuration(2000)  # 设置动画间隔时间
         # self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         # self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
         # self.anim.start()  # 启动动画
     def run1(self):
+        # time.sleep(10)
         import threading
         ChosedFiles = self.GetChoseFiles()
         DownInfos = []
         if ChosedFiles:
             self.SignalTranspan.emit()
+            # self.ui.thread = TranspAnithread(self.ui)
+            # self.ui.thread.start()
+            # self.SignalTranspan.emit()
         for i in ChosedFiles:
             if i['fetype'] != 'folder':
                 DownFaPath = self.ui.DownPath
