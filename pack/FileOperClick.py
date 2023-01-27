@@ -233,6 +233,10 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+    def SBCShare(self):
+        ChosedFiles = self.GetChoseFiles()
+        if ChosedFiles:
+            pass
     def NewFolderact(self,info):
         self.ui.SBCNewWindowDialog.destroy()
         NewNameValue = self.ui.SBCNewWindow.lineEdit.text()

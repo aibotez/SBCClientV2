@@ -282,6 +282,7 @@ class initWindow():
                                         "}\n")
         self.actionDel.triggered.connect(self.fileoperclick.DelFile)
         self.actionNewFolders.triggered.connect(self.fileoperclick.NewFolder)
+        self.actionShare.triggered.connect(self.fileoperclick.SBCShare)
     def initpopup(self):
         pass
 
