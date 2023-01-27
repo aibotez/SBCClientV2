@@ -12,6 +12,29 @@ from PyQt5.QtCore import *
 from . import FileType
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
+
+
+def FileConChose(fetype):
+    if fetype == 'folder':
+        return 'img/filecon/folder1.png'
+    if fetype == 'zip':
+        return 'img/filecon/zipcon.png'
+    if fetype == 'img':
+        return 'img/filecon/imgcon.jpg'
+    if fetype == 'pdf':
+        return 'img/filecon/pdfcon.jpg'
+    if fetype == 'ppt':
+        return 'img/filecon/pptcon.jpg'
+    if fetype == 'exe':
+        return 'img/filecon/execon.jpg'
+    if fetype == 'excel':
+        return 'img/filecon/excelcon.jpg'
+    if fetype == 'word':
+        return 'img/filecon/wordcon.jpg'
+    if fetype == 'html':
+        return 'img/filecon/htmlcon.jpg'
+    else:
+        return 'img/filecon/wj.jfif'
 def getfileMd5(filename):
     if not os.path.isfile(filename):
         return
@@ -209,6 +232,17 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+    def ReName(self,e):
+        ChosedFiles = self.GetChoseFiles()
+        if ChosedFiles:
+            ChosedFile = ChosedFiles[0]
+            self.ui.SBCReNameWindowDialog.show()
+            self.ui.SBCReNameWindow.lineEdit.setText(ChosedFile['fename'])
+            self.ui.SBCReNameWindow.lineEdit.selectAll()
+            self.ui.SBCReNameWindow.label.setText('')
+            self.ui.SBCReNameWindow.label.setPixmap(QtGui.QPixmap(FileConChose(ChosedFile['fetype'])))
+            self.ui.SBCReNameWindow.label.setScaledContents(True)
+
 
     def Transpanim(self):
         self.ui.anim.start()

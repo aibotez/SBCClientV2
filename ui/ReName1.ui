@@ -208,6 +208,7 @@
 	border:1px groove #566573;
 	border-style: outset;
 	border-radius:12px;
+	font-size:23px;
 }
 </string>
         </property>

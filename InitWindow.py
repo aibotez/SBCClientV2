@@ -5,7 +5,7 @@ import time
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QDialog
 from PyQt5.Qt import QThread
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
@@ -136,14 +136,18 @@ class initWindow():
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.MainWindow = Main
-        self.SBCReNameWindow = ReNameui.Ui_Form()
         self.Main.setAcceptDrops(True)
         self.Main.dragEnterEvent = self.dragEnterEvent
         self.Main.dropEvent = self.dropEvent
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
-
         self.SBCMain.setupUi(Main)
-        self.SBCReNameWindow.setupUi(Main)
+
+        self.SBCReNameWindow = ReNameui.Ui_Dialog()
+        self.SBCReNameWindowDialog = QDialog()
+        self.SBCReNameWindow.setupUi(self.SBCReNameWindowDialog)
+        self.SBCMain.SBCReNameWindow = self.SBCReNameWindow
+        self.SBCMain.SBCReNameWindowDialog = self.SBCReNameWindowDialog
+
 
         self.SBCMain.TranspArrow = self.SBCMain.label_23
 
@@ -329,8 +333,10 @@ class initWindow():
         self.SBCMain.label_18.mousePressEvent = self.creat_ChoseNetmenu #切换网盘
         self.SBCMain.label_17.mousePressEvent = self.creat_Moremenu  # 更多
         self.SBCMain.label_15.mousePressEvent = self.creat_Upmenu  # 上传
+        self.SBCMain.label_16.mousePressEvent = self.fileoperclick.ReName  # 重命名
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down  # 下载
+
 
     def AniUpdate(self):
         self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
