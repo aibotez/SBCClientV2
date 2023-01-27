@@ -281,6 +281,7 @@ class initWindow():
                                         "    font-size:18px;\n"
                                         "}\n")
         self.actionDel.triggered.connect(self.fileoperclick.DelFile)
+        self.actionNewFolders.triggered.connect(self.fileoperclick.NewFolder)
     def initpopup(self):
         pass
 

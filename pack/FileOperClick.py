@@ -233,6 +233,41 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+    def NewFolderact(self,info):
+        self.ui.SBCNewWindowDialog.destroy()
+        NewNameValue = self.ui.SBCNewWindow.lineEdit.text()
+        if NewNameValue and NewNameValue not in info['FileNames']:
+            self.ui.SBCRe.NewFolder(info)
+            self.ui.signalRefresh.emit()
+
+    def NewFolder(self):
+        FileDicts = self.ui.SBCFilesDict[self.ui.CurNetChosed][self.ui.CurNavChosed]['File']
+        FileNames = [FileDicts[i]['fename'] for i in FileDicts if FileDicts[i]['isdir']]
+        NewFolderName = '新建文件夹'
+        j = 1
+        while True:
+            if NewFolderName not in FileNames:
+                break
+            NewFolderName = '新建文件夹（{}）'.format(str(j))
+            j+=1
+        nav = self.ui.nav[self.ui.CurNetChosed]
+        CurRopath = nav[-1]['path']
+        info = {}
+        info['NewFolderName'] = NewFolderName
+        info['FileNames'] = FileNames
+        info ['CurPath'] = CurRopath
+
+        self.ui.SBCNewWindow = ReNameui.Ui_Dialog()
+        self.ui.SBCNewWindowDialog = QDialog()
+        self.ui.SBCNewWindow.setupUi(self.ui.SBCNewWindowDialog)
+        self.ui.SBCNewWindowDialog.setWindowTitle("新建文件夹")
+        self.ui.SBCNewWindow.lineEdit.setText(NewFolderName)
+        self.ui.SBCNewWindow.lineEdit.selectAll()
+        self.ui.SBCNewWindow.label.setText('')
+        self.ui.SBCNewWindow.label.setPixmap(QtGui.QPixmap('img/filecon/folder1.png'))
+        self.ui.SBCNewWindow.label.setScaledContents(True)
+        self.ui.SBCNewWindowDialog.show()
+        self.ui.SBCNewWindow.pushButton.clicked.connect(lambda: self.NewFolderact(info))
     def ReNameact(self,info):
         self.ui.SBCReNameWindowDialog.destroy()
         reNameValue = self.ui.SBCReNameWindow.lineEdit.text()
