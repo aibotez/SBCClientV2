@@ -242,7 +242,7 @@ class FileOperClick(QThread):
         ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
             self.ui.SBCFileMoveWindowDialog = QDialog()
-            self.ui.SBCFileMoveWindow = Moveuiinit.MoveUi(self.ui.SBCFileMoveWindowDialog,self.ui)
+            self.ui.SBCFileMoveWindow = Moveuiinit.MoveUi(self.ui.SBCFileMoveWindowDialog,self.ui,ChosedFiles)
             self.ui.SBCFileMoveWindowDialog.show()
 
 

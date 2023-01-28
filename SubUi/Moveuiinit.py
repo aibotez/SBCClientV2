@@ -12,15 +12,17 @@ def str_trans_to_md5(src):
     myMd5_Digest = myMd5.hexdigest()
     return myMd5_Digest
 class MoveUi(Moveui.Ui_Dialog):
-    def __init__(self,Dialog,ui):
+    def __init__(self,Dialog,ui,ChosedFiles):
         super().__init__()
         self.ui = ui
+        self.ChosedFiles = ChosedFiles
         self.Dialog = Dialog
         self.init()
 
     def init(self):
         self.setupUi(self.Dialog)
         self.label_3.setText('')
+        self.pushButton.clicked.connect(self.MoveFile)
         self.treeView.setHeaderHidden(True)
         # self.tree.clicked.connect(self.get_checked1)
         self.treeView.itemClicked.connect(self.get_CurPath)
@@ -38,6 +40,15 @@ class MoveUi(Moveui.Ui_Dialog):
         # self.qvl.addWidget(self.pushButton)
         # self.setLayout(self.qvl)
 
+    def MoveFile(self):
+        move2path = self.get_CurPath()
+        if move2path:
+            moveinfo = {
+                'move2path':move2path,
+                'netOper': 'MoveFile',
+                'movefilesinfo':self.ChosedFiles
+            }
+            res = self.ui.SBCRe.SBCFileMove(moveinfo)
 
     def GetBranch(self,path,FaTree):
         childs = [FaTree.child(i) for i in range(FaTree.childCount())]
