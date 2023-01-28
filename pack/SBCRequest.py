@@ -99,6 +99,7 @@ class SBCRe():
         self.CurFileList = FileDatas['FileList']
         self.Nav = FileDatas['Nav']
         self.imgFiles = FileDatas['imgFiles']
+        return FileDatas['FileList']
 
     def DelFile(self,fileinfo):
         url = 'http://' + self.host + '/DelFiles/'

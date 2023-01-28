@@ -14,6 +14,7 @@ from . import FileType
 from SubUi import ReNameui
 from SubUi import Shareui
 from SubUi import ShowShareLinkui
+from SubUi import Moveuiinit
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 
@@ -236,6 +237,15 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+
+    def SBCFileMove(self,e):
+        ChosedFiles = self.GetChoseFiles()
+        if ChosedFiles:
+            self.ui.SBCFileMoveWindowDialog = QDialog()
+            self.ui.SBCFileMoveWindow = Moveuiinit.MoveUi(self.ui.SBCFileMoveWindowDialog,self.ui)
+            self.ui.SBCFileMoveWindowDialog.show()
+
+
     def CopyLink(self,sharelink):
         pyperclip.copy(sharelink)
         self.ui.SBCShowShareLinkuiWindowDialog.destroy()
