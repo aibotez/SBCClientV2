@@ -41,7 +41,6 @@ class SBCRe():
         return json.loads(res.text)
 
     def SBCFileMove(self,info):
-        print(info)
         url = 'http://' + self.host + '/netOper/'
         data = json.dumps(info)
         res = requests.post(url, data=data,headers=self.headers)

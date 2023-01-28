@@ -1,6 +1,6 @@
 from . import Moveui
 import sys,hashlib
-from PyQt5.QtWidgets import QTreeWidgetItem, QTreeWidget, QWidget, QVBoxLayout, QPushButton, QApplication
+from PyQt5.QtWidgets import QTreeWidgetItem, QTreeWidget, QWidget, QVBoxLayout, QPushButton, QApplication,QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon,QBrush,QColor
 
@@ -39,16 +39,54 @@ class MoveUi(Moveui.Ui_Dialog):
         # self.qvl.addWidget(self.treeView)
         # self.qvl.addWidget(self.pushButton)
         # self.setLayout(self.qvl)
+    def MoveReplacebox(self,ChosedFile):
+        def calback(num):
+            nonlocal replacechose
+            replacechose = num
+        replacechose = 0
+        box = QMessageBox(QMessageBox.Question, '提示', '目标路径下含有“{}”是否要替换原文件？'.format(ChosedFile['fename']),
+                          QMessageBox.NoButton, self.ui.MainWindow)
+        sure = box.addButton('替换', QMessageBox.YesRole)
+        cancel = box.addButton('取消', QMessageBox.YesRole)
+        sureAll = box.addButton('全部替换', QMessageBox.YesRole)
+        cancelAll = box.addButton('全部取消', QMessageBox.YesRole)
+        box.show()
+        sure.clicked.connect(lambda: calback(1))
+        cancel.clicked.connect(lambda: calback(0))
+        sureAll.clicked.connect(lambda: calback(2))
+        cancelAll.clicked.connect(lambda: calback(3))
+        box.exec_()
+        return replacechose
 
     def MoveFile(self):
         move2path = self.get_CurPath()
+        CurFileList = self.ui.SBCRe.GetFileList(move2path)
+        fenameRo = [i['filename']+str(i['isdir']) for i in CurFileList]
+        ChosedFiles = []
+        replacechose = 0
+        for i in self.ChosedFiles:
+            ChosedFile = i
+            if ChosedFile['fename']+str(ChosedFile['isdir']) in fenameRo:
+                if replacechose != 2 or replacechose != 3:
+                    replacechose = self.MoveReplacebox(ChosedFile)
+                if replacechose == 0:
+                    pass
+                elif replacechose == 1:
+                    ChosedFiles.append(i)
+                elif replacechose == 2:
+                    ChosedFiles.append(i)
+                elif replacechose == 3:
+                    pass
+            else:
+                ChosedFiles.append(i)
         if move2path:
             moveinfo = {
                 'move2path':move2path,
                 'netOper': 'MoveFile',
-                'movefilesinfo':self.ChosedFiles
+                'movefilesinfo':ChosedFiles
             }
             res = self.ui.SBCRe.SBCFileMove(moveinfo)
+            self.Dialog.destroy()
 
     def GetBranch(self,path,FaTree):
         childs = [FaTree.child(i) for i in range(FaTree.childCount())]

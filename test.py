@@ -3,53 +3,23 @@ from PyQt5 import QtCore, QtGui, QtWidgets, QtMultimedia
 
 # -*- coding:utf-8 -*-
 import threading
-import time
+import time,os,shutil
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.Qt import QThread
 
 
-class aa():
-    def __init__(self):
-        self.saa = 8
+def mklink(pathsrc,pathdst):
+    os.symlink(pathsrc,pathdst)
+def copyfe(pathsrc,pathdst):
+    shutil.copyfile(pathsrc,pathdst,follow_symlinks=False)
+def copyfo(pathsrc,pathdst):
+    shutil.copytree(pathsrc,pathdst,symlinks=True)
 
-    def a_a(self):
-        print('a_a')
+pathsrc = r'C:\Users\zzx\Desktop\FeTest\1\copyTranslator.7z'
+pathdst = r'C:\Users\zzx\Desktop\FeTest\1\1\copyTranslator.7z'
+# pathsrc = 'C:/Users/zzx/Desktop/FeTest/1/1'
+# pathdst = 'C:/Users/zzx/Desktop/FeTest/1/2/1'
 
-class a():
-    def __init__(self):
-        self.s = 6
-
-    def a_a(self):
-        print('a_a')
-
-class b(a,aa):
-    def __init__(self):
-        a.__init__(self)
-        aa.__init__(self)
-
-    def b_b(self):
-        # self.saa = 8
-        print(self.saa)
-
-class bc(b):
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def c_c(self):
-        self.b_b()
-
-# c = b()
-#
-# c.b_b()
-
-def te(ma):
-    ma['ab'] = 1
-
-
-# m = {}
-# te(m)
-# print(m)
-
-print(__name__)
+# mklink(pathsrc,pathdst)
+copyfe(pathsrc,pathdst)
