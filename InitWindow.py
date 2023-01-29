@@ -24,6 +24,8 @@ from SubUi import NavShow
 from UpdateUi import FileUpdate
 # from UpdateUi import TransShowUpdate
 # from SubUi import ReNameui
+from UpdateUi import FileShare
+
 
 
 
@@ -353,6 +355,8 @@ class initWindow():
     def init(self):
         self.initBindSignal()
         self.FileUpdates.start()
+        FileShare_ = FileShare.FileShare(self.SBCMain)
+
         self.SBCMain.frame_2.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
 
         self.SBCMain.TranspArrow1 = QtWidgets.QLabel(self.Main) #

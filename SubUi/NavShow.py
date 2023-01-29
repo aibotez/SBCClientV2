@@ -365,7 +365,7 @@ class Ui_PhotoShow(QThread):
         ShareShowuii = ShareShowui.Ui_Form()
         ShareShowuii.setupUi(self.frame_ShareShow)
         self.frame_ShareShow.hide()
-        # self.MainWindow.TranspscrollArea = TranspscrollAreaformLayout
+        self.MainWindow.ShareWindow = ShareShowuii
         self.MainWindow.frameandscroll['Share'] = self.frame_ShareShow
         self.MainWindow.horizontalLayout.addWidget(self.frame_ShareShow)
 

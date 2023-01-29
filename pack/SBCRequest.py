@@ -40,6 +40,11 @@ class SBCRe():
         # FileDatas = json.loads(res.text)
         return json.loads(res.text)
 
+    def GetSBCShareFile(self,url):
+        data = {
+            'client':'windows'
+        }
+        res = requests.get(url, params=data,headers=self.headers)
     def SBCFileCopy(self,info):
         url = 'http://' + self.host + '/netOper/'
         data = json.dumps(info)
