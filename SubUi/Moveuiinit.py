@@ -1,8 +1,9 @@
 from . import Moveui
 import sys,hashlib
-from PyQt5.QtWidgets import QTreeWidgetItem, QTreeWidget, QWidget, QVBoxLayout, QPushButton, QApplication,QMessageBox
+from PyQt5.QtWidgets import QTreeWidgetItem, QTreeWidget, QWidget, QVBoxLayout, QPushButton, QApplication,QMessageBox,QInputDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon,QBrush,QColor
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 def str_trans_to_md5(src):
@@ -24,6 +25,7 @@ class MoveUi(Moveui.Ui_Dialog):
         self.label_3.setText('')
         self.pushButton.clicked.connect(self.MoveFile)
         self.treeView.setHeaderHidden(True)
+        self.label.mousePressEvent = lambda e:self.NewFolderBox()
         # self.tree.clicked.connect(self.get_checked1)
         self.treeView.itemClicked.connect(self.get_CurPath)
         self.treeView.expanded.connect(self.nodeExpand)
@@ -57,6 +59,19 @@ class MoveUi(Moveui.Ui_Dialog):
         cancelAll.clicked.connect(lambda: calback(3))
         box.exec_()
         return replacechose
+    def NewFolderBox(self):
+        CurPath = self.get_CurPath()
+        text, okPressed = QInputDialog.getText(self.Dialog, "新建文件夹", CurPath, QtWidgets.QLineEdit.Normal, "")
+        if text and okPressed:
+            NewFolder = CurPath+text
+            info = {}
+            info['NewFolderName'] = text
+            info['CurPath'] = CurPath
+            self.ui.SBCRe.NewFolder(info)
+            self.ui.signalRefresh.emit()
+            self.TreeNodes[str_trans_to_md5(CurPath)]['expand'] = 0
+            self.TreeNodes[str_trans_to_md5(CurPath)]['item'].setExpanded(True)
+            self.nodeExpand()
 
     def MoveFile(self):
         move2path = self.get_CurPath()
@@ -98,15 +113,17 @@ class MoveUi(Moveui.Ui_Dialog):
             treename = [i['filename'] for i in CurFileList if i['isdir']]
         except:
             return
+        # self.NewFolderBox()
         for text in treename:
             item = QTreeWidgetItem()
             item.setText(0, text)
             item.setIcon(0, QIcon(r'img/filecon/foldersm.png'))
             # item.setCheckState(0, Qt.Unchecked)
             FaTree.addChild(item)
+
             itemchild = QTreeWidgetItem()
             item.addChild(itemchild)
-            self.TreeNodes[str_trans_to_md5(path +text)] = {'path':path + text+'/','item':item, 'expand': 0}
+            self.TreeNodes[str_trans_to_md5(path +text+'/')] = {'path':path + text+'/','item':item, 'expand': 0}
     def nodeExpand(self):
         TreeNodes = {}
         for i in self.TreeNodes:
