@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>911</width>
-    <height>706</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -1155,7 +1155,7 @@ Line{
                    <x>0</x>
                    <y>0</y>
                    <width>751</width>
-                   <height>579</height>
+                   <height>593</height>
                   </rect>
                  </property>
                  <property name="layoutDirection">

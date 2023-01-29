@@ -42,11 +42,12 @@ class ClickEventDeals():
         # ui.frame_12.hide()
         for i in self.ui.frameandscroll:
             # print(i)
-            if 'Tran' != i:
+            if 'Tran' != i and i!='Share':
                 self.ui.frameandscroll[i]['Photo']['frame'].hide()
                 self.ui.frameandscroll[i]['Video']['frame'].hide()
                 self.ui.frameandscroll[i]['File']['frame'].hide()
         self.ui.frameandscroll['Tran'].hide()
+        self.ui.frameandscroll['Share'].hide()
         self.ui.frame_14.hide()
     def NavChoose(self,WosLabel,e):
         if e.buttons() == QtCore.Qt.LeftButton:
@@ -74,7 +75,7 @@ class ClickEventDeals():
                     # SBCM.ChoseNav_Video()
                 if WosLabel == 'Share':
                     self.ui.CurNavChosed = 'Share'
-                    self.ui.frame_14.show()
+                    self.ui.frameandscroll['Share'].show()
                     self.ui.frame_5.setStyleSheet("background:#7DCEA0;border-radius:20px;opacity:0.5;")
                 if WosLabel == 'Transmit':
                     self.ui.CurNavChosed = 'Transmit'
@@ -309,7 +310,7 @@ class initWindow():
 
             self.SBCMain.frameandscroll[i]['File']['scrollArea'].verticalScrollBar().valueChanged.connect(self.Thread_LoadImgs.runthread1)
             # vertical.valueChanged.connect(self.test1)
-
+        ShareShow = self.Navshows.InitShareShow()
         TranShow = self.Navshows.InitTranShow()
 
         # self.SBCMain.TranspscrollArea = TranShow[1]

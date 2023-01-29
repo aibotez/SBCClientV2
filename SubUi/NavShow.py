@@ -12,6 +12,7 @@ from pack import SBCRequest
 from SubUi import Transmitui
 from pack.preview import ImgPreview
 from UpdateUi import TransShowUpdate
+from SubUi import ShareShowui
 
 
 class Ui_PhotoShow(QThread):
@@ -355,6 +356,18 @@ class Ui_PhotoShow(QThread):
         # self.TransShowUpdate_.RefreshDowning()
 
         return [self.frame_TranShow,TranspscrollAreaformLayout]
+
+    def InitShareShow(self):
+        self.frame_ShareShow = QtWidgets.QFrame(self.MainWindow.centralwidget)
+        self.frame_ShareShow.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_ShareShow.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_ShareShow.setObjectName("frame_ShareShow")
+        ShareShowuii = ShareShowui.Ui_Form()
+        ShareShowuii.setupUi(self.frame_ShareShow)
+        self.frame_ShareShow.hide()
+        # self.MainWindow.TranspscrollArea = TranspscrollAreaformLayout
+        self.MainWindow.frameandscroll['Share'] = self.frame_ShareShow
+        self.MainWindow.horizontalLayout.addWidget(self.frame_ShareShow)
 
     def InitShow(self):
         # self.centralwidget = self.MainWindow.centralwidget
