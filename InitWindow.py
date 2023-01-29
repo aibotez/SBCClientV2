@@ -285,6 +285,7 @@ class initWindow():
         self.actionShare.triggered.connect(self.fileoperclick.SBCShare)
         self.actionMove.triggered.connect(self.fileoperclick.SBCFileMove)
         self.actionCopy.triggered.connect(self.fileoperclick.SBCFileCopy)
+        self.actionPorper.triggered.connect(self.fileoperclick.SBCFileInfos)
     def initpopup(self):
         pass
 

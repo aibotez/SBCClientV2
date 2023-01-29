@@ -16,6 +16,7 @@ from SubUi import Shareui
 from SubUi import ShowShareLinkui
 from SubUi import Moveuiinit
 from SubUi import Copyui
+from SubUi import FileInfosui0
 
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 
@@ -238,6 +239,14 @@ class FileOperClick(QThread):
         t = threading.Thread(target=self.run1)
         t.setDaemon(True)
         t.start()
+
+    def SBCFileInfos(self,e):
+        ChosedFiles = self.GetChoseFiles()
+        if ChosedFiles:
+            ChosedFile = ChosedFiles[0]
+            self.ui.SBCFileFileInfosWindowDialog = QDialog()
+            self.ui.SBCFileFileInfosWindow = FileInfosui0.FileInfosUi(self.ui.SBCFileFileInfosWindowDialog,self.ui,ChosedFile)
+            self.ui.SBCFileFileInfosWindowDialog.show()
 
     def SBCFileCopy(self,e):
         ChosedFiles = self.GetChoseFiles()

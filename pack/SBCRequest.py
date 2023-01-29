@@ -50,6 +50,12 @@ class SBCRe():
         data = json.dumps(info)
         res = requests.post(url, data=data,headers=self.headers)
         return res.text
+    def SBCFileInfos(self,info):
+        # print(path)
+        url = 'http://' + self.host + '/GetFilePorper/'
+        data = json.dumps(info)
+        res = requests.post(url, data=data,headers=self.headers)
+        return json.loads(res.text)
     def SBCShare(self,info):
         # print(path)
         url = 'http://' + self.host + '/CreatShareFile/'
