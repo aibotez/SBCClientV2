@@ -240,22 +240,36 @@ class FileOperClick(QThread):
         t.setDaemon(True)
         t.start()
 
-    def SBCFileInfos(self,e):
-        ChosedFiles = self.GetChoseFiles()
+    def SBCFileInfos(self,e,info = None):
+        if info:
+            info1 = {'fepath': info['fepath'], 'fename': info['fename'], 'fetype': info['fetype'],
+                     'isdir': info['isdir'],'size':info['size']}
+            ChosedFiles = [info1]
+        else:
+            ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
             ChosedFile = ChosedFiles[0]
             self.ui.SBCFileFileInfosWindowDialog = QDialog()
             self.ui.SBCFileFileInfosWindow = FileInfosui0.FileInfosUi(self.ui.SBCFileFileInfosWindowDialog,self.ui,ChosedFile)
             self.ui.SBCFileFileInfosWindowDialog.show()
 
-    def SBCFileCopy(self,e):
-        ChosedFiles = self.GetChoseFiles()
+    def SBCFileCopy(self,e,info = None):
+        if info:
+            info1 ={'fepath':info['fepath'],'fename':info['fename'],'fetype':info['fetype'],'isdir':info['isdir']}
+            ChosedFiles = [info1]
+        else:
+            ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
             self.ui.SBCFileCopyWindowDialog = QDialog()
             self.ui.SBCFileCopyWindow = Copyui.CopyUi(self.ui.SBCFileCopyWindowDialog,self.ui,ChosedFiles)
             self.ui.SBCFileCopyWindowDialog.show()
-    def SBCFileMove(self,e):
-        ChosedFiles = self.GetChoseFiles()
+    def SBCFileMove(self,e,info = None):
+        if info:
+            info1 = {'fepath': info['fepath'], 'fename': info['fename'], 'fetype': info['fetype'],
+                     'isdir': info['isdir']}
+            ChosedFiles = [info1]
+        else:
+            ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
             self.ui.SBCFileMoveWindowDialog = QDialog()
             self.ui.SBCFileMoveWindow = Moveuiinit.MoveUi(self.ui.SBCFileMoveWindowDialog,self.ui,ChosedFiles)
@@ -295,8 +309,13 @@ class FileOperClick(QThread):
         self.actionShare2.triggered.connect(lambda: self.ui.SBCShareWindow.label_4.setText('7天内有效'))
         self.actionShare3.triggered.connect(lambda: self.ui.SBCShareWindow.label_4.setText('1个月内有效'))
         self.actionShare4.triggered.connect(lambda: self.ui.SBCShareWindow.label_4.setText('永久有效'))
-    def SBCShare(self):
-        ChosedFiles = self.GetChoseFiles()
+    def SBCShare(self,info = None):
+        if info:
+            info1 = {'fepath': info['fepath'], 'fename': info['fename'], 'fetype': info['fetype'],
+                     'isdir': info['isdir']}
+            ChosedFiles = [info1]
+        else:
+            ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
             self.ui.SBCShareWindow = Shareui.Ui_Dialog()
             self.ui.SBCShareWindowDialog = QDialog()
@@ -359,8 +378,13 @@ class FileOperClick(QThread):
             info['NewName'] = reNameValue
             self.ui.SBCRe.ReName(info)
             self.ui.signalRefresh.emit()
-    def ReName(self,e):
-        ChosedFiles = self.GetChoseFiles()
+    def ReName(self,e,info = None):
+        if info:
+            info1 = {'fepath': info['fepath'], 'fename': info['fename'], 'fetype': info['fetype'],
+                     'isdir': info['isdir']}
+            ChosedFiles = [info1]
+        else:
+            ChosedFiles = self.GetChoseFiles()
         if ChosedFiles:
             ChosedFile = ChosedFiles[0]
             self.ui.SBCReNameWindow = ReNameui.Ui_Dialog()

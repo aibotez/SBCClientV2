@@ -74,9 +74,21 @@ class CopyUi(Moveui.Ui_Dialog):
             self.TreeNodes[str_trans_to_md5(CurPath)]['expand'] = 0
             self.TreeNodes[str_trans_to_md5(CurPath)]['item'].setExpanded(True)
             self.nodeExpand()
-
+    def checkpath(self,move2path):
+        if self.ChosedFiles[0]['fepath'] in move2path:
+            return 1
+        srcpath = self.ChosedFiles[0]['fepath'].split('/')
+        if not srcpath[-1]:
+            del srcpath[-1]
+        del srcpath[-1]
+        srcpath = '/'.join(srcpath)+'/'
+        if srcpath == move2path:
+            return 1
+        return 0
     def MoveFile(self):
         move2path = self.get_CurPath()
+        if self.checkpath(move2path):
+            return
         CurFileList = self.ui.SBCRe.GetFileList(move2path)
         fenameRo = [i['filename']+str(i['isdir']) for i in CurFileList]
         ChosedFiles = []

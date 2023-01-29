@@ -191,6 +191,7 @@ class FileUpdate(QThread):
     def Del(self,info):
         self.DelChoseFiles(info)
         self.fileoperclick.DelFile()
+
     def create_Filerightmenu(self,info,e):
         if e and e.buttons() == QtCore.Qt.LeftButton:
             return
@@ -199,15 +200,15 @@ class FileUpdate(QThread):
         self.groupBox_Upmenu.addSeparator()
         self.actionDelfile = self.groupBox_Upmenu.addAction(u'删除')
         self.groupBox_Upmenu.addSeparator()
-        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'分享')
+        self.actionShare = self.groupBox_Upmenu.addAction(u'分享')
         self.groupBox_Upmenu.addSeparator()
-        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'重命名')
+        self.actionReName = self.groupBox_Upmenu.addAction(u'重命名')
         self.groupBox_Upmenu.addSeparator()
-        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'复制')
+        self.actionCopy = self.groupBox_Upmenu.addAction(u'复制')
         self.groupBox_Upmenu.addSeparator()
-        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'移动')
+        self.actionMove = self.groupBox_Upmenu.addAction(u'移动')
         self.groupBox_Upmenu.addSeparator()
-        self.actionUpfolder = self.groupBox_Upmenu.addAction(u'属性')
+        self.actionPorper = self.groupBox_Upmenu.addAction(u'属性')
         self.groupBox_Upmenu.popup(QCursor.pos())
         self.groupBox_Upmenu.setStyleSheet("QMenu{\n"
                                         "    margin:0px 10px 10px 0px;\n"
@@ -216,6 +217,12 @@ class FileUpdate(QThread):
                                         "}\n")
         self.actionDownfile.triggered.connect(lambda e: self.Down(info))
         self.actionDelfile.triggered.connect(lambda e: self.Del(info))
+
+        self.actionShare.triggered.connect(lambda e: self.fileoperclick.SBCShare(info))
+        self.actionMove.triggered.connect(lambda e: self.fileoperclick.SBCFileMove(e,info))
+        self.actionCopy.triggered.connect(lambda e: self.fileoperclick.SBCFileCopy(e,info))
+        self.actionPorper.triggered.connect(lambda e: self.fileoperclick.SBCFileInfos(e,info))
+        self.actionReName.triggered.connect(lambda e: self.fileoperclick.ReName(e, info))
 
 
     def Refresh(self,e):

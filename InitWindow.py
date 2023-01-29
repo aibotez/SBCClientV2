@@ -343,6 +343,7 @@ class initWindow():
         self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down  # 下载
 
 
+
     def AniUpdate(self):
         self.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
         self.anim.setDuration(2000)  # 设置动画间隔时间
