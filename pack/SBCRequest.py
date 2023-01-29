@@ -40,6 +40,11 @@ class SBCRe():
         # FileDatas = json.loads(res.text)
         return json.loads(res.text)
 
+    def SBCFileCopy(self,info):
+        url = 'http://' + self.host + '/netOper/'
+        data = json.dumps(info)
+        res = requests.post(url, data=data,headers=self.headers)
+        return res.text
     def SBCFileMove(self,info):
         url = 'http://' + self.host + '/netOper/'
         data = json.dumps(info)
