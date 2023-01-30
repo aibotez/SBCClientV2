@@ -12,7 +12,7 @@ from pack import SBCRequest
 from SubUi import Transmitui
 from pack.preview import ImgPreview
 from UpdateUi import TransShowUpdate
-from SubUi import ShareShowui
+from SubUi import ShareShowui1
 
 
 class Ui_PhotoShow(QThread):
@@ -362,8 +362,8 @@ class Ui_PhotoShow(QThread):
         self.frame_ShareShow.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_ShareShow.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_ShareShow.setObjectName("frame_ShareShow")
-        ShareShowuii = ShareShowui.Ui_Form()
-        ShareShowuii.setupUi(self.frame_ShareShow)
+        ShareShowuii = ShareShowui1.ShareShow(self.frame_ShareShow)
+        # ShareShowuii.setupUi(self.frame_ShareShow)
         self.frame_ShareShow.hide()
         self.MainWindow.ShareWindow = ShareShowuii
         self.MainWindow.frameandscroll['Share'] = self.frame_ShareShow
