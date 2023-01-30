@@ -40,6 +40,8 @@ class ShareShow(ShareShowui.Ui_Form):
         self.formLayout.removeWidget(self.frame_13)
         sip.delete(self.frame_13)
         self.label.setText('')
+        self.label_2.setText('')
+        self.frame_2.setMaximumSize(QtCore.QSize(500, 30))
 
     def clearframe(self):
         for i in self.CurFrames:
@@ -49,42 +51,8 @@ class ShareShow(ShareShowui.Ui_Form):
         # for i in range(self.formLayout.count()):
         #     self.formLayout.itemAt(i).widget().deleteLater()
         #     # sip.delete(self.frame_13)
-    def FileClickDeal(self,info,e):
-        if e.buttons() == QtCore.Qt.LeftButton:
-            self.FileLeftDeal(info)
-        elif e.buttons() == QtCore.Qt.RightButton:
-            return
-            # self.create_Filerightmenu(info,None)
 
-    def FileLeftDeal(self,info):
-        if info['isdir']:
-            self.UpdateUi(info)
-    def UpdateUi(self,infos):
-        self.clearframe()
-        for i in infos:
-            self.add(i)
-    def navClick(self,FilePath,e):
-        if e.buttons() == QtCore.Qt.LeftButton:
-            pass
-    def NavUpdate(self):
-        pass
     def add(self,info):
-
-        for i in range(self.horizontalLayout_4.count()):
-            self.horizontalLayout_4.itemAt(0).widget().deleteLater()
-        label_2 = QtWidgets.QLabel(self.frame_2)
-        label_2.setObjectName("label_2")
-        self.horizontalLayout_4.addWidget(label_2)
-        label_2.setText('587')
-
-        label_2 = QtWidgets.QLabel(self.frame_2)
-        label_2.setObjectName("label_2")
-        self.horizontalLayout_4.addWidget(label_2)
-        label_2.setText('test')
-        # self.horizontalLayout_4.removeItem()
-        spacerItem3 = QtWidgets.QSpacerItem(6000, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem3)
-
         self.frame_13 = QtWidgets.QFrame(self.scrollAreaWidgetContents)
         self.frame_13.setMinimumSize(QtCore.QSize(0, 36))
         self.frame_13.setMaximumSize(QtCore.QSize(16777215, 36))
@@ -162,7 +130,6 @@ class ShareShow(ShareShowui.Ui_Form):
         metrics = QFontMetrics(self.label_36.font())
         new_file_name = metrics.elidedText(info['fename'], Qt.ElideRight, 260)
         self.label_36.setText(new_file_name)
-        # self.label_36.mousePressEvent = partial(self.FileClickDeal,info)
         self.label_37.setText(info['date'])
         self.label_38.setText(info['big'])
         self.label_32.setPixmap(QtGui.QPixmap(FileConChose(info['fetype'])))

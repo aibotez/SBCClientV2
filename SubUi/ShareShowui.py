@@ -134,7 +134,7 @@ class Ui_Form(object):
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_4.addWidget(self.label_2)
         spacerItem3 = QtWidgets.QSpacerItem(414, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem3)
+        # self.horizontalLayout_4.addItem(spacerItem3)
         self.horizontalLayout_3.addWidget(self.frame_2)
         self.line_10 = QtWidgets.QFrame(self.frame_11)
         self.line_10.setMaximumSize(QtCore.QSize(5, 16777215))
