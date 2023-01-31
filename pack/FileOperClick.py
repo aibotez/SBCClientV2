@@ -1,6 +1,6 @@
 
 import sys,threading,os,hashlib
-import time
+import time,json
 
 
 sys.path.append('..')
@@ -431,9 +431,16 @@ class FileOperClick(QThread):
             else:
                 # FatherPath0 = self.ui.DownPath+i['fename']+'/'
                 CurPath = i['fepath']
-                Files = self.ui.SBCRe.GetAllFilesfromFolder(CurPath)
+                queinfo = {}
+                if share:
+                    queinfo = i
+                else:
+                    queinfo = {'path': CurPath}
+                Files = self.ui.SBCRe.GetAllFilesfromFolder(json.dumps(queinfo))
                 if Files['Files']:
                     for fei in Files['Files']:
+                        if share:
+                            fei['shareinfo'] = i['shareinfo']
                         # print(fei)
                         DownFaPath = self.ui.DownPath + i['fename']+'/'+fei['fapath']+'/'
                         DownFaPath = DownFaPath.replace('//','/')

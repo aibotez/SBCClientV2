@@ -93,7 +93,7 @@ class FileShare():
     #  "ShareDateDur": "7\u5929\u5185\u6709\u6548", "SharePass": "", "useremail": "2290227486@qq.com",
     #  "shareFaPath": "/home"}
 
-    # http://10.147.17.148:90/SBCShare/?SBCShare=MuSP
+    # http://10.147.17.148:90/SBCShare/?SBCShare=GG2Z
     def UpdateShareFile(self,path):
         # ShareLink = info['ShareLink']
         # path = info['fepath']

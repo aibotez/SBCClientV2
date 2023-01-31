@@ -498,16 +498,15 @@ class TransShowUpdate(QThread):
 
         queinfo = {}
         if 'shareinfo' in info and info['shareinfo']:
-            queinfo = {'shareinfo':info['shareinfo']}
+            queinfo = {'fepath':info['RoFilePath'],'shareinfo':info['shareinfo']}
         else:
             queinfo = {'path': info['RoFilePath']}
-
         try:
             info['statusLabel'].setText("校验文件...")
             RofeMd5_ = self.ui.SBCRe.GetRoFileMd5(json.dumps(queinfo))
             RofeMd5 = RofeMd5_['md5']
-        except:
-            pass
+        except Exception as e:
+            print(e)
         if LofeMd5 == RofeMd5:
             info['FeCheck'] = 1
         else:
@@ -678,7 +677,6 @@ class TransShowUpdate(QThread):
                     self.DownFinsh(info)
         dbManager.close()
     def Down(self,info):
-        print('Down',info)
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']
