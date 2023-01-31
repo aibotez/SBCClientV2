@@ -507,6 +507,7 @@ class TransShowUpdate(QThread):
             RofeMd5 = RofeMd5_['md5']
         except Exception as e:
             print(e)
+        print(LofeMd5,RofeMd5)
         if LofeMd5 == RofeMd5:
             info['FeCheck'] = 1
         else:

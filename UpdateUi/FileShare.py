@@ -8,13 +8,26 @@ from SubUi import ShareSave2SBC
 from pack import FileOperClick
 
 
+class CustSignal(QObject):
+    signal = pyqtSignal(list)
+    def __init__(self, par,parent=None):
+        super(CustSignal, self).__init__(parent)
+        self.signal.connect(self.Stfun)
+        self.par = par
+    def Stfun(self,fun):
+        return fun(self.par)
+
 class FileShare():
+
     def __init__(self,ui):
         self.ui = ui
-        self.ShareFiles = []
 
+        self.ShareFiles = []
         self.ShareWindow = self.ui.ShareWindow
         self.bindSignal()
+
+
+
         # self.NavUpdate('/abd')
 
 
@@ -75,6 +88,9 @@ class FileShare():
         label_2.setText('')
         label_2.setMinimumSize(QtCore.QSize(3000, 30))
         label_2.setMaximumSize(QtCore.QSize(3000, 30))
+
+    def abb(self,lst):
+        pass
     def UpdateUi(self,infos):
         self.ui.ShareWindow.clearframe()
         self.ShareFiles = []
@@ -84,7 +100,6 @@ class FileShare():
         shareFaPath = '/'+'/'.join(shareFaPath)
         self.NavUpdate(shareFaPath)
         for i in infos:
-
             self.ui.ShareWindow.add(i)
             self.ui.ShareWindow.label_36.mousePressEvent = partial(self.FileClickDeal,i)
             self.ShareFiles.append({'check':self.ui.ShareWindow.checkBox_2,'file':i})
@@ -103,7 +118,9 @@ class FileShare():
             'PassWord':self.PassWord
         }
         SBCShare = self.ui.SBCRe.GetSBCShareFile1(data)
-        self.UpdateUi(SBCShare['res'])
+        CustSignali = CustSignal(SBCShare['res'])
+        CustSignali.signal.emit(self.UpdateUi)
+        # self.UpdateUi(SBCShare['res'])
 
 
     def GetShareFile(self):
@@ -143,7 +160,6 @@ class FileShare():
         #  'fepath_base64': 'L2hvbWUvU3VyZmFjZV9uZTEubQ==', 'fetype': 'other'}
         if GetChoseFiles:
             for i in GetChoseFiles:
-                print(i)
                 i['shareinfo'] = {'sharelink':i['ShareLink'],'password':i['password'],'fepath':i['fepath']}
                 DownFiles.append(i)
             FileOperclick = FileOperClick.FileOperClick(self.ui)

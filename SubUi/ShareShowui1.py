@@ -35,6 +35,7 @@ class ShareShow(ShareShowui.Ui_Form):
         self.CurFrames = []
 
 
+
     def init(self):
         self.setupUi(self.frame_ShareShow)
         self.formLayout.removeWidget(self.frame_13)

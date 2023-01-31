@@ -25,6 +25,7 @@ from UpdateUi import FileUpdate
 # from UpdateUi import TransShowUpdate
 # from SubUi import ReNameui
 from UpdateUi import FileShare
+from PyQt5.QtCore import QObject, pyqtSignal
 
 
 
