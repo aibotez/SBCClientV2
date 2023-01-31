@@ -2,12 +2,16 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QM
 from PyQt5.QtCore import *
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 import sip
+from SubUi import ShareSave2SBC
 
 
 class FileShare():
     def __init__(self,ui):
         self.ui = ui
+        self.ShareFiles = []
+
         self.ShareWindow = self.ui.ShareWindow
         self.bindSignal()
         # self.NavUpdate('/abd')
@@ -72,7 +76,7 @@ class FileShare():
         label_2.setMaximumSize(QtCore.QSize(3000, 30))
     def UpdateUi(self,infos):
         self.ui.ShareWindow.clearframe()
-
+        self.ShareFiles = []
         shareFaPath = infos[0]['fepath'].split('/')
         del shareFaPath[0]
         del shareFaPath[-1]
@@ -81,8 +85,11 @@ class FileShare():
         for i in infos:
             self.ui.ShareWindow.add(i)
             self.ui.ShareWindow.label_36.mousePressEvent = partial(self.FileClickDeal,i)
+            self.ShareFiles.append({'check':self.ui.ShareWindow.checkBox_2,'file':i})
 
-
+    # {"ShareFile": [{"fepath": "/\u76f8\u51731.bmp", "fename": "\u76f8\u51731.bmp", "fetype": "img", "isdir": 0}],
+    #  "ShareDateDur": "7\u5929\u5185\u6709\u6548", "SharePass": "", "useremail": "2290227486@qq.com",
+    #  "shareFaPath": "/home"}
 
     # http://10.147.17.148:90/SBCShare/?SBCShare=MuSP
     def UpdateShareFile(self,path):
@@ -118,7 +125,33 @@ class FileShare():
             info[i]['ShareLink'] = ShareLink.split('SBCShare=')[-1]
             info[i]['PassWord'] = self.PassWord
         self.UpdateUi(info)
-
+    def GetChoseFiles(self):
+        ChosedFiles = []
+        for i in self.ShareFiles:
+            Filei =i
+            if Filei['check'].isChecked():
+                Filei['check'].setChecked(False)
+                ChosedFiles.append(Filei['file'])
+        return ChosedFiles
+    def Save2SBC(self):
+        GetChoseFiles = self.GetChoseFiles()
+        if GetChoseFiles:
+            self.ui.SBCFileSave2SBCWindowDialog = QDialog()
+            ShareSave2SBCi = ShareSave2SBC.CopyUi(self.ui.SBCFileSave2SBCWindowDialog,self.ui,GetChoseFiles)
+            self.ui.SBCFileSave2SBCWindowDialog.show()
+    def SaveFilebtn(self):
+        self.groupBox_Moremenu = QMenu()
+        self.actionSaveSBC = self.groupBox_Moremenu.addAction(u'保存进小黑云')
+        self.actionSaveBD = self.groupBox_Moremenu.addAction(u'保存进百度云')
+        self.actionSaveAL = self.groupBox_Moremenu.addAction(u'保存进阿里云')
+        self.groupBox_Moremenu.popup(QCursor.pos())
+        self.groupBox_Moremenu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:18px;\n"
+                                        "}\n")
+        self.actionSaveSBC.triggered.connect(self.Save2SBC)
     def bindSignal(self):
         self.ShareWindow.pushButton_13.clicked.connect(lambda: self.GetShareFile())
         self.ShareWindow.lineEdit.returnPressed.connect(self.GetShareFile)
+        self.ShareWindow.pushButton_15.clicked.connect(lambda: self.SaveFilebtn())

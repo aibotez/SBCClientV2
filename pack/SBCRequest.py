@@ -40,6 +40,11 @@ class SBCRe():
         # FileDatas = json.loads(res.text)
         return json.loads(res.text)
 
+    def ShareSave2SBC(self,data):
+        url = 'http://' + self.host + '/ShareSave2SBC/'
+        data = json.dumps(data)
+        res = requests.post(url, data=data,headers=self.headers)
+        return json.loads(res.text)
     def GetSBCShareFile1(self,data):
         url = 'http://' + self.host + '/GetSBCShareFile/'
         res = requests.get(url, params=data,headers=self.headers)
