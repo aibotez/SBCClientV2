@@ -9,6 +9,7 @@ from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.Qt import QThread,QMutex
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont
 import threading
 
@@ -66,7 +67,18 @@ def str_trans_to_md5(src):
     myMd5.update(src)
     myMd5_Digest = myMd5.hexdigest()
     return myMd5_Digest
-
+def getfileMd5(filename):
+    if not os.path.isfile(filename):
+        return
+    myhash = hashlib.md5()
+    f = open(filename, "rb")
+    while True:
+        b = f.read(8096)
+        if not b:
+            break
+        myhash.update(b)
+    f.close()
+    return myhash.hexdigest()
 class TransFinishShowUpdate():
     signal = pyqtSignal()
     def __init__(self,ui):
@@ -242,28 +254,48 @@ class TransShowUpdate(QThread):
     signaladd = pyqtSignal(dict)
     signaladdUp = pyqtSignal(list)
     signalaDelUp = pyqtSignal(dict)
+    signalaDelUp1 = pyqtSignal(dict)
     signalaUpdateUpProgress = pyqtSignal(dict,dict)
+
+
+    signaladdDown = pyqtSignal(list)
+    signalaDowndateUpProgress = pyqtSignal(dict,dict)
+    signalaDelDown = pyqtSignal(dict)
+
 
     def __init__(self,ui):
         super().__init__()
+        self.MaxDownNums = 2
         self.DownInfosUpdateLabs = {}
         self.ui = ui
-        self.TranspUps = TranspUp.TransUp(self.ui,self.signaladdUp,self.signalaDelUp,self.signalaUpdateUpProgress)
+        self.TranspUps = TranspUp.TransUp(self.ui,self.signaladdUp,self.signalaDelUp,self.signalaDelUp1,self.signalaUpdateUpProgress)
         self.DownInfos = []
         self.PriDown = None
-        self.dbManager = DBManager.DBManager()
-        self.ClientSetting = self.dbManager.GetClientSetting()
-        self.signal.connect(self.RefreshDowning)
-        self.signaladd.connect(self.AddDowning1)
-
         self.ButtonBind()
-        self.RefreshDowning()
+        self.dbManager = DBManager.DBManager()
+        self.dbManager1 = DBManager.DBManager1()
+        self.ClientSetting = self.dbManager.GetClientSetting()
+        # self.signal.connect(self.RefreshDowning)
+        self.signaladdDown.connect(self.AddDowning1)
+        self.DownLayout = ui.TranspscrollArea['Down']
+        self.signalaDowndateUpProgress.connect(self.UpdateDownProgress)
+        self.signalaDelDown.connect(self.DelDownact)
 
 
-        self.TransFinishShow = TransFinishShowUpdate(self.ui)
+
+        # self.ButtonBind()
+        # self.RefreshDowning()
+
+
+        self.TransFinishShow = TransFinishShowUpdate(ui)
         self.TransFinishShow.Refresh()
         self.signal1.connect(self.TransFinishShow.Refresh)
         # self.SBCRequest = SBCRequest.SBCRe()
+        self.AddDowning()
+
+    def AddUping(self,UpInfos):
+        self.TranspUps.AddUping(UpInfos)
+        # self.TranspUps.AddUpFiles(UpInfos)
 
     def FileConChose(self,fetype):
         if fetype == 'folder':
@@ -286,7 +318,7 @@ class TransShowUpdate(QThread):
             return 'img/filecon/htmlcon.jpg'
         else:
             return 'img/filecon/wj.jfif'
-    def add1(self,scrollAreaWidgetContents,DownInfo):
+    def add(self,scrollAreaWidgetContents,DownInfo):
 
         self.frame_16 = QtWidgets.QFrame(scrollAreaWidgetContents)
         self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -374,10 +406,10 @@ class TransShowUpdate(QThread):
         self.horizontalLayout_11.setStretch(6, 5)
         self.horizontalLayout_11.setStretch(7, 1)
 
-        LoFile = self.CheckLoFile(DownInfo)
-        LoSize = self.size_format(LoFile['size'])
+        LoFile = CheckLoFile(DownInfo)
+        LoSize = size_format(LoFile['size'])
 
-        progressBar_4.setProperty("value", (LoFile['size']/DownInfo['Size'])*100)
+        progressBar_4.setProperty("value", (LoFile['size']/DownInfo['size'])*100)
 
 
         self.label_33.setText("")
@@ -390,7 +422,7 @@ class TransShowUpdate(QThread):
 
         self.label_19.setText(DownInfo['FileName'])
         self.label_19.setFixedWidth(260)
-        label_20.setText("{}/{}".format(LoSize,self.size_format(DownInfo['Size'])))
+        label_20.setText("{}/{}".format(LoSize,size_format(DownInfo['Size'])))
 
         label_21.setText("--")
         # print(66,DownInfo)
@@ -410,21 +442,6 @@ class TransShowUpdate(QThread):
         label_24.setStyleSheet("QLabel{font-size:26px;font-weight:bold;font-family:Roman times;}"
                            "QLabel:hover{color:rgb(20, 90, 50);}")
 
-
-
-        # label_23.setText("")
-        # label_23.setMaximumSize(20,20)
-        # label_23.setPixmap(QtGui.QPixmap('./img/del1.png'))
-        # label_23.setScaledContents(True)
-        # label_22.setText("")
-        # label_22.setMaximumSize(22,23)
-        # label_22.setPixmap(QtGui.QPixmap('./img/start1.png'))
-        # label_22.setScaledContents(True)
-        # label_22.setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 2px;")
-
-
-        # label_23.setStyleSheet("border:1px groove gray;border-radius:10px;padding:0px 0px;")
-
         label_23.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         label_22.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         label_24.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -435,107 +452,176 @@ class TransShowUpdate(QThread):
         Downinginfoi['statusLabel'] = label_21
         Downinginfoi['progressBar'] = progressBar_4
         Downinginfoi['DownSizeLabel'] = label_20
-        # Downinginfoi['FilePath'] = DownInfo['FilePath']
-        # Downinginfoi['FileName'] = DownInfo['FileName']
-        # Downinginfoi['isDown'] = DownInfo['isDown']
-        # Downinginfoi['size'] = DownInfo['Size']
-        # Downinginfoi['RoFilePath'] = DownInfo['RoFilePath']
         Downinginfoi['LoFileSatus'] = LoFile
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
         self.DownInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
 
         label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
-        label_23.mousePressEvent = partial(self.DelDowing,Downinginfoi)
+        label_23.mousePressEvent = partial(self.DelDown,Downinginfoi)
         label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
+    def OpenDownFile(self,info,e):
+        Path = info['LoPath'].replace('/','\\')
+        os.system(r"explorer /select,{}".format(Path))
 
-    def getfileMd5(self,filename):
-        if not os.path.isfile(filename):
-            return
-        myhash = hashlib.md5()
-        f = open(filename, "rb")
-        while True:
-            b = f.read(8096)
-            if not b:
-                break
-            myhash.update(b)
-        f.close()
-        return myhash.hexdigest()
+    def DelDownact(self,info):
+        t = threading.Thread(target=self.DelDownact1,args=(info,))
+        t.setDaemon(True)
+        t.start()
+    def DelDownact1(self,info):
+        i = info
+        infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+        self.DownLayout[1].removeWidget(infoi['frame'])
+        sip.delete(infoi['frame'])
+        self.DownLayout[1].removeWidget(infoi['line'])
+        sip.delete(infoi['line'])
+        del self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+    def DelDown(self,info,e=None):
+        t = threading.Thread(target=self.DelDown1,args=(info,))
+        t.setDaemon(True)
+        t.start()
+        return
+    def DelDown1(self,info,e=None):
+        i = info
+        infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+        self.dbManager1.WSQL(info, 'DelUserDownRecord')
+        self.signalaDelDown.emit(info)
+        self.DownManger()
+
+
+    # def UpadateDownFinish(self,info):
 
     def DownFinsh(self,info):
         dbManager = DBManager.DBManager()
-        info['statusLabel'].setText("校验文件...")
-        LofeMd5 = self.getfileMd5(info['LoPath'])
+        LofeMd5 = getfileMd5(info['LoPath'])
         RofeMd5 = info['FileMd5']
+        try:
+            info['statusLabel'].setText("校验文件...")
+            RofeMd5_ = self.ui.SBCRe.GetRoFileMd5(info['RoFilePath'])
+            RofeMd5 = RofeMd5_['md5']
+        except:
+            pass
         if LofeMd5 == RofeMd5:
-            info['statusLabel'].setText("校验通过")
             info['FeCheck'] = 1
-            print('校验通过',info['FileName'])
         else:
-            info['statusLabel'].setText("文件损坏")
             info['FeCheck'] = 0
-            print('文件损坏')
         info['timestamp'] = time.time()     # 当前时间戳
         dbManager.AddUserTranspFinshRecord(info)
-        self.DelDowing(info,0)
-        # dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
-        # self.DownLayout[1].removeWidget(info['frame'])
-        # sip.delete(info['frame'])
-        # self.DownLayout[1].removeWidget(info['line'])
-        # sip.delete(info['line'])
-        # dbManager.AddUserTranspFinshRecord(info)
         dbManager.close()
-        # # self.signal.emit()
         self.signal1.emit()
-        self.DownManger()
-
-
-
-    def DownCancel(self,info):
-        dbManager = DBManager.DBManager()
+        time.sleep(0.5)
+        self.DelDown(info)
+        return
+    def DownPause(self,info):
         info['statusButon'].setText(">")
         info['statusLabel'].setText("已暂停")
-        dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 0)
-        # info['isDown'] = 0
-        dbManager.close()
+        self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]['isDown'] = 0
+        self.dbManager1.WSQL(info, 'UpdataUserDownRecord',0)
         self.DownManger()
     def DownGon(self,info):
-        dbManager = DBManager.DBManager()
         info['statusButon'].setText("||")
-        dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
-        # info['isDown'] = 1
-        dbManager.close()
+        self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]['isUp'] = 1
+        self.dbManager1.WSQL(info, 'UpdataUserDownRecord',1)
         self.Down(info)
-        self.DownManger(info)
-
-
+        self.DownManger()
     def DownSatusChange(self,info,e):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
         if DownInfoi and int(DownInfoi['isDown'])==1:
-        # if int(info['isDown']):
-            self.DownCancel(info)
-            # info['statusButon'].setText(">")
-            # info['statusLabel'].setText("已暂停")
-            # dbManager.UpdataUserDownRecord(info['FilePath'],info['FileName'],0)
-            #
-            # info['isDown'] = 0
+            self.DownPause(info)
         else:
             self.DownGon(info)
-            # info['statusButon'].setText("||")
-            # dbManager.UpdataUserDownRecord(info['FilePath'], info['FileName'], 1)
-            # info['isDown'] = 1
-            # self.Down(info)
-        # dbManager.close()
-        # self.signal.emit()
+    def StartAll1(self):
+        DownInfosUpdateLabs = {}
+        infos = []
+        for i in self.DownInfosUpdateLabs:
+            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
+        for keyi in DownInfosUpdateLabs:
+            i = DownInfosUpdateLabs[keyi]
+            infos.append(i)
+            i['statusButon'].setText(">")
+            i['statusLabel'].setText("等待下载")
+            self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]['isDown'] = 2
+        self.dbManager1.WSQL(infos, 'UpdataUserDownRecords',2)
+        self.DownManger()
+    def StartAll(self):
+        t = threading.Thread(target=self.StartAll1)
+        t.setDaemon(True)
+        t.start()
 
+    def PauseAll1(self):
+        DownInfosUpdateLabs={}
+        infos = []
+        for i in self.DownInfosUpdateLabs:
+            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
+        try:
+            for keyi in DownInfosUpdateLabs:
+                i = DownInfosUpdateLabs[keyi]
+                infos.append(i)
+                i['statusButon'].setText(">")
+                i['statusLabel'].setText("已暂停")
+                self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]['isDown'] = 0
+            # self.dbManager1.setUpPar(0, 0, 0)
+            self.dbManager1.WSQL(infos, 'UpdataUserDownRecords',0)
+        except Exception as e:
+            print('PauseError',e)
+    def PauseAll(self):
+        t = threading.Thread(target=self.PauseAll1)
+        t.setDaemon(True)
+        t.start()
+        # dbManager = DBManager.DBManager()
+        # DownInfos = dbManager.GetUserDownRecordAll()
+        # for i in DownInfos:
+        #     self.DownCancel(i)
+        # dbManager.close()
+
+    def CancelAll1(self):
+        infos = []
+        DownInfosUpdateLabs={}
+        for i in self.DownInfosUpdateLabs:
+            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
+
+        for keyi in DownInfosUpdateLabs:
+            i = DownInfosUpdateLabs[keyi]
+            infos.append(i)
+            infoi = DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+            # print('Finsh', info['FileName'])
+            # UpLayout = self.ui.TranspscrollArea['Up']
+            # infoi['frame'].setParent(None)
+            # infoi['line'].setParent(None)
+            self.DownLayout[1].removeWidget(infoi['frame'])
+            sip.delete(infoi['frame'])
+            self.DownLayout[1].removeWidget(infoi['line'])
+            sip.delete(infoi['line'])
+        self.dbManager1.WSQL(infos,'DelUserDownRecords')
+        self.DownInfosUpdateLabs = {}
+        self.DownLayout[3].setText(str(0))
+    def CancelAll(self):
+        t = threading.Thread(target=self.CancelAll1)
+        t.setDaemon(True)
+        t.start()
+    def ButtonBind(self):
+        self.DownLayout = self.ui.TranspscrollArea['Down']
+        self.DownLayout[4].clicked.connect(self.StartAll)
+        self.DownLayout[5].clicked.connect(self.PauseAll)
+        self.DownLayout[6].clicked.connect(self.CancelAll)
+    def UpdateDownProgress(self,Labelinfo,info):
+        # return
+        try:
+            # Labelinfo['statusButon'].setEnabled(False)
+            Labelinfo['progressBar'].setProperty("value",info['bar'])
+            Labelinfo['DownSizeLabel'].setText(
+                "{}/{}".format(size_format(info['CurFileSize']),size_format(info['FileTotSize'])))
+            Labelinfo['statusLabel'].setText("{}/S".format(info['Speed']))
+        except Exception as e:
+            print('UpdateProgessError',e)
     def Downact(self,info):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
         if DownInfoi and int(DownInfoi['isDown'])==1:
         # if int(info['isDown']):
             info['statusButon'].setText("||")
-            LoFileSatus = self.CheckLoFile(info)
+            LoFileSatus = CheckLoFile(info)
             # LoFileSatus = info['LoFileSatus']
             LoFileSize = LoFileSatus['size']
             RoFileSize = info['Size']
@@ -570,14 +656,9 @@ class TransShowUpdate(QThread):
                                 if deltat ==0:
                                     deltat = 0.001
                                 DownSpeed = len(chunk)/deltat
-                                try:
-                                    info['progressBar'].setProperty("value", (LoFileSize/RoFileSize)*100)
-                                    info['DownSizeLabel'].setText("{}/{}".format(self.size_format(LoFileSize),self.size_format(RoFileSize)))
-                                    info['statusLabel'].setText("{}/S".format(self.size_format(DownSpeed)))
-                                except Exception as e:
-                                    print(e)
-                                    print(info)
-
+                                progressinfo = {'bar': (LoFileSize/RoFileSize)*100, 'CurFileSize': LoFileSize,
+                                                'FileTotSize': RoFileSize, 'Speed': size_format(DownSpeed)}
+                                self.signalaDowndateUpProgress.emit(info, progressinfo)
                         else:
                             # self.DownCancel(info)
                             break
@@ -585,7 +666,6 @@ class TransShowUpdate(QThread):
                     self.DownFinsh(info)
         dbManager.close()
     def Down(self,info):
-
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']
@@ -603,260 +683,106 @@ class TransShowUpdate(QThread):
     def run1(self,info):
         # return
         self.Downact(info)
-
-
-
-
-
-    def OpenDownFile(self,info,e):
-        Path = info['LoPath'].replace('/','\\')
-        os.system(r"explorer /select,{}".format(Path))
-
-    def size_format(self,size):
-        if size < 1024:
-            return '%i' % size + 'size'
-        elif 1024 <= size < 1024 * 1024:
-            return '%.1f' % float(size / 1024) + 'KB'
-        elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
-            return '%.1f' % float(size / (1024 * 1024)) + 'MB'
-        elif 1024 * 1024 * 1024 <= size < 1024 * 1024 * 1024 * 1024:
-            return '%.1f' % float(size / (1024 * 1024 * 1024)) + 'GB'
-        elif 1024 * 1024 * 1024 * 1024 <= size:
-            return '%.1f' % float(size / (1024 * 1024 * 1024 * 1024)) + 'TB'
-    def CheckLoFile(self,downinfo):
-        # print(self.ui.DownPath)
-        FileLoPath = downinfo['FilePath']+downinfo['FileName']
-        LoFileSize = 0
-        LoFileExist = 0
-        if os.path.exists(FileLoPath):
-            LoFileSize = os.path.getsize(FileLoPath)
-            LoFileExist = 1
-        return {'exist':LoFileExist,'size':LoFileSize}
-
-    def DelDowing(self,info,e):
-        print('DelFile0', info['FileName'])
-        dbManager = DBManager.DBManager()
-        dbManager.DelUserDownRecord(info['FilePath'],info['FileName'])
-        self.DownLayout[1].removeWidget(info['frame'])
-        sip.delete(info['frame'])
-        self.DownLayout[1].removeWidget(info['line'])
-        sip.delete(info['line'])
-        # self.RefreshDowning()
-        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
-        DownInfos = dbManager.GetUserDownRecordAll()
-        print('DelFile1', info['FileName'],DownInfoi)
-        # print('DownS',DownInfos)
-        self.DownLayout[3].setText(str(len(DownInfos)))
-        del self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath']+info['FileName'])]
-        dbManager.close()
-
-        # j=0
-        # for i in self.DownInfos:
-        #     if i['FilePath']+i['FileName'] == info['LoPath']:
-        #         DownverticalLayout = self.DownLayout[1]
-        #         DownverticalLayout.itemAt(j).widget().deleteLater()
-        #         break
-        #     j+=1
-        # del self.DownInfos[j]
-
-    def checkAddFile(self,info):
-        CurLabs = []
-        for i in self.DownInfosUpdateLabs:
-            CurLabs.append(i['LoPath'])
-        if info['FilePath']+info['FileName'] in CurLabs:
-            return 1
-        return 0
-    def checkDelFile(self):
-        CurDowns = []
-        for i in self.DownInfos:
-            CurDowns.append(i['FilePath']+i['FileName'])
-
-        j = 0
-        delidxs = []
-        DownInfosUpdateLabs = []
-        for i in self.DownInfosUpdateLabs:
-            CurDownLabi = i['LoPath']
-            if CurDownLabi not in CurDowns:
-                delidxs.append(j)
-            else:
-                DownInfosUpdateLabs.append(i)
-            j+=1
-
-
-        self.DownInfosUpdateLabs = DownInfosUpdateLabs
-        for i in delidxs:
-            DownverticalLayout = self.DownLayout[1]
-            DownverticalLayout.itemAt(2*i+1).widget().deleteLater()
-            DownverticalLayout.itemAt(2 * i).widget().deleteLater()
-
-
-
-    def StartAll(self):
-        self.PauseAll()
-        time.sleep(2)
-        # self.DownInfos = self.dbManager.GetUserDownRecordAll()
-        for i in self.DownInfosUpdateLabs:
-            self.DownGon(self.DownInfosUpdateLabs[i])
-
-
-    def PauseAll(self):
-        for i in self.DownInfosUpdateLabs:
-            self.DownCancel(self.DownInfosUpdateLabs[i])
-        # dbManager = DBManager.DBManager()
-        # DownInfos = dbManager.GetUserDownRecordAll()
-        # for i in DownInfos:
-        #     self.DownCancel(i)
-        # dbManager.close()
-    def CancelAll(self):
-        DownInfosUpdateLabs = {}
-        for i in self.DownInfosUpdateLabs:
-            DownInfosUpdateLabs[i] = self.DownInfosUpdateLabs[i]
-
-        for i in DownInfosUpdateLabs:
-            self.DelDowing(self.DownInfosUpdateLabs[i], 0)
-        # dbManager = DBManager.DBManager()
-        # DownInfos = dbManager.GetUserDownRecordAll()
-        # for i in DownInfos:
-        #     # self.dbManager.DelUserDownRecord(i['FilePath'], i['FileName'])
-        #     self.DelDowing(i,0)
-        # # self.RefreshDowning()
-        # dbManager.close()
-
-    def ButtonBind(self):
-        self.DownLayout = self.ui.TranspscrollArea['Down']
-        self.DownLayout[4].clicked.connect(self.StartAll)
-        self.DownLayout[5].clicked.connect(self.PauseAll)
-        self.DownLayout[6].clicked.connect(self.CancelAll)
-
-    def DownManger(self,Downinfo = None):
+    def AddDowning(self,DownInfos=None):
+        if not DownInfos:
+            DownInfos = self.dbManager.GetUserDownRecordAll()
+        self.signaladdDown.emit(DownInfos)
+    def WSQL(self,info):
+        self.dbManager1.WSQL(info, 'AddUserDownRecords')
+        DownLayout = self.ui.TranspscrollArea['Down']
+        DownLayout[3].setText(str(len(info)))
+        self.DownManger()
+    def DownManger(self):
         qmut_1.lock()
-        self.DownManger1(Downinfo)
+        self.DownManger1()
         qmut_1.unlock()
-    def DownManger1(self,Downinfo = None):
+    def DownManger1(self):
+        # return
         dbManager = DBManager.DBManager()
         DownInfos = dbManager.GetUserDownRecordAll()
-
+        # self.DownLayout[3].setText(str(len(DownInfos)))
         CurDownNums = 0
-        MaxDownNums = 2
+        MaxDownNums = self.MaxDownNums
         WaitDown = []
         CurDown = []
+        DelDown = []
         for i in DownInfos:
             if int(i['isDown'])==1:
                 CurDownNums += 1
                 CurDown.append(i)
             elif int(i['isDown']) == 2:
                 WaitDown.append(i)
-        print(WaitDown)
+            elif int(i['isDown']) == 3:
+                DelDown.append(i)
+        for i in DelDown:
+            # print('Del',i['FileName'])
+            infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+            self.dbManager1.WSQL(i,'DelUserDownRecord')
+            self.DownLayout[1].removeWidget(infoi['frame'])
+            sip.delete(infoi['frame'])
+            self.DownLayout[1].removeWidget(infoi['line'])
+            sip.delete(infoi['line'])
+            # QApplication.processEvents()
+
+            # print('Del1', i['FileName'])
+            del self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+        DownInfos = dbManager.GetUserDownRecordAll()
+        self.DownLayout[3].setText(str(len(DownInfos)))
+        dbManager.close()
         if CurDownNums < MaxDownNums:
             for i in range(MaxDownNums-CurDownNums):
                 if i < len(WaitDown):
-                    infoi = WaitDown[i]
-                    DownInfoi = dbManager.GetUserDownRecord(infoi['FilePath'], infoi['FileName'])
-                    dbManager.UpdataUserDownRecord(infoi['FilePath'], infoi['FileName'], 1)
-                    print('AddDown',infoi['FileName'],str_trans_to_md5(infoi['FilePath'] + infoi['FileName']),DownInfoi)
-                    infoii = self.DownInfosUpdateLabs[str_trans_to_md5(infoi['FilePath'] + infoi['FileName'])]
-                    self.Down(infoii)
-                    # time.sleep(0.01)
-
+                    info = WaitDown[i]
+                    self.dbManager1.WSQL(info,'UpdataUserDownRecord',1)
+                    infoi = self.DownInfosUpdateLabs[str_trans_to_md5(info['FilePath'] + info['FileName'])]
+                    self.Down(infoi)
         if CurDownNums > MaxDownNums:
             for i in CurDown:
                 if CurDownNums > MaxDownNums:
-                    if not Downinfo or Downinfo['FilePath']+Downinfo['FileName'] == i['FilePath']+i['FileName']:
-                        # print(i)
-                        dbManager.UpdataUserDownRecord(i['FilePath'], i['FileName'],2)
-                        infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
-                        infoi['statusButon'].setText(">")
-                        infoi['statusLabel'].setText("等待下载")
-                        CurDownNums -= 1
-        dbManager.close()
+                    self.dbManager1.WSQL(i, 'UpdataUserDownRecord',2)
+                    infoi = self.DownInfosUpdateLabs[str_trans_to_md5(i['FilePath'] + i['FileName'])]
+                    infoi['statusButon'].setText(">")
+                    infoi['statusLabel'].setText("等待上传")
+                    CurDownNums -= 1
+        # dbManager.close()
+    def AddDowning1(self,DownInfos):
 
-    def AddUping(self,UpInfos):
-        self.TranspUps.AddUpFiles(UpInfos)
-    def AddDowning(self,DownInfo):
-        self.signaladd.emit(DownInfo)
+        FilesSQL = []
+        for DownInfo in DownInfos:
+            DownInfoExist = self.dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
+            if not DownInfoExist or 'statusButon' not in DownInfo:
+                DownInfo['size'] = DownInfo['Size']
+                DownverticalLayout = self.DownLayout[1]
+                scrollAreaWidgetContents_Down = self.DownLayout[2]
+                if 'isDown' not in DownInfo:
+                    DownInfo['isDown'] = 2
+                DownInfos = self.dbManager.GetUserDownRecordAll()
+                self.DownLayout[3].setText(str(len(DownInfos)))
+                Downinginfoi = self.add(scrollAreaWidgetContents_Down,DownInfo)
+                form = Downinginfoi['frame']
+                DownverticalLayout.addWidget(form)
+                line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_Down)
+                line_3.setMinimumSize(QtCore.QSize(649, 0))
+                line_3.setFrameShape(QtWidgets.QFrame.HLine)
+                line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+                line_3.setObjectName("line_3")
+                DownverticalLayout.addWidget(line_3)
+                self.DownInfosUpdateLabs[str_trans_to_md5(DownInfo['FilePath'] + DownInfo['FileName'])]['line'] = line_3
+                if not DownInfoExist:
+                    FilesSQL.append(DownInfo)
+            # QApplication.processEvents()
+            # print(DownInfo)
 
-    def AddDowning1(self,DownInfo):
-        DownInfo['Size'] = DownInfo['size']
-        DownLayout = self.ui.TranspscrollArea['Down']
-        DownverticalLayout = DownLayout[1]
-        scrollAreaWidgetContents_down = DownLayout[2]
-        dbManager = DBManager.DBManager()
-        dbManager.AddUserDownRecord(DownInfo)
-        DownInfo['isDown'] =2
-        DownInfos = dbManager.GetUserDownRecordAll()
-        self.DownLayout[3].setText(str(len(DownInfos)))
+        if FilesSQL:
+            # pass
 
-        Downinginfoi = self.add1(scrollAreaWidgetContents_down,DownInfo)
-        form = Downinginfoi['frame']
-        DownverticalLayout.addWidget(form)
-        line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
-        line_3.setMinimumSize(QtCore.QSize(649, 0))
-        line_3.setFrameShape(QtWidgets.QFrame.HLine)
-        line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        line_3.setObjectName("line_3")
-        DownverticalLayout.addWidget(line_3)
-        Downinginfoi['line'] = line_3
-        dbManager.close()
+            self.WSQLDownThread = threading.Thread(target=self.WSQL,args=(FilesSQL,))
+            self.WSQLDownThread.setDaemon(True)
+            self.WSQLDownThread.start()
 
-        self.DownManger()
-        # self.Down(Downinginfoi)
-
-
-
-    def RefreshDowning(self):
-        self.infos = []
-        DownLayout = self.ui.TranspscrollArea['Down']
-        self.DownLayout = DownLayout
-        DownformLayout = DownLayout[0]
-        DownverticalLayout = DownLayout[1]
-        scrollAreaWidgetContents_down = DownLayout[2]
-        LaConts = DownverticalLayout.count()
-        dbManager = DBManager.DBManager()
-        DownInfos = dbManager.GetUserDownRecordAll()
-        # self.checkDelFile()
-        self.DownLayout[3].setText(str(len(DownInfos)))
-        # print(66,DownInfos)
-        for i in DownInfos:
-            Downinginfoi = self.add1(scrollAreaWidgetContents_down, i)
-            form = Downinginfoi['frame']
-            DownverticalLayout.addWidget(form)
-            line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
-            line_3.setMinimumSize(QtCore.QSize(649, 0))
-            line_3.setFrameShape(QtWidgets.QFrame.HLine)
-            line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-            line_3.setObjectName("line_3")
-            DownverticalLayout.addWidget(line_3)
-            Downinginfoi['line'] = line_3
-            # ThreadUpdatei = ThreadUpdate(self.ui)
-            # # ThreadUpdatei.setPar(Downinginfoi)
-            # ThreadUpdatei.Down(Downinginfoi)
-            self.Down(Downinginfoi)
-        self.DownManger()
-
-            # if not self.checkAddFile(i):
-            #     Downinginfoi = self.add1(scrollAreaWidgetContents_down,i)
-            #     form = Downinginfoi['frame']
-            #     DownverticalLayout.addWidget(form)
-            #     line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_down)
-            #     line_3.setMinimumSize(QtCore.QSize(649, 0))
-            #     line_3.setFrameShape(QtWidgets.QFrame.HLine)
-            #     line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-            #     line_3.setObjectName("line_3")
-            #     DownverticalLayout.addWidget(line_3)
-            #     Downinginfoi['line'] = line_3
-            #     # ThreadUpdatei = ThreadUpdate(self.ui)
-            #     # # ThreadUpdatei.setPar(Downinginfoi)
-            #     # ThreadUpdatei.Down(Downinginfoi)
-            #     self.Down(Downinginfoi)
-            #
-
-
-        dbManager.close()
-
-
-
-
-
-# myLayout.count()
-
-
+            # self.ui.MainWindow.WSQLDownThread = WSQLThread(self.ui,FilesSQL,self.dbManager1)
+            # self.ui.MainWindow.WSQLDownThread.Signal.connect(self.DowndateDOwnNums)
+            # # self.ui.MainWindow.WSQLDownThread.Signal.connect(self.DownManger)
+            # self.ui.MainWindow.WSQLDownThread.start()
+        else:
+            self.DownManger()

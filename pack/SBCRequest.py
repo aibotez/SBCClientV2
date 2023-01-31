@@ -95,12 +95,9 @@ class SBCRe():
             'OldNamePath':info['fepath'],
         }
         res = requests.post(url, data=data,headers=self.headers)
-    def GetRoFileMd5(self,path):
+    def GetRoFileMd5(self,data):
         # print(path)
         url = 'http://' + self.host + '/GetFileMd5/'
-        data = {
-            'path': path,
-        }
         res = requests.post(url, data=data,headers=self.headers)
         # print(json.loads(res.text))
 

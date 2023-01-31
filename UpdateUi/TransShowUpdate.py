@@ -495,9 +495,16 @@ class TransShowUpdate(QThread):
         dbManager = DBManager.DBManager()
         LofeMd5 = getfileMd5(info['LoPath'])
         RofeMd5 = info['FileMd5']
+
+        queinfo = {}
+        if 'shareinfo' in info and info['shareinfo']:
+            queinfo = {'shareinfo':info['shareinfo']}
+        else:
+            queinfo = {'path': info['RoFilePath']}
+
         try:
             info['statusLabel'].setText("校验文件...")
-            RofeMd5_ = self.ui.SBCRe.GetRoFileMd5(info['RoFilePath'])
+            RofeMd5_ = self.ui.SBCRe.GetRoFileMd5(json.dumps(queinfo))
             RofeMd5 = RofeMd5_['md5']
         except:
             pass
@@ -625,14 +632,19 @@ class TransShowUpdate(QThread):
             # LoFileSatus = info['LoFileSatus']
             LoFileSize = LoFileSatus['size']
             RoFileSize = info['Size']
+            shareinfo = None
             if LoFileSize >= RoFileSize:
                 self.DownFinsh(info)
             else:
+                if 'shareinfo' in info:
+                    shareinfo = info['shareinfo']
                 downinfo = {
                     'fename':info['FileName'],
                     'fepath':info['RoFilePath'],
-                    'feseek':LoFileSize
+                    'feseek':LoFileSize,
+                    'shareinfo': shareinfo
                 }
+                # {'fename': 'Surface_ne1.m', 'fepath': 'D:/SBC/SBCUsers/2290227486@qq.com/Surface_ne1.m', 'feseek': 0}
                 data = {
                     'downinfo':downinfo
                 }
@@ -666,6 +678,7 @@ class TransShowUpdate(QThread):
                     self.DownFinsh(info)
         dbManager.close()
     def Down(self,info):
+        print('Down',info)
         Path = info['LoPath']
         LoFileSatus = info['LoFileSatus']
         LoFileSize = LoFileSatus['size']

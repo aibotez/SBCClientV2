@@ -119,10 +119,10 @@ class FileOperClick(QThread):
             # FeMd5req = self.ui.SBCRe.GetRoFileMd5(DownFile['fepath'])
             # if not FeMd5req['error']:
             #     Femd5 = FeMd5req['md5']
-
             DownFeInfo ={}
-
             if DownFile['fetype'] != 'folder':
+                if 'shareinfo' in DownFile:
+                    DownFeInfo['shareinfo'] = DownFile['shareinfo']
                 DownFeInfo['FileMd5'] = Femd5
                 DownFeInfo['FileName'] = DownFile['fename']
                 DownFeInfo['size'] = DownFile['size']
@@ -410,11 +410,14 @@ class FileOperClick(QThread):
         # self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         # self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
         # self.anim.start()  # 启动动画
-    def run1(self):
+    def run1(self,share=None):
         # time.sleep(10)
         import threading
-        ChosedFiles = self.GetChoseFiles()
         DownInfos = []
+        if not share:
+            ChosedFiles = self.GetChoseFiles()
+        else:
+            ChosedFiles = share
         if ChosedFiles:
             self.SignalTranspan.emit()
             # self.ui.thread = TranspAnithread(self.ui)

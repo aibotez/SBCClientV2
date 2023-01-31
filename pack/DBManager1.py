@@ -1,4 +1,4 @@
-import sys,sqlite3,os,threading,json
+import sys,sqlite3,os,threading
 
 
 class DBManager1():
@@ -112,7 +112,7 @@ class DBManager():
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserDownRecordform(self):
-        sql = "create table UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype,shareinfo)"
+        sql = "create table UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype)"
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserUpRecordform(self):
@@ -176,11 +176,8 @@ class DBManager():
             print('Have Down')
             return 'Have'
         # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
-        sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype) values (?,?,?,?,?,?,?,?)"
-        shareinfo = None
-        if 'shareinfo' in DownInfo and DownInfo['shareinfo']:
-            shareinfo = json.dumps(DownInfo['shareinfo'])
-        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'2',DownInfo['fetype'],shareinfo)
+        sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype) values (?,?,?,?,?,?,?)"
+        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'2',DownInfo['fetype'])
         self.lock.acquire(True)
         self.cur.execute(sql, data)
         self.conn.commit()
@@ -190,11 +187,9 @@ class DBManager():
         if self.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName']):
             # print('Have Down')
             return 'Have'
-        sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype,shareinfo) values (?,?,?,?,?,?,?,?)"
-        shareinfo = None
-        if 'shareinfo' in DownInfo and DownInfo['shareinfo']:
-            shareinfo = json.dumps(DownInfo['shareinfo'])
-        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'2',DownInfo['fetype'],shareinfo)
+        # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
+        sql = "insert into UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype) values (?,?,?,?,?,?,?)"
+        data = (DownInfo['FileMd5'],DownInfo['FileName'],DownInfo['size'],DownInfo['FilePath'],DownInfo['RoFilePath'],'2',DownInfo['fetype'])
         self.cur.execute(sql, data)
         return 1
     def GetUserUpRecord(self,RoFilePath,FileName):
@@ -213,7 +208,7 @@ class DBManager():
         Result = None
         for i in self.cur:
             info = list(i)
-            Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6],'shareinfo':info[7]}
+            Result = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
         return Result
     def GetUserTranspFinshRecord(self,FilePath,FileName):
         sql = "select * from TransFinsh where FilePath ='{}' and FileName='{}'".format(FilePath,FileName)
@@ -252,7 +247,7 @@ class DBManager():
         Result = []
         for i in self.cur:
             info = list(i)
-            Resulti = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6],'shareinfo':info[7]}
+            Resulti = {'FileMd5':info[0],'FileName':info[1],'Size':info[2],'FilePath':info[3],'RoFilePath':info[4],'isDown':int(info[5]),'fetype':info[6]}
             Result.append(Resulti)
 
         return Result

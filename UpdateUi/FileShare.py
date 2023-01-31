@@ -3,8 +3,9 @@ from PyQt5.QtCore import *
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
-import sip
+import sip,threading
 from SubUi import ShareSave2SBC
+from pack import FileOperClick
 
 
 class FileShare():
@@ -83,6 +84,7 @@ class FileShare():
         shareFaPath = '/'+'/'.join(shareFaPath)
         self.NavUpdate(shareFaPath)
         for i in infos:
+
             self.ui.ShareWindow.add(i)
             self.ui.ShareWindow.label_36.mousePressEvent = partial(self.FileClickDeal,i)
             self.ShareFiles.append({'check':self.ui.ShareWindow.checkBox_2,'file':i})
@@ -133,6 +135,23 @@ class FileShare():
                 Filei['check'].setChecked(False)
                 ChosedFiles.append(Filei['file'])
         return ChosedFiles
+
+    def DownFile(self):
+        GetChoseFiles = self.GetChoseFiles()
+        DownFiles = []
+        #Down {'size': 2613, 'fepath': '/home/Surface_ne1.m', 'fename': 'Surface_ne1.m', 'isdir': 0,
+        #  'fepath_base64': 'L2hvbWUvU3VyZmFjZV9uZTEubQ==', 'fetype': 'other'}
+        if GetChoseFiles:
+            for i in GetChoseFiles:
+                print(i)
+                i['shareinfo'] = {'sharelink':i['ShareLink'],'password':i['password'],'fepath':i['fepath']}
+                DownFiles.append(i)
+            FileOperclick = FileOperClick.FileOperClick(self.ui)
+            t = threading.Thread(target=FileOperclick.run1,args=(DownFiles,))
+            t.setDaemon(True)
+            t.start()
+
+
     def Save2SBC(self):
         GetChoseFiles = self.GetChoseFiles()
         if GetChoseFiles:
@@ -155,3 +174,4 @@ class FileShare():
         self.ShareWindow.pushButton_13.clicked.connect(lambda: self.GetShareFile())
         self.ShareWindow.lineEdit.returnPressed.connect(self.GetShareFile)
         self.ShareWindow.pushButton_15.clicked.connect(lambda: self.SaveFilebtn())
+        self.ShareWindow.pushButton_14.clicked.connect(lambda: self.DownFile())
