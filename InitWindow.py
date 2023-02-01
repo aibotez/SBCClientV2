@@ -25,6 +25,7 @@ from UpdateUi import FileUpdate
 # from UpdateUi import TransShowUpdate
 # from SubUi import ReNameui
 from UpdateUi import FileShare
+from SubUi import Setting1
 from PyQt5.QtCore import QObject, pyqtSignal
 
 
@@ -244,6 +245,24 @@ class initWindow():
     #     v = max(min(v, horizontal_bar.maximum()), horizontal_bar.minimum())
     #     print(horizontal_bar.minimum(),horizontal_bar.maximum())
     #     horizontal_bar.setValue(v)
+    def SettingShow(self,e):
+        self.SBCMain.SBCSettingWindowDialog = QDialog()
+        self.SBCMain.SBCSettingWindow = Setting1.SettingShow(self.SBCMain.SBCSettingWindowDialog)
+        self.SBCMain.SBCSettingWindowDialog.show()
+    def creat_Usermenu(self,e):
+        self.groupBox_Upmenu = QMenu()
+        self.actionSetting = self.groupBox_Upmenu.addAction(u'设置')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionTools = self.groupBox_Upmenu.addAction(u'工具')
+        self.groupBox_Upmenu.addSeparator()
+        self.actionLoginOut = self.groupBox_Upmenu.addAction(u'退出登录')
+        self.groupBox_Upmenu.popup(QCursor.pos())
+        self.groupBox_Upmenu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 10px 10px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:18px;\n"
+                                        "}\n")
+        self.actionSetting.triggered.connect(self.SettingShow)
 
     def creat_Upmenu(self,e):
         self.groupBox_Upmenu = QMenu()
@@ -345,6 +364,8 @@ class initWindow():
         self.SBCMain.label_16.mousePressEvent = self.fileoperclick.ReName  # 重命名
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down  # 下载
+
+        self.SBCMain.label_9.mousePressEvent = self.creat_Usermenu  # 用户
 
 
 

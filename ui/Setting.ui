@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
+    <width>691</width>
     <height>600</height>
    </rect>
   </property>
@@ -16,8 +16,11 @@
     <height>600</height>
    </size>
   </property>
+  <property name="cursor">
+   <cursorShape>ArrowCursor</cursorShape>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>小黑云设置</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -45,6 +48,12 @@
     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,5,7">
      <property name="spacing">
       <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>15</number>
+     </property>
+     <property name="rightMargin">
+      <number>15</number>
      </property>
      <item>
       <widget class="QLabel" name="label_9">
@@ -97,7 +106,7 @@
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -145,7 +154,7 @@
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -193,7 +202,7 @@
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -241,7 +250,7 @@
            <number>0</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>0</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -304,7 +313,7 @@
       <enum>Qt::LeftToRight</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -545,6 +554,9 @@
             </item>
             <item>
              <widget class="QLabel" name="label_18">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="text">
                <string>&gt;&gt;</string>
               </property>
@@ -632,6 +644,9 @@
             </item>
             <item>
              <widget class="QLabel" name="label_20">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="text">
                <string>&gt;&gt;</string>
               </property>
@@ -690,7 +705,7 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>419</width>
+              <width>426</width>
               <height>20</height>
              </size>
             </property>
@@ -826,6 +841,9 @@
             </item>
             <item>
              <widget class="QLabel" name="label_28">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="text">
                <string>&gt;&gt;</string>
               </property>
