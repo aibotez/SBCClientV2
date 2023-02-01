@@ -313,7 +313,7 @@
       <enum>Qt::LeftToRight</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -368,7 +368,11 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="lineEdit">
+           <property name="placeholderText">
+            <string>域名及端口测试</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_12">
@@ -394,7 +398,11 @@
         </layout>
        </item>
        <item>
-        <widget class="QTextEdit" name="textEdit"/>
+        <widget class="QTextEdit" name="textEdit">
+         <property name="placeholderText">
+          <string>在该区域天填写域名及端口</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1351,7 +1359,7 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>311</width>
+              <width>318</width>
               <height>20</height>
              </size>
             </property>

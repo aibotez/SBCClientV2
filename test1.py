@@ -1,35 +1,41 @@
-import os,time,socket,struct
+import psutil,os
+# #
+# #
+# # #描述当前磁盘使用情况
+# #
+# # def describeDisk(path):
+# #     diskInfo = psutil.disk_usage(path)
+# #     total = diskInfo.total
+# #     used = diskInfo.used
+# #     free = diskInfo.free
+# #     usedPercent = diskInfo.percent
+# #     print(total,used)
+# # print(os.path.isdir('H:/'))
+# # describeDisk('C:/')
+
+import zipfile
+import os
+
+import py7zr
 
 
-def wake_up(mac=None):
-    MAC = mac
-    BROADCAST = "192.168.2.255"
-    if len(MAC) != 17:
-        raise ValueError("MAC address should be set as form 'XX-XX-XX-XX-XX-XX'")
-    mac_address = MAC.replace("-", '')
-    data = ''.join(['FFFFFFFFFFFF', mac_address * 20])  # 构造原始数据格式
-    send_data = b''
-    # 把原始数据转换为16进制字节数组，
-    for i in range(0, len(data), 2):
-        send_data = b''.join([send_data, struct.pack('B', int(data[i: i + 2], 16))])
-    print(send_data)
-
-    # 通过socket广播出去，为避免失败，间隔广播三次
-    try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        sock.sendto(send_data, (BROADCAST, 9))
-        time.sleep(1)
-        sock.sendto(send_data, (BROADCAST, 9))
-        time.sleep(1)
-        sock.sendto(send_data, (BROADCAST, 9))
-        time.sleep(1)
-        sock.sendto(send_data, (BROADCAST, 9))
-        print("Done")
-    except Exception as e:
-        print(e)
+def un_zip(file_name, dst):
+    archive = py7zr.SevenZipFile(file_name, mode='r')
+    archive.extractall(path=dst)
+    archive.close()
+    # """解压 zip 文件"""
+    # zip_file = zipfile.ZipFile(file_name)
+    # if os.path.isdir(dst):
+    #     pass
+    # else:
+    #     os.mkdir(dst)
+    # for names in zip_file.namelist():
+    #     zip_file.extract(names, dst)
+    # zip_file.close()
 
 
-# from wakeonlan import send_magic_packet
-# send_magic_packet('cc:2d:21:63:ae:d0')
-wake_up('4C-ED-FB-75-8C-9B')
+
+if __name__ == '__main__':
+    file_name = r"D:\SBCDown\WinSCP.7z"
+    dst = r"D:\SBCDown"
+    un_zip(file_name, dst)

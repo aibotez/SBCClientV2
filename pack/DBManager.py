@@ -72,12 +72,12 @@ class DBManager1():
 
 
 class DBManager():
-    def __init__(self):
+    def __init__(self,info=None):
         self.lock = threading.Lock()
         self.cur = None
         self.conn = None
-        self.db_connect()
-    def db_connect(self):
+        self.db_connect(info)
+    def db_connect(self,info = None):
         if not os.path.exists('./UserDB.db'):
             conn = sqlite3.connect('./UserDB.db',check_same_thread=False)
             cur = conn.cursor()
@@ -87,6 +87,7 @@ class DBManager():
             self.creatUserDownRecordform()
             self.creatUserUpRecordform()
             self.creatUserTransFinshRecordform()
+            self.AddClientSetting(info)
             # # 关闭资源
             # cur.close()
             # conn.close()
@@ -108,7 +109,7 @@ class DBManager():
         self.conn.close()
 
     def creatClientSettingform(self):
-        sql = "create table ClientSetting(DownPath,BackupPath,host)"
+        sql = "create table ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate)"
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserDownRecordform(self):
@@ -131,9 +132,16 @@ class DBManager():
         Result = {}
         for i in self.cur:
             info = list(i)
-            Result = {'DownPath':info[0],'BackupPath':info[1],'host':info[2]}
+            Result = {'DownPath':info[0],'BackupLoPath':info[1],'host':info[2],'BackupRoPath':info[3],'DowNum':info[4],
+                      'UpNum':info[5],'SycOpen':info[6],'SycFre':info[7],'MSK':info[8],'AutoUpdate':info[9]}
         return Result
-
+    def AddClientSetting(self,info):
+        sql = "insert into ClientSetting(DownPath,BackupLoPath,host,BackupRoPath) values (?,?,?,?,?,?,?,?,?,?)"
+        data = (info['DownPath'], info['BackupLoPath'], info['host'], info['BackupRoPath'],
+                info['DowNum'],info['UpNum'],info['SycOpen'],info['SycFre'],info['MSK'],info['AutoUpdate'])
+        self.cur.execute(sql, data)
+        self.conn.commit()
+        return 1
     def AddUserTranspFinshRecord(self,DownInfo):
         if self.GetUserTranspFinshRecord(DownInfo['FilePath'],DownInfo['FileName']):
             return 'Have'

@@ -141,6 +141,8 @@ class initWindow():
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.MainWindow = Main
+        self.SBCMain.Version = '2.0.0'
+        self.SBCMain.YM0 = 'pi.sbc.plus:90'
         self.Main.setAcceptDrops(True)
         self.Main.dragEnterEvent = self.dragEnterEvent
         self.Main.dropEvent = self.dropEvent
@@ -374,6 +376,14 @@ class initWindow():
         self.anim.setDuration(2000)  # 设置动画间隔时间
         self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+
+    def Login(self):
+        print(1)
+    def LoginCheck(self):
+        if not os.path.exists('./UserDB.db'):
+            print('NotHost')
+        if not os.path.exists('./uci'):
+            print('NotLogin')
     def init(self):
         self.initBindSignal()
         self.FileUpdates.start()

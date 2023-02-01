@@ -47,14 +47,14 @@ class SettingShow(Settingui.Ui_Dialog):
         self.ClearNavStyle()
         if oper == 'NetCon':
             self.tabWidget.setCurrentIndex(0)
-            self.frame.setStyleSheet("background:#7DCEA0;border-radius:15px;opacity:0.5;")
+            self.frame.setStyleSheet("background:#7DCEA0;border-radius:12px;opacity:0.5;")
         elif oper == 'UpDOwn':
             self.tabWidget.setCurrentIndex(1)
-            self.frame_2.setStyleSheet("background:#7DCEA0;border-radius:15px;opacity:0.5;")
+            self.frame_2.setStyleSheet("background:#7DCEA0;border-radius:12px;opacity:0.5;")
         elif oper == 'Syn':
             self.tabWidget.setCurrentIndex(2)
-            self.frame_3.setStyleSheet("background:#7DCEA0;border-radius:15px;opacity:0.5;")
+            self.frame_3.setStyleSheet("background:#7DCEA0;border-radius:12px;opacity:0.5;")
         elif oper == 'Other':
             self.tabWidget.setCurrentIndex(3)
-            self.frame_4.setStyleSheet("background:#7DCEA0;border-radius:15px;opacity:0.5;")
+            self.frame_4.setStyleSheet("background:#7DCEA0;border-radius:12px;opacity:0.5;")
 
