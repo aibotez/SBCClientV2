@@ -1,27 +1,24 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog,QInputDialog,QLineEdit
 from PyQt5.QtCore import *
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
-import sip,threading
+import sip,threading,time
 from SubUi import ShareSave2SBC
 from pack import FileOperClick
 
-
-class CustSignal(QObject):
+class FileShare(QObject):
     signal = pyqtSignal(list)
-    def __init__(self, par,parent=None):
-        super(CustSignal, self).__init__(parent)
-        self.signal.connect(self.Stfun)
-        self.par = par
-    def Stfun(self,fun):
-        return fun(self.par)
-
-class FileShare():
-
+    signal1 = pyqtSignal(str)
+    signalMsgBox = pyqtSignal(str)
+    signalMsgBoxInpuPass = pyqtSignal()
     def __init__(self,ui):
+        super(FileShare, self).__init__()
         self.ui = ui
-
+        self.signal.connect(self.adds)
+        self.signal1.connect(self.NavUpdate)
+        self.signalMsgBox.connect(lambda info:QMessageBox.information(self.ui.MainWindow, '提示',info))
+        self.signalMsgBoxInpuPass.connect(self.InputPassword)
         self.ShareFiles = []
         self.ShareWindow = self.ui.ShareWindow
         self.bindSignal()
@@ -88,21 +85,32 @@ class FileShare():
         label_2.setText('')
         label_2.setMinimumSize(QtCore.QSize(3000, 30))
         label_2.setMaximumSize(QtCore.QSize(3000, 30))
+        return
 
-    def abb(self,lst):
-        pass
-    def UpdateUi(self,infos):
+
+    def adds(self,infos):
+        for i in infos:
+            self.ui.ShareWindow.add(i)
+            self.ui.ShareWindow.label_36.mousePressEvent = partial(self.FileClickDeal,i)
+            self.ShareFiles.append({'check':self.ui.ShareWindow.checkBox_2,'file':i})
+        return
+
+    def UpdateUi(self,infos,first=None):
         self.ui.ShareWindow.clearframe()
         self.ShareFiles = []
         shareFaPath = infos[0]['fepath'].split('/')
         del shareFaPath[0]
         del shareFaPath[-1]
         shareFaPath = '/'+'/'.join(shareFaPath)
-        self.NavUpdate(shareFaPath)
-        for i in infos:
-            self.ui.ShareWindow.add(i)
-            self.ui.ShareWindow.label_36.mousePressEvent = partial(self.FileClickDeal,i)
-            self.ShareFiles.append({'check':self.ui.ShareWindow.checkBox_2,'file':i})
+        if not first:
+            self.NavUpdate(shareFaPath)
+        # self.signal1.emit(shareFaPath)
+        self.signal.emit(infos)
+        # for i in infos:
+        #     self.ui.ShareWindow.add(i)
+        #     self.ui.ShareWindow.label_36.mousePressEvent = partial(self.FileClickDeal,i)
+        #     self.ShareFiles.append({'check':self.ui.ShareWindow.checkBox_2,'file':i})
+
 
     # {"ShareFile": [{"fepath": "/\u76f8\u51731.bmp", "fename": "\u76f8\u51731.bmp", "fetype": "img", "isdir": 0}],
     #  "ShareDateDur": "7\u5929\u5185\u6709\u6548", "SharePass": "", "useremail": "2290227486@qq.com",
@@ -118,32 +126,53 @@ class FileShare():
             'PassWord':self.PassWord
         }
         SBCShare = self.ui.SBCRe.GetSBCShareFile1(data)
-        CustSignali = CustSignal(SBCShare['res'])
-        CustSignali.signal.emit(self.UpdateUi)
-        # self.UpdateUi(SBCShare['res'])
+        self.UpdateUi(SBCShare['res'])
 
-
+    # http://10.147.17.148:90/SBCShare/?SBCShare=2Kc4
     def GetShareFile(self):
+        self.ui.tShareS = threading.Thread(target=self.GetShareFile1)
+        self.ui.tShareS.setDaemon(True)
+        self.ui.tShareS.start()
+    def InputPassword(self):
+        text, okPressed = QInputDialog.getText(self.ui.MainWindow, "输入分享密码", "输入分享密码：", QLineEdit.Normal, "")
+        if okPressed and text != '':
+            data = {
+                'ShareLink': self.ShareLink,
+                'path': '',
+                'PassWord':text
+            }
+            SBCShare = self.ui.SBCRe.GetSBCShareFile1(data)
+            if type(SBCShare['res']) == str:
+                self.signalMsgBox.emit('密码错误！')
+                return
+            info = SBCShare['res']
+            self.ShareUserName = info[0]['ShareUserName']
+            for i in range(len(info)):
+                info[i]['ShareLink'] = self.ShareLink
+                info[i]['PassWord'] = self.PassWord
+            self.UpdateUi(info, 1)
+        # okPressed.exec_()
+    def GetShareFile1(self):
         ShareLink = self.ShareWindow.lineEdit.text()
         SBCShare = self.ui.SBCRe.GetSBCShareFile0(ShareLink)
+        self.ShareLink = ShareLink.split('SBCShare=')[-1]
         self.PassWord = ''
         if 'check' in SBCShare:
             if SBCShare['check'] == '分享不存在':
-                QMessageBox.information(self.ui.MainWindow, '提示', '分享文件不存在')
+                self.signalMsgBox.emit('分享文件不存在')
                 return
             elif SBCShare['check'] == '分享已超时':
-                QMessageBox.information(self.ui.MainWindow, '提示', '分享文件已超时')
+                self.signalMsgBox.emit('分享文件已超时')
                 return
             elif SBCShare['check'] == 'password':
-                QMessageBox.information(self.ui.MainWindow, '提示', '分享文件不存在')
-                pass
+                self.signalMsgBoxInpuPass.emit()
+                return
         info = SBCShare['res']
         self.ShareUserName = info[0]['ShareUserName']
-        self.ShareLink = ShareLink.split('SBCShare=')[-1]
         for i in range(len(info)):
-            info[i]['ShareLink'] = ShareLink.split('SBCShare=')[-1]
+            info[i]['ShareLink'] = self.ShareLink
             info[i]['PassWord'] = self.PassWord
-        self.UpdateUi(info)
+        self.UpdateUi(info,1)
     def GetChoseFiles(self):
         ChosedFiles = []
         for i in self.ShareFiles:

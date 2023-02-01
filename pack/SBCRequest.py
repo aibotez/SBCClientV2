@@ -54,7 +54,7 @@ class SBCRe():
             'client':'windows',
             'check':check,
         }
-        res = requests.get(url, params=data,headers=self.headers)
+        res = requests.get(url, params=data,headers=self.headers,timeout=3)
         return json.loads(res.text)
     def SBCFileCopy(self,info):
         url = 'http://' + self.host + '/netOper/'

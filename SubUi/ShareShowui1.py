@@ -41,7 +41,7 @@ class ShareShow(ShareShowui.Ui_Form):
         self.formLayout.removeWidget(self.frame_13)
         sip.delete(self.frame_13)
         self.label.setText('')
-        self.label_2.setText('')
+        self.label_2.setText('分享文件')
         self.frame_2.setMaximumSize(QtCore.QSize(500, 30))
 
     def clearframe(self):
