@@ -1,7 +1,15 @@
 import os,wmi,requests
 from pack import DBManager
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog,QInputDialog,QLineEdit
 
 class UserCheck():
+    ###################
+    ###             登录流程
+    ##  1、连接/创建储存客户端信息的本地数据库
+    ##  2、判断域名是否可用、网络是否通畅
+    ##  3、判断用户信息/更改用户信息
+    ##  4、完成登录
+    ####################
     def __init__(self,ui):
         self.s = wmi.WMI()
         self.ui = ui
@@ -49,7 +57,13 @@ class UserCheck():
         if hostsavi:
             self.ui.host = hostsavi[0]
         else:
-            pass
+            while True:
+                text, okPressed = QInputDialog.getText(self.ui.MainWindow, "连接错误", "输入域名及端口：", QLineEdit.Normal, "")
+                if okPressed and text != '':
+                    if self.ConnectTest(text):
+                        self.ui.host = text
+                        break
+
 
 
 
