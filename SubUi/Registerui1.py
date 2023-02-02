@@ -41,7 +41,9 @@ class RegisterUi(Registerui.Ui_Dialog):
         }
         RegRes = self.ui.SBCRe.Register(data)
         if RegRes == 1:
-            pass
+            self.ui.SBCRegiWindowDialog.hide()
+            Loginui = Loginui1.LoginUi(self.ui)
+            Loginui.Login()
         else:
             self.label_6.setText(RegRes)
 

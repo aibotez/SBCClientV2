@@ -37,7 +37,7 @@ class SBCRe():
         cookie = requests.utils.dict_from_cookiejar(cookies)
         if 'coks' in cookie:
             self.Cookie = 'coks='+cookie['coks']
-            self.PublicHeaders()
+            # self.PublicHeaders()
             return 1
         return res.text
     def PublicHeaders(self):
