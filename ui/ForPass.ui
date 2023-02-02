@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>777</width>
+    <width>773</width>
     <height>570</height>
    </rect>
   </property>
@@ -21,7 +21,10 @@
 	border-image:url(login.jpg)
 }</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="10,1,1" columnstretch="10,9">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="10,1,1" columnstretch="10,9" columnminimumwidth="10,10">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
    <property name="topMargin">
     <number>60</number>
    </property>
@@ -35,7 +38,7 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>388</width>
+       <width>390</width>
        <height>20</height>
       </size>
      </property>
@@ -60,18 +63,18 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,5,1">
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,1,5,0">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="leftMargin">
        <number>30</number>
-      </property>
-      <property name="topMargin">
-       <number>9</number>
       </property>
       <property name="rightMargin">
        <number>30</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>30</number>
       </property>
       <item>
        <widget class="QLabel" name="label">
@@ -97,7 +100,34 @@
 }</string>
         </property>
         <property name="text">
-         <string>小黑云账号注册</string>
+         <string>小黑云</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_8">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">#label_6{
+	color:#ff0000;
+}</string>
+        </property>
+        <property name="text">
+         <string>找回密码</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -229,68 +259,7 @@
                <bool>false</bool>
               </property>
               <property name="placeholderText">
-               <string>用户名</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame_13">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">#frame_3{
-	background:#ffffff;
-	border:1px groove gray;
-	border-radius:10px;
-	
-}
-#frame_3 QLineEdit{
-	border:none;
-}
-</string>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>con</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="lineEdit_9">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="placeholderText">
-               <string>邮箱</string>
+               <string>邮箱/用户名</string>
               </property>
              </widget>
             </item>
@@ -467,7 +436,7 @@
                <string/>
               </property>
               <property name="placeholderText">
-               <string>密码</string>
+               <string>设置新密码</string>
               </property>
              </widget>
             </item>
@@ -566,7 +535,7 @@
 }</string>
           </property>
           <property name="text">
-           <string>已有账号</string>
+           <string>登录</string>
           </property>
          </widget>
         </item>
@@ -602,7 +571,7 @@
 }</string>
           </property>
           <property name="text">
-           <string>注册</string>
+           <string>设置新密码</string>
           </property>
          </widget>
         </item>
