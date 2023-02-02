@@ -3,7 +3,7 @@ import os,wmi,sys
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QDialog,QLineEdit
 from . import Registerui1
 
 class LoginUi(Loginui.Ui_Dialog):
@@ -51,6 +51,7 @@ class LoginUi(Loginui.Ui_Dialog):
         self.ui.SBCLoginWindowDialog.show()
         self.pushButton.clicked.connect(self.loginact)
         self.label_5.mousePressEvent = self.Registerui.Regi
+        self.lineEdit_2.setEchoMode(QLineEdit.Password)
 
 
 
