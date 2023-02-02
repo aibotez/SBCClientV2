@@ -384,13 +384,6 @@ class initWindow():
         self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
 
-    def Login(self):
-        print(1)
-    def LoginCheck(self):
-        if not os.path.exists('./UserDB.db'):
-            print('NotHost')
-        if not os.path.exists('./uci'):
-            print('NotLogin')
     def init(self):
 
         self.initBindSignal()

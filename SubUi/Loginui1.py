@@ -4,6 +4,7 @@ from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QDialog
+from . import Registerui1
 
 class LoginUi(Loginui.Ui_Dialog):
     def __init__(self,ui):
@@ -11,6 +12,7 @@ class LoginUi(Loginui.Ui_Dialog):
         self.ui = ui
         self.s = wmi.WMI()
         self.LoginStatu = 0
+        self.Registerui = Registerui1.RegisterUi(self.ui)
 
     # def init(self):
     #     self.Dialog.setStyleSheet("#Dialog{\n"
@@ -47,8 +49,10 @@ class LoginUi(Loginui.Ui_Dialog):
         self.ui.SBCLoginWindow = self.setupUi(self.ui.SBCLoginWindowDialog)
         # self.ui.SBCLoginWindowDialog.setStyleSheet("#Dialog{border-image:url(img/login.jpg)}")
         self.ui.SBCLoginWindowDialog.show()
-
         self.pushButton.clicked.connect(self.loginact)
+        self.label_5.mousePressEvent = self.Registerui.Regi
+
+
 
         self.ui.SBCLoginWindowDialog.exec_()
 
