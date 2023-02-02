@@ -142,43 +142,13 @@ class initWindow():
         # return
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
-        self.SBCMain.MainWindow = Main
         self.SBCMain.Version = '2.0.0'
         self.SBCMain.YM0 = 'pi.sbc.plus:90'
+        self.SBCMain.MainWindow = self.Main
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
-        self.usercheck = UserCheck.UserCheck(self.SBCMain)
-        if not self.usercheck.LoginStatu:
-            sys.exit()
-
-        self.Main.setAcceptDrops(True)
-        self.Main.dragEnterEvent = self.dragEnterEvent
-        self.Main.dropEvent = self.dropEvent
-        self.SBCMain.setupUi(Main)
-        # self.Main.show()
+        self.SBCMain.MainWindow.hide()
 
 
-        # self.SBCReNameWindow = ReNameui.Ui_Dialog()
-        # self.SBCReNameWindowDialog = QDialog()
-        # self.SBCReNameWindow.setupUi(self.SBCReNameWindowDialog)
-        # self.SBCMain.SBCReNameWindow = self.SBCReNameWindow
-        # self.SBCMain.SBCReNameWindowDialog = self.SBCReNameWindowDialog
-
-
-        self.SBCMain.TranspArrow = self.SBCMain.label_23
-
-        # self.SBCMain.TranspArrow.setText("↑↓")
-        self.SBCMain.DownRecordFile = 'DownRecord.txt'
-        self.SBCMain.UpRecordFile = 'UpRecord.txt'
-        self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
-        # self.SBCMain.DownPath = 'D:/SBCDown/'
-        # self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.SBCMain.DownRecordFile,self.SBCMain.UpRecordFile,self.SBCMain.FinishRcordFile)
-
-        self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
-        self.SBCMain = self.initFrame()
-        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main, self.SBCMain)
-        # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
-        self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
-        self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         self.init()
 
     def dragEnterEvent(self, evn):
@@ -255,6 +225,13 @@ class initWindow():
     #     v = max(min(v, horizontal_bar.maximum()), horizontal_bar.minimum())
     #     print(horizontal_bar.minimum(),horizontal_bar.maximum())
     #     horizontal_bar.setValue(v)
+    def LoginOut(self,e):
+        # self.SBCMain.MainWindow.destroy()
+        # self.SBCMain.MainWindow.close()
+        self.SBCMain.MainWindow.hide()
+        os.remove('uci/uci')
+        self.init()
+        # self.SBCMain.SBCLoginWindowDialog.show()
     def SettingShow(self,e):
         self.SBCMain.SBCSettingWindowDialog = QDialog()
         self.SBCMain.SBCSettingWindow = Setting1.SettingShow(self.SBCMain.SBCSettingWindowDialog)
@@ -273,6 +250,7 @@ class initWindow():
                                         "    font-size:18px;\n"
                                         "}\n")
         self.actionSetting.triggered.connect(self.SettingShow)
+        self.actionLoginOut.triggered.connect(self.LoginOut)
 
     def creat_Upmenu(self,e):
         self.groupBox_Upmenu = QMenu()
@@ -393,6 +371,27 @@ class initWindow():
         if not os.path.exists('./uci'):
             print('NotLogin')
     def init(self):
+        self.SBCMain.setupUi(self.Main)
+        self.usercheck = UserCheck.UserCheck(self.SBCMain)
+        if not self.usercheck.LoginStatu:
+            sys.exit()
+        self.Main.setAcceptDrops(True)
+        self.Main.dragEnterEvent = self.dragEnterEvent
+        self.Main.dropEvent = self.dropEvent
+        # self.SBCMain.setupUi(self.Main)
+        self.SBCMain.MainWindow.show()
+        self.SBCMain.TranspArrow = self.SBCMain.label_23
+        # self.SBCMain.TranspArrow.setText("↑↓")
+        self.SBCMain.DownRecordFile = 'DownRecord.txt'
+        self.SBCMain.UpRecordFile = 'UpRecord.txt'
+        self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
+        self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
+        self.SBCMain = self.initFrame()
+        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main, self.SBCMain)
+        # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
+        self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
+        self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
+
         self.initBindSignal()
         self.FileUpdates.start()
         FileShare_ = FileShare.FileShare(self.SBCMain)
