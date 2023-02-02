@@ -10,9 +10,23 @@ class SBCRe():
         self.host = '10.147.17.148:90'
         self.UserEmail = '2290227486@qq.com'
         self.UserPassword = '12'
-        self.GetSBCCookie()
-        self.PublicHeaders()
+        # self.GetSBCCookie()
+        # self.PublicHeaders()
 
+    def Login(self,logininfo):
+        url = 'http://'+self.host+'/loginVerify/'
+        data = {
+            'usercount': logininfo['usercount'],
+            'userpassword': logininfo['userpassword'],
+        }
+        res = requests.post(url, data=data, allow_redirects=False)
+        cookies = res.cookies
+        cookie = requests.utils.dict_from_cookiejar(cookies)
+        if 'coks' in cookie:
+            self.Cookie = 'coks='+cookie['coks']
+            self.PublicHeaders()
+            return 1
+        return 0
 
     def PublicHeaders(self):
         headers = {

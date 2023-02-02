@@ -27,6 +27,7 @@ from UpdateUi import FileUpdate
 from UpdateUi import FileShare
 from SubUi import Setting1
 from PyQt5.QtCore import QObject, pyqtSignal
+from pack import UserCheck
 
 
 
@@ -137,17 +138,24 @@ def CreatPopFram(SBCMain):
 
 class initWindow():
     def __init__(self,Main):
-
+        # Main.close()
+        # return
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.MainWindow = Main
         self.SBCMain.Version = '2.0.0'
         self.SBCMain.YM0 = 'pi.sbc.plus:90'
+        self.SBCMain.SBCRe = SBCRequest.SBCRe()
+        self.usercheck = UserCheck.UserCheck(self.SBCMain)
+        if not self.usercheck.LoginStatu:
+            sys.exit()
+
+
         self.Main.setAcceptDrops(True)
         self.Main.dragEnterEvent = self.dragEnterEvent
         self.Main.dropEvent = self.dropEvent
-        self.SBCMain.SBCRe = SBCRequest.SBCRe()
         self.SBCMain.setupUi(Main)
+        Main.show()
 
         # self.SBCReNameWindow = ReNameui.Ui_Dialog()
         # self.SBCReNameWindowDialog = QDialog()

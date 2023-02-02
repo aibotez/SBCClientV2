@@ -1,6 +1,7 @@
 import os,wmi,requests
 from pack import DBManager
 from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog,QInputDialog,QLineEdit
+from SubUi import Loginui1
 
 class UserCheck():
     ###################
@@ -13,8 +14,11 @@ class UserCheck():
     def __init__(self,ui):
         self.s = wmi.WMI()
         self.ui = ui
-        self.UserFile = './uci'
+        self.loginui = Loginui1.LoginUi(ui)
+        self.UserFile = './uci/uci'
+        self.LoginStatu = 0
         self.ConnectDB()
+        self.init()
     def ConnectDB(self):
         Disk = ['C:/','D:/','E:/']
         Diskexist = []
@@ -28,25 +32,19 @@ class UserCheck():
 
 
 
-        if not os.path.exists(self.UserFile):
-            print('NotLogin')
-            # if os.path.exists('./UserDB.db'):
-            #     os.remove('./UserDB.db')
-        UserInfo = self.GetUser()
-        CurComputerId = self.get_mainboard_info()
-        if CurComputerId != UserInfo['ComputerId']:
-            pass
-            # if os.path.exists('./UserDB.db'):
-            #     os.remove('./UserDB.db')
-
-
     def ConnectTest(self,host):
         url = 'http://'+host+'/ConnectTest'
-        res = requests.get(url,timeout=2).text
-        if res == '1':
+        try:
+            res = requests.get(url,timeout=2).text
             return 1
-        return 0
+        except:
+            return 0
+
+    def Login(self):
+        pass
+
     def init(self):
+        ###连接测试
         self.GetClientInfo()
         hosts = self.hosts
         hostsavi = []
@@ -56,13 +54,41 @@ class UserCheck():
                     hostsavi.append(i)
         if hostsavi:
             self.ui.host = hostsavi[0]
+            self.ui.SBCRe.host = hostsavi[0]
         else:
             while True:
                 text, okPressed = QInputDialog.getText(self.ui.MainWindow, "连接错误", "输入域名及端口：", QLineEdit.Normal, "")
                 if okPressed and text != '':
                     if self.ConnectTest(text):
                         self.ui.host = text
+                        self.ClientInfo['host'] = text
+                        self.dbManager.DelClientSettingAllRecords()
+                        self.dbManager.AddClientSetting(self.ClientInfo)
                         break
+                else:
+                    return
+        ###############判断用户登录
+        if not os.path.exists(self.UserFile):
+            print('NotLogin')
+            self.loginui.Login()
+            self.LoginStatu = self.loginui.LoginStatu
+            # self.Login()
+        else:
+            UserInfo = self.GetUser()
+            CurComputerId = self.get_mainboard_info()
+            if CurComputerId != UserInfo['ComputerId']:
+                ###打开登录界面
+                self.loginui.Login()
+                # self.Login()
+            data = {
+                'usercount':UserInfo['UserName'],
+                'userpassword':UserInfo['UserPass']
+            }
+            ####登录尝试
+            LginRes = self.ui.SBCRe.Login(data)
+            if not LginRes:
+                self.loginui.Login()
+
 
 
 
@@ -71,7 +97,8 @@ class UserCheck():
     def GetClientInfo(self):
         Result = self.dbManager.GetClientSetting()
         self.ui.DownPath = Result['DownPath']
-        self.hosts = Result['host']
+        hosts = Result['host']
+        self.hosts = hosts.split('#')
         self.ui.BackupRoPath = Result['BackupRoPath']
         self.ui.DowNum = Result['DowNum']
         self.ui.UpNum = Result['UpNum']
@@ -79,6 +106,7 @@ class UserCheck():
         self.ui.SycFre = Result['SycFre']
         self.ui.MSK = Result['MSK']
         self.ui.AutoUpdate = Result['AutoUpdate']
+        self.ClientInfo = Result
 
 
     # 主板序列号

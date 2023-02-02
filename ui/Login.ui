@@ -18,7 +18,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">#Dialog{
-	border-image:url(login.jpg)
+	border-image:url(../img/login.jpg)
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="10,1,1" columnstretch="10,9">

@@ -135,8 +135,12 @@ class DBManager():
             Result = {'DownPath':info[0],'BackupLoPath':info[1],'host':info[2],'BackupRoPath':info[3],'DowNum':info[4],
                       'UpNum':info[5],'SycOpen':info[6],'SycFre':info[7],'MSK':info[8],'AutoUpdate':info[9]}
         return Result
+    def DelClientSettingAllRecords(self):
+        sql = "DELETE FROM ClientSetting"
+        self.cur.execute(sql)
+        self.conn.commit()
     def AddClientSetting(self,info):
-        sql = "insert into ClientSetting(DownPath,BackupLoPath,host,BackupRoPath) values (?,?,?,?,?,?,?,?,?,?)"
+        sql = "insert into ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate) values (?,?,?,?,?,?,?,?,?,?)"
         data = (info['DownPath'], info['BackupLoPath'], info['host'], info['BackupRoPath'],
                 info['DowNum'],info['UpNum'],info['SycOpen'],info['SycFre'],info['MSK'],info['AutoUpdate'])
         self.cur.execute(sql, data)
