@@ -27,7 +27,19 @@ class SBCRe():
             self.PublicHeaders()
             return 1
         return 0
-
+    def GetVcode(self,data):
+        url = 'http://'+self.host+'/GetVcode/'
+        res = requests.get(url, params=data, allow_redirects=False)
+    def Register(self,data):
+        url = 'http://'+self.host+'/registerVerify/'
+        res = requests.post(url, data=data, allow_redirects=False)
+        cookies = res.cookies
+        cookie = requests.utils.dict_from_cookiejar(cookies)
+        if 'coks' in cookie:
+            self.Cookie = 'coks='+cookie['coks']
+            self.PublicHeaders()
+            return 1
+        return res.text
     def PublicHeaders(self):
         headers = {
             # 'Content-Type': 'application/json; charset=UTF-8',

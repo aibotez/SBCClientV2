@@ -1,5 +1,5 @@
 from SubUi import Registerui
-import os,wmi,sys,time
+import os,wmi,sys,time,threading
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
@@ -21,7 +21,7 @@ class RegisterUi(Registerui.Ui_Dialog):
             self.pushButton_3.setText('获取验证码')
             return
         self.pushButton_3.setText(str(int(dt))+'s后重试')
-        time.sleep(1)
+        # time.sleep(1)
 
     def regiact(self):
         self.UserName = self.lineEdit_6.text()
@@ -32,13 +32,27 @@ class RegisterUi(Registerui.Ui_Dialog):
         if self.UserPassword != self.UserPassword_2:
             self.label_6.setText('两次输入密码不一致')
             return
+        data = {
+            'username':self.UserName,
+            'useremail':self.UserEmail,
+            'vcode':self.Vcode,
+            'userpassword1':self.UserPassword,
+            'userpassword2': self.UserPassword_2
+        }
+        RegRes = self.ui.SBCRe.Register(data)
+        if RegRes == 1:
+            pass
+        else:
+            self.label_6.setText(RegRes)
+
     def GetVcode(self):
         if '@' not in self.lineEdit_9.text():
             self.label_6.setText('输入邮箱')
             return
         self.pushButton_3.setEnabled(False)
-        self.timer.start()
+        self.timer.start(1000)
         self.time0 = time.time()
+        self.ui.SBCRe.GetVcode({'useremail':self.lineEdit_9.text()})
 
     def HaveCount(self,e):
         # self.ui.SBCLoginWindowDialog.show()
