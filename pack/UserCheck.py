@@ -71,6 +71,7 @@ class UserCheck():
         if not os.path.exists(self.UserFile):
             self.loginui.Login()
             self.LoginStatu = self.loginui.LoginStatu
+            # self.ui.SBCLoginWindowDialog.exit()
             return self.LoginStatu
             # self.Login()
         else:

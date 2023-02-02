@@ -401,6 +401,17 @@ class FileOperClick(QThread):
 
 
     def Transpanim(self):
+
+        # self.ui.TranspArrow1 = QtWidgets.QLabel(self.ui.MainWindow) #
+        # self.ui.TranspArrow1.setGeometry(200,20,0,0)
+        # self.ui.TranspArrow1.setPixmap(QtGui.QPixmap('img/Transp2.jpg'))
+        # self.ui.TranspArrow1.setScaledContents(True) # 图片随文本部件的大小变动
+        # self.ui.anim = QtCore.QPropertyAnimation(self.ui.TranspArrow1, b'geometry')  # 设置动画的对象及其属性
+        # self.ui.anim.setDuration(1000)  # 设置动画间隔时间
+        # self.ui.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
+        # self.ui.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+
+
         self.ui.anim.start()
         # self.ui.thread = TranspAnithread(self.ui)
         # self.ui.thread.start()

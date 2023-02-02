@@ -146,7 +146,27 @@ class initWindow():
         self.SBCMain.YM0 = 'pi.sbc.plus:90'
         self.SBCMain.MainWindow = self.Main
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
-        self.SBCMain.MainWindow.hide()
+        # self.SBCMain.MainWindow.hide()
+        self.SBCMain.setupUi(self.Main)
+        self.usercheck = UserCheck.UserCheck(self.SBCMain)
+        if not self.usercheck.LoginStatu:
+            sys.exit()
+        self.Main.setAcceptDrops(True)
+        self.Main.dragEnterEvent = self.dragEnterEvent
+        self.Main.dropEvent = self.dropEvent
+        # self.SBCMain.setupUi(self.Main)
+        # self.SBCMain.MainWindow.show()
+        self.SBCMain.TranspArrow = self.SBCMain.label_23
+        # self.SBCMain.TranspArrow.setText("↑↓")
+        self.SBCMain.DownRecordFile = 'DownRecord.txt'
+        self.SBCMain.UpRecordFile = 'UpRecord.txt'
+        self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
+        self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
+        self.SBCMain = self.initFrame()
+        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main, self.SBCMain)
+        # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
+        self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
+        self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
 
 
         self.init()
@@ -230,7 +250,8 @@ class initWindow():
         # self.SBCMain.MainWindow.close()
         self.SBCMain.MainWindow.hide()
         os.remove('uci/uci')
-        self.init()
+        sys.exit()
+        # self.init()
         # self.SBCMain.SBCLoginWindowDialog.show()
     def SettingShow(self,e):
         self.SBCMain.SBCSettingWindowDialog = QDialog()
@@ -371,26 +392,6 @@ class initWindow():
         if not os.path.exists('./uci'):
             print('NotLogin')
     def init(self):
-        self.SBCMain.setupUi(self.Main)
-        self.usercheck = UserCheck.UserCheck(self.SBCMain)
-        if not self.usercheck.LoginStatu:
-            sys.exit()
-        self.Main.setAcceptDrops(True)
-        self.Main.dragEnterEvent = self.dragEnterEvent
-        self.Main.dropEvent = self.dropEvent
-        # self.SBCMain.setupUi(self.Main)
-        self.SBCMain.MainWindow.show()
-        self.SBCMain.TranspArrow = self.SBCMain.label_23
-        # self.SBCMain.TranspArrow.setText("↑↓")
-        self.SBCMain.DownRecordFile = 'DownRecord.txt'
-        self.SBCMain.UpRecordFile = 'UpRecord.txt'
-        self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
-        self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
-        self.SBCMain = self.initFrame()
-        self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.Main, self.SBCMain)
-        # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
-        self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
-        self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
 
         self.initBindSignal()
         self.FileUpdates.start()
