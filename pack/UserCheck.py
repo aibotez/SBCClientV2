@@ -15,7 +15,7 @@ class UserCheck():
         self.s = wmi.WMI()
         self.ui = ui
         self.loginui = Loginui1.LoginUi(ui)
-        self.UserFile = './uci/uci'
+        self.UserFile = 'uci/uci'
         self.LoginStatu = 0
         self.ConnectDB()
         self.init()
@@ -69,9 +69,9 @@ class UserCheck():
                     return
         ###############判断用户登录
         if not os.path.exists(self.UserFile):
-            print('NotLogin')
             self.loginui.Login()
             self.LoginStatu = self.loginui.LoginStatu
+            return self.LoginStatu
             # self.Login()
         else:
             UserInfo = self.GetUser()
@@ -79,7 +79,8 @@ class UserCheck():
             if CurComputerId != UserInfo['ComputerId']:
                 ###打开登录界面
                 self.loginui.Login()
-                # self.Login()
+                self.LoginStatu = self.loginui.LoginStatu
+                return self.LoginStatu
             data = {
                 'usercount':UserInfo['UserName'],
                 'userpassword':UserInfo['UserPass']
@@ -88,6 +89,11 @@ class UserCheck():
             LginRes = self.ui.SBCRe.Login(data)
             if not LginRes:
                 self.loginui.Login()
+                self.LoginStatu = self.loginui.LoginStatu
+                return self.LoginStatu
+            else:
+                self.LoginStatu = 1
+                return self.LoginStatu
 
 
 
@@ -95,6 +101,11 @@ class UserCheck():
 
 
     def GetClientInfo(self):
+        Result = self.dbManager.GetClientSetting()
+        if not Result:
+            self.dbManager.AddClientSetting(
+                {'BackupLoPath': '', 'DownPath': self.SBCDownPath, 'host': self.ui.YM0, 'BackupRoPath': '',
+                 'DowNum': 2, 'UpNum': 2, 'SycOpen': 0, 'SycFre': '', 'MSK': '', 'AutoUpdate': 1})
         Result = self.dbManager.GetClientSetting()
         self.ui.DownPath = Result['DownPath']
         hosts = Result['host']

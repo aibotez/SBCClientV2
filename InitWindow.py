@@ -150,12 +150,12 @@ class initWindow():
         if not self.usercheck.LoginStatu:
             sys.exit()
 
-
         self.Main.setAcceptDrops(True)
         self.Main.dragEnterEvent = self.dragEnterEvent
         self.Main.dropEvent = self.dropEvent
         self.SBCMain.setupUi(Main)
-        Main.show()
+        # self.Main.show()
+
 
         # self.SBCReNameWindow = ReNameui.Ui_Dialog()
         # self.SBCReNameWindowDialog = QDialog()
@@ -170,7 +170,7 @@ class initWindow():
         self.SBCMain.DownRecordFile = 'DownRecord.txt'
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
         self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
-        self.SBCMain.DownPath = 'D:/SBCDown/'
+        # self.SBCMain.DownPath = 'D:/SBCDown/'
         # self.SBCMain.TransFilesManager = TransFileManager.TransFileManager(self.SBCMain.DownRecordFile,self.SBCMain.UpRecordFile,self.SBCMain.FinishRcordFile)
 
         self.Thread_LoadImgs = FileUpdate.Thread_LoadImg(self.SBCMain)
