@@ -137,8 +137,10 @@ def CreatPopFram(SBCMain):
     SBCMain.frame_ChoseNet.hide()
 
 
-class initWindow():
+class initWindow(QObject):
+    signalUpdateUser = pyqtSignal()
     def __init__(self,Main):
+        super().__init__()
         # Main.close()
         # return
         self.Main = Main
@@ -147,6 +149,8 @@ class initWindow():
         self.SBCMain.YM0 = 'pi.sbc.plus:90'
         self.SBCMain.PPIw0 = 36.92
         self.SBCMain.PPIh0 = 33.75
+        self.SBCMain.signalUpdateUser = self.signalUpdateUser
+        self.SBCMain.signalUpdateUser.connect(self.UpdateUserInfo)
         [PPIw,PPIh] = GetMoniterPPi.GetMoniterPPI()
         self.SBCMain.PPIwper = PPIw/self.SBCMain.PPIw0
         self.SBCMain.PPIhper = PPIh/self.SBCMain.PPIh0
@@ -391,6 +395,15 @@ class initWindow():
         self.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         self.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
 
+    def UpdateUserInfo(self):
+        data = self.SBCMain.SBCRe.GetUserInfo()
+        if 'error' not in data:
+            self.SBCMain.label_7.setText(data['usedcappercentstr'])
+            self.SBCMain.label_9.setText(data['username'])
+            usedper = data['usedcappercent']*130
+            self.SBCMain.usedCap.setMinimumSize(QtCore.QSize(usedper, 0))
+            self.SBCMain.usedCap.setMaximumSize(QtCore.QSize(usedper, 10))
+
     def init(self):
 
         self.initBindSignal()
@@ -407,6 +420,9 @@ class initWindow():
         self.SBCMain.anim.setDuration(1000)  # 设置动画间隔时间
         self.SBCMain.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         self.SBCMain.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+
+
+        self.SBCMain.signalUpdateUser.emit()
 
 
 

@@ -18,7 +18,12 @@ class SBCRe():
         res = requests.post(url, data=data, allow_redirects=False)
         return res.text
 
-
+    def GetUserInfo(self):
+        url = 'http://' + self.host + '/GetUserInfo/'
+        res = requests.post(url,headers=self.headers)
+        # print(json.loads(res.text))
+        # FileDatas = json.loads(res.text)
+        return json.loads(res.text)
     def Login(self,logininfo):
         url = 'http://'+self.host+'/loginVerify/'
         data = {

@@ -417,13 +417,13 @@ Line{
              <property name="minimumSize">
               <size>
                <width>130</width>
-               <height>0</height>
+               <height>11</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>130</width>
-               <height>10</height>
+               <height>11</height>
               </size>
              </property>
              <property name="styleSheet">
@@ -435,40 +435,64 @@ Line{
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <widget class="QFrame" name="usedCap">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>20</width>
-                <height>10</height>
-               </rect>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <property name="spacing">
+               <number>0</number>
               </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+              <property name="leftMargin">
+               <number>1</number>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
+              <property name="topMargin">
+               <number>0</number>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>10</height>
-               </size>
+              <property name="rightMargin">
+               <number>0</number>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+              <property name="bottomMargin">
+               <number>0</number>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-             </widget>
+              <item>
+               <widget class="QFrame" name="usedCap">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>20</width>
+                  <height>10</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>20</width>
+                  <height>10</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>106</width>
+                  <height>8</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
