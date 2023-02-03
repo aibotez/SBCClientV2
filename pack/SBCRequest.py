@@ -13,6 +13,12 @@ class SBCRe():
         # self.GetSBCCookie()
         # self.PublicHeaders()
 
+    def ForPass(self,data):
+        url = 'http://'+self.host+'/forgotpassVcodeVerify/'
+        res = requests.post(url, data=data, allow_redirects=False)
+        return res.text
+
+
     def Login(self,logininfo):
         url = 'http://'+self.host+'/loginVerify/'
         data = {

@@ -259,7 +259,7 @@
                <bool>false</bool>
               </property>
               <property name="placeholderText">
-               <string>邮箱/用户名</string>
+               <string>邮箱</string>
               </property>
              </widget>
             </item>

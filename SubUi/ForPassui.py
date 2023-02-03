@@ -13,9 +13,9 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(773, 570)
         Dialog.setAutoFillBackground(False)
-        Dialog.setStyleSheet("#Dialog{\n"
-"    border-image:url(img/login.jpg)\n"
-"}")
+#         Dialog.setStyleSheet("#Dialog{\n"
+# "    border-image:url(login.jpg)\n"
+# "}")
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(0, 60, 20, -1)
         self.gridLayout.setObjectName("gridLayout")
@@ -300,7 +300,7 @@ class Ui_Dialog(object):
         self.label.setText(_translate("Dialog", "小黑云"))
         self.label_8.setText(_translate("Dialog", "找回密码"))
         self.label_9.setText(_translate("Dialog", "con"))
-        self.lineEdit_6.setPlaceholderText(_translate("Dialog", "邮箱/用户名"))
+        self.lineEdit_6.setPlaceholderText(_translate("Dialog", "邮箱"))
         self.lineEdit_8.setPlaceholderText(_translate("Dialog", "验证码"))
         self.pushButton_3.setText(_translate("Dialog", "获取验证码"))
         self.label_12.setText(_translate("Dialog", "con"))
