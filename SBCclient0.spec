@@ -8,7 +8,7 @@ a = Analysis(
     ['SBCclient0.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('img','img')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
