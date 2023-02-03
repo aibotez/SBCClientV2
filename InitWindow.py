@@ -154,6 +154,7 @@ class initWindow():
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         # self.SBCMain.MainWindow.hide()
         self.SBCMain.setupUi(self.Main)
+        self.SBCMain.label_23.setText('')
         self.usercheck = UserCheck.UserCheck(self.SBCMain)
         if not self.usercheck.LoginStatu:
             sys.exit()
@@ -406,6 +407,9 @@ class initWindow():
         self.SBCMain.anim.setDuration(1000)  # 设置动画间隔时间
         self.SBCMain.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         self.SBCMain.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+
+
+
 
 
 

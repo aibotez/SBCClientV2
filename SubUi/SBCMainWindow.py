@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SBCclient(object):
     def setupUi(self, SBCclient):
         SBCclient.setObjectName("SBCclient")
-        SBCclient.resize(911, 706)
+        SBCclient.resize(940, 720)
         SBCclient.setMinimumSize(QtCore.QSize(800, 700))
         font = QtGui.QFont()
         font.setFamily("宋体")
@@ -51,7 +51,7 @@ class Ui_SBCclient(object):
 "}\n"
 "#usedCap{\n"
 "    border-radius:5px;\n"
-"    background:#006000;\n"
+"    background:#00aa00;\n"
 "    Width:60px;\n"
 "}")
         SBCclient.setAnimated(True)
@@ -169,13 +169,16 @@ class Ui_SBCclient(object):
         spacerItem1 = QtWidgets.QSpacerItem(20, 245, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_5.addItem(spacerItem1)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setContentsMargins(12, 0, 12, -1)
+        self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.label_7 = QtWidgets.QLabel(self.frame)
         self.label_7.setAlignment(QtCore.Qt.AlignCenter)
         self.label_7.setObjectName("label_7")
         self.verticalLayout_4.addWidget(self.label_7)
         self.SBCCapacity = QtWidgets.QFrame(self.frame)
-        self.SBCCapacity.setMaximumSize(QtCore.QSize(16777215, 10))
+        self.SBCCapacity.setMinimumSize(QtCore.QSize(130, 0))
+        self.SBCCapacity.setMaximumSize(QtCore.QSize(130, 10))
         self.SBCCapacity.setStyleSheet("")
         self.SBCCapacity.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.SBCCapacity.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -187,6 +190,7 @@ class Ui_SBCclient(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.usedCap.sizePolicy().hasHeightForWidth())
         self.usedCap.setSizePolicy(sizePolicy)
+        self.usedCap.setMinimumSize(QtCore.QSize(20, 0))
         self.usedCap.setMaximumSize(QtCore.QSize(20, 10))
         self.usedCap.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.usedCap.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -221,6 +225,12 @@ class Ui_SBCclient(object):
         self.label_9.setObjectName("label_9")
         self.horizontalLayout_7.addWidget(self.label_9)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)
+        self.verticalLayout_5.setStretch(0, 1)
+        self.verticalLayout_5.setStretch(1, 10)
+        self.verticalLayout_5.setStretch(2, 3)
+        self.verticalLayout_5.setStretch(3, 1)
+        self.verticalLayout_5.setStretch(4, 1)
+        self.verticalLayout_5.setStretch(5, 1)
         self.horizontalLayout.addWidget(self.frame)
         self.frame_14 = QtWidgets.QFrame(self.centralwidget)
         self.frame_14.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -502,7 +512,7 @@ class Ui_SBCclient(object):
         self.scrollArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 751, 579))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 780, 616))
         self.scrollAreaWidgetContents.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.formLayout = QtWidgets.QFormLayout(self.scrollAreaWidgetContents)
@@ -585,10 +595,6 @@ class Ui_SBCclient(object):
         self.horizontalLayout.addWidget(self.frame_14)
         self.horizontalLayout_5.addLayout(self.horizontalLayout)
         SBCclient.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(SBCclient)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 911, 23))
-        self.menubar.setObjectName("menubar")
-        SBCclient.setMenuBar(self.menubar)
 
         self.retranslateUi(SBCclient)
         QtCore.QMetaObject.connectSlotsByName(SBCclient)
@@ -602,7 +608,7 @@ class Ui_SBCclient(object):
         self.label_4.setText(_translate("SBCclient", "视频"))
         self.label_5.setText(_translate("SBCclient", "分享"))
         self.label_6.setText(_translate("SBCclient", "传输列表"))
-        # self.label_23.setText(_translate("SBCclient", "↑↓"))
+        self.label_23.setText(_translate("SBCclient", "Tran"))
         self.label_7.setText(_translate("SBCclient", "10.1GB/6.0T"))
         self.label_9.setText(_translate("SBCclient", "用户"))
         self.label_14.setText(_translate("SBCclient", "下载"))

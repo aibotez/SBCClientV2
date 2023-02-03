@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>911</width>
+    <width>940</width>
     <height>720</height>
    </rect>
   </property>
@@ -1154,7 +1154,7 @@ Line{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>751</width>
+                   <width>780</width>
                    <height>593</height>
                   </rect>
                  </property>
@@ -1351,7 +1351,7 @@ Line{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>911</width>
+     <width>940</width>
      <height>23</height>
     </rect>
    </property>

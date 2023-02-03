@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>862</width>
-    <height>706</height>
+    <width>940</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -63,7 +63,7 @@ Line{
 }
 #usedCap{
 	border-radius:5px;
-	background:#006000;
+	background:#00aa00;
 	Width:60px;
 }</string>
   </property>
@@ -112,6 +112,12 @@ Line{
       </property>
       <item>
        <widget class="QFrame" name="frame">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>150</width>
@@ -124,7 +130,7 @@ Line{
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,10,3,1,1,1">
          <property name="spacing">
           <number>9</number>
          </property>
@@ -343,12 +349,25 @@ Line{
                 <rect>
                  <x>30</x>
                  <y>10</y>
-                 <width>61</width>
+                 <width>71</width>
                  <height>21</height>
                 </rect>
                </property>
                <property name="text">
                 <string>传输列表</string>
+               </property>
+              </widget>
+              <widget class="QLabel" name="label_23">
+               <property name="geometry">
+                <rect>
+                 <x>100</x>
+                 <y>10</y>
+                 <width>31</width>
+                 <height>21</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Tran</string>
                </property>
               </widget>
              </widget>
@@ -371,6 +390,18 @@ Line{
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>12</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>12</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
@@ -383,9 +414,15 @@ Line{
            </item>
            <item>
             <widget class="QFrame" name="SBCCapacity">
+             <property name="minimumSize">
+              <size>
+               <width>130</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>130</width>
                <height>10</height>
               </size>
              </property>
@@ -412,6 +449,12 @@ Line{
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>20</width>
+                <height>0</height>
+               </size>
               </property>
               <property name="maximumSize">
                <size>
@@ -1135,8 +1178,8 @@ Line{
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>710</width>
-                   <height>579</height>
+                   <width>780</width>
+                   <height>616</height>
                   </rect>
                  </property>
                  <property name="layoutDirection">
@@ -1326,16 +1369,6 @@ Line{
      </layout>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>862</width>
-     <height>23</height>
-    </rect>
-   </property>
   </widget>
  </widget>
  <resources/>
