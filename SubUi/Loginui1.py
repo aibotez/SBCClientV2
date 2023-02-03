@@ -45,6 +45,7 @@ class LoginUi(Loginui.Ui_Dialog):
                 self.WRUserLoginInfo()
                 # self.ui.SBCLoginWindowDialog.destroy()
                 self.ui.SBCLoginWindowDialog.close()
+
     def Login(self):
         self.ui.SBCLoginWindowDialog = QDialog()
         # self.ui.SBCLoginWindowDialog.setWindowModality(Qt.ApplicationModal)
@@ -55,6 +56,11 @@ class LoginUi(Loginui.Ui_Dialog):
         self.label_5.mousePressEvent = self.Registerui.Regi
         self.lineEdit_2.setEchoMode(QLineEdit.Password)
         self.label_4.mousePressEvent = self.ForPass.ForPass
+        # self.ui.SBCLoginWindowDialog.resize(777*self.ui.PPIwper, 570*self.ui.PPIhper)
+        # self.gridLayout.setContentsMargins(-1, 60*self.ui.PPIhper, 20*self.ui.PPIwper, -1)
+        # self.frame_2.setMaximumSize(QtCore.QSize(16777215, 40*self.ui.PPIhper))
+        # self.frame_3.setMaximumSize(QtCore.QSize(16777215, 40*self.ui.PPIhper))
+        # self.pushButton.setMinimumSize(QtCore.QSize(70*self.ui.PPIwper, 30*self.ui.PPIhper))
 
 
         self.ui.SBCLoginWindowDialog.exec_()

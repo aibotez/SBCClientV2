@@ -28,6 +28,7 @@ from UpdateUi import FileShare
 from SubUi import Setting1
 from PyQt5.QtCore import QObject, pyqtSignal
 from pack import UserCheck
+from pack import GetMoniterPPi
 
 
 
@@ -144,6 +145,11 @@ class initWindow():
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
         self.SBCMain.Version = '2.0.0'
         self.SBCMain.YM0 = 'pi.sbc.plus:90'
+        self.SBCMain.PPIw0 = 36.92
+        self.SBCMain.PPIh0 = 33.75
+        [PPIw,PPIh] = GetMoniterPPi.GetMoniterPPI()
+        self.SBCMain.PPIwper = PPIw/self.SBCMain.PPIw0
+        self.SBCMain.PPIhper = PPIh/self.SBCMain.PPIh0
         self.SBCMain.MainWindow = self.Main
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         # self.SBCMain.MainWindow.hide()
