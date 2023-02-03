@@ -323,10 +323,12 @@ class FileUpdate(QThread):
         # print(self.CurFileList)
 
 
-        self.CurFileList.sort(key=lambda x: x['date0'],reverse=True)
-        cur1 = [i for i in self.CurFileList if i['isdir']]
-        cur2 = [i for i in self.CurFileList if not i['isdir']]
-        self.CurFileList = cur1+cur2
+        self.CurFileList.sort(key=lambda x: time.mktime(time.strptime(x['date'],'%Y-%m-%d %H:%M')),reverse=True)
+
+        if self.CurFileList and 'isdir' in self.CurFileList[0]:
+            cur1 = [i for i in self.CurFileList if i['isdir']]
+            cur2 = [i for i in self.CurFileList if not i['isdir']]
+            self.CurFileList = cur1+cur2
 
         for i in range(len(self.CurFileList)):
 
