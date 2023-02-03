@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QDialog,QLineEdit
 from . import Registerui1
+from  SubUi import ForPass1
 
 class LoginUi(Loginui.Ui_Dialog):
     def __init__(self,ui):
@@ -13,6 +14,7 @@ class LoginUi(Loginui.Ui_Dialog):
         self.s = wmi.WMI()
         self.LoginStatu = 0
         self.Registerui = Registerui1.RegisterUi(self.ui)
+        self.ForPass = ForPass1.ForPassUi(self.ui)
 
     # def init(self):
     #     self.Dialog.setStyleSheet("#Dialog{\n"
@@ -52,7 +54,7 @@ class LoginUi(Loginui.Ui_Dialog):
         self.pushButton.clicked.connect(self.loginact)
         self.label_5.mousePressEvent = self.Registerui.Regi
         self.lineEdit_2.setEchoMode(QLineEdit.Password)
-
+        self.label_4.mousePressEvent = self.ForPass.ForPass
 
 
         self.ui.SBCLoginWindowDialog.exec_()
