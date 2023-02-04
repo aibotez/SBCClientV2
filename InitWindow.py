@@ -266,7 +266,7 @@ class initWindow(QObject):
         # self.SBCMain.SBCLoginWindowDialog.show()
     def SettingShow(self,e):
         self.SBCMain.SBCSettingWindowDialog = QDialog()
-        self.SBCMain.SBCSettingWindow = Setting1.SettingShow(self.SBCMain.SBCSettingWindowDialog)
+        self.SBCMain.SBCSettingWindow = Setting1.SettingShow(self.SBCMain.SBCSettingWindowDialog,self.SBCMain)
         self.SBCMain.SBCSettingWindowDialog.show()
     def creat_Usermenu(self,e):
         self.groupBox_Upmenu = QMenu()

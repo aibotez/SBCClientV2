@@ -1,15 +1,16 @@
 from . import Settingui
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sip
+import sip,requests
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
 from pack import DBManager
 
 
 class SettingShow(Settingui.Ui_Dialog):
-    def __init__(self,Dialog):
+    def __init__(self,Dialog,ui):
         super().__init__()
+        self.ui = ui
         self.Dialog = Dialog
         self.dbManager = DBManager.DBManager()
         self.init()
@@ -41,6 +42,37 @@ class SettingShow(Settingui.Ui_Dialog):
         self.lineEdit_3.setText(str(self.ClientInfo['UpNum']))
         self.label_22.setText(' '+self.ClientInfo['BackupLoPath'])
         self.label_25.setText(' '+self.ClientInfo['BackupRoPath'])
+        self.radioButton.setChecked(self.ClientInfo['SycOpen'])
+        self.radioButton_2.setChecked(self.ClientInfo['AutoUpdate'])
+        # Filei['checkBox'].setChecked(False)
+
+    def hosttest(self):
+        host = self.lineEdit.text()
+        if host:
+            print(host)
+            url = 'http://' + host + '/ConnectTest'
+            try:
+                res = requests.get(url, timeout=2).text
+                if res == '1':
+                    self.label_12.setText('测试通过')
+                    return 1
+                self.label_12.setText('连接错误')
+                return 0
+            except:
+                self.label_12.setText('连接超时')
+                return 0
+        else:
+            self.label_12.setText('域名为空')
+    def SaveConnect(self):
+        hosts = self.textEdit.toPlainText()
+        host = hosts.split('\n')
+        hoststr = ''
+        for i in host:
+            if i:
+                hoststr = hoststr + '#' + i
+        self.ClientInfo['host'] = hoststr
+        self.dbManager.DelClientSettingAllRecords()
+        self.dbManager.AddClientSetting(self.ClientInfo)
 
 
     def init(self):
@@ -54,24 +86,15 @@ class SettingShow(Settingui.Ui_Dialog):
         self.label_25.setText('')
         self.label_35.setText('')
         self.label_36.setText('')
-
         self.tabWidget.tabBar().hide()
-        # self.tabWidget.tab_2().hide()
-        # self.tabWidget.tab_3().hide()
-        # self.tabWidget.tab_4().hide()
-        # self.tabWidget.removeTab(3)
-        # self.tabWidget.removeTab(2)
-        # self.tabWidget.removeTab(1)
-        # self.tabWidget.removeTab(0)
-
         self.label.mousePressEvent = partial(self.NavOper,'NetCon')
         self.label_4.mousePressEvent = partial(self.NavOper, 'UpDOwn')
         self.label_6.mousePressEvent = partial(self.NavOper, 'Syn')
         self.label_8.mousePressEvent = partial(self.NavOper, 'Other')
         self.NavOper('NetCon',0)
-
         self.LoadClienttingConfig()
-
+        self.pushButton.clicked.connect(self.hosttest)
+        self.pushButton_2.clicked.connect(self.SaveConnect)
     def ClearNavStyle(self):
         self.frame.setStyleSheet("#frame:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")
         self.frame_2.setStyleSheet("#frame_2:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")

@@ -36,7 +36,9 @@ class UserCheck():
         url = 'http://'+host+'/ConnectTest'
         try:
             res = requests.get(url,timeout=2).text
-            return 1
+            if res == '1':
+                return 1
+            return 0
         except:
             return 0
 
