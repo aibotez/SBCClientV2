@@ -5,6 +5,7 @@ import sip,requests
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
 from pack import DBManager
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog
 
 
 class SettingShow(Settingui.Ui_Dialog):
@@ -44,6 +45,9 @@ class SettingShow(Settingui.Ui_Dialog):
         self.label_25.setText(' '+self.ClientInfo['BackupRoPath'])
         self.radioButton.setChecked(self.ClientInfo['SycOpen'])
         self.radioButton_2.setChecked(self.ClientInfo['AutoUpdate'])
+        self.lineEdit_4.setText(str(self.ClientInfo['SycFre']))
+        self.lineEdit_5.setText(self.ClientInfo['MSK'])
+
         # Filei['checkBox'].setChecked(False)
 
     def hosttest(self):
@@ -64,6 +68,8 @@ class SettingShow(Settingui.Ui_Dialog):
         else:
             self.label_12.setText('域名为空')
     def SaveConnect(self):
+        Result = self.dbManager.GetClientSetting()
+        self.ClientInfo = Result
         hosts = self.textEdit.toPlainText()
         host = hosts.split('\n')
         hoststr = ''
@@ -73,8 +79,113 @@ class SettingShow(Settingui.Ui_Dialog):
         self.ClientInfo['host'] = hoststr
         self.dbManager.DelClientSettingAllRecords()
         self.dbManager.AddClientSetting(self.ClientInfo)
+    def DownFilePathSetting(self,e):
+        FolderPath = QFileDialog.getExistingDirectory(self.ui.MainWindow, "选择文件夹", "./")
+        if FolderPath:
+            FolderPath += '/'
+            print(FolderPath)
+            Result = self.dbManager.GetClientSetting()
+            self.ClientInfo = Result
+            self.ClientInfo['DownPath'] = FolderPath
+            self.dbManager.DelClientSettingAllRecords()
+            self.dbManager.AddClientSetting(self.ClientInfo)
+            self.LoadClienttingConfig()
 
+    def saveDownNum(self,num,up = None):
+        self.ClientInfo = self.dbManager.GetClientSetting()
+        if up:
+            self.ClientInfo['UpNum'] = num
+        else:
+            self.ClientInfo['DowNum'] = num
+        self.dbManager.DelClientSettingAllRecords()
+        self.dbManager.AddClientSetting(self.ClientInfo)
+        self.LoadClienttingConfig()
 
+    def creat_UpNummenu(self,e):
+        self.groupBox_Upmenu = QMenu()
+        self.action1= self.groupBox_Upmenu.addAction(u'1')
+        self.action2 = self.groupBox_Upmenu.addAction(u'2')
+        self.action3 = self.groupBox_Upmenu.addAction(u'3')
+        self.action4 = self.groupBox_Upmenu.addAction(u'4')
+        self.action5 = self.groupBox_Upmenu.addAction(u'5')
+        self.groupBox_Upmenu.popup(QCursor.pos())
+        self.groupBox_Upmenu.setStyleSheet("QMenu{margin:0px 2px 2px 2px;color:blue;font-size:10px;}")
+        self.action1.triggered.connect(lambda :self.saveDownNum(1,1))
+        self.action2.triggered.connect(lambda: self.saveDownNum(2,1))
+        self.action3.triggered.connect(lambda: self.saveDownNum(3,1))
+        self.action4.triggered.connect(lambda: self.saveDownNum(4,1))
+        self.action5.triggered.connect(lambda: self.saveDownNum(5,1))
+    def creat_DowNummenu(self,e):
+        self.groupBox_Upmenu = QMenu()
+        self.action1= self.groupBox_Upmenu.addAction(u'1')
+        self.action2 = self.groupBox_Upmenu.addAction(u'2')
+        self.action3 = self.groupBox_Upmenu.addAction(u'3')
+        self.action4 = self.groupBox_Upmenu.addAction(u'4')
+        self.action5 = self.groupBox_Upmenu.addAction(u'5')
+        self.groupBox_Upmenu.popup(QCursor.pos())
+        self.groupBox_Upmenu.setStyleSheet("QMenu{margin:0px 2px 2px 2px;color:blue;font-size:10px;}")
+        self.action1.triggered.connect(lambda :self.saveDownNum(1))
+        self.action2.triggered.connect(lambda: self.saveDownNum(2))
+        self.action3.triggered.connect(lambda: self.saveDownNum(3))
+        self.action4.triggered.connect(lambda: self.saveDownNum(4))
+        self.action5.triggered.connect(lambda: self.saveDownNum(5))
+        # self.actionLoginOut.triggered.connect(self.LoginOut)
+    def SycOpen_radio_button(self):
+        self.ClientInfo = self.dbManager.GetClientSetting()
+        self.ClientInfo['SycOpen'] = self.radioButton.isChecked()
+        self.dbManager.DelClientSettingAllRecords()
+        self.dbManager.AddClientSetting(self.ClientInfo)
+        self.LoadClienttingConfig()
+
+    def saveSycFre(self,SyTime):
+        self.ClientInfo = self.dbManager.GetClientSetting()
+        self.ClientInfo['SycFre'] = SyTime
+        self.dbManager.DelClientSettingAllRecords()
+        self.dbManager.AddClientSetting(self.ClientInfo)
+        self.LoadClienttingConfig()
+    def creat_SycFreNummenu(self,e):
+        self.groupBox_Upmenu = QMenu()
+        self.action1= self.groupBox_Upmenu.addAction(u'10分钟')
+        self.action2 = self.groupBox_Upmenu.addAction(u'30分钟')
+        self.action3 = self.groupBox_Upmenu.addAction(u'1小时')
+        self.action4 = self.groupBox_Upmenu.addAction(u'2小时')
+        self.action5 = self.groupBox_Upmenu.addAction(u'5分钟')
+        self.groupBox_Upmenu.popup(QCursor.pos())
+        self.groupBox_Upmenu.setStyleSheet("QMenu{margin:0px 2px 2px 2px;color:blue;font-size:10px;}")
+        self.action1.triggered.connect(lambda :self.saveSycFre('10分钟'))
+        self.action2.triggered.connect(lambda: self.saveSycFre('30分钟'))
+        self.action3.triggered.connect(lambda: self.saveSycFre('1小时'))
+        self.action4.triggered.connect(lambda: self.saveSycFre('2小时'))
+        self.action5.triggered.connect(lambda: self.saveSycFre('5分钟'))
+    def MSKinput(self,keyevent):
+        self.ClientInfo = self.dbManager.GetClientSetting()
+        modifiers = keyevent.modifiers()
+        if modifiers == Qt.ControlModifier:
+            if keyevent.text():
+                self.lineEdit_5.setText('Ctrl + ' + chr(keyevent.key()))
+                self.ClientInfo['MSK'] = 'Ctrl + '+chr(keyevent.key())
+                self.dbManager.DelClientSettingAllRecords()
+                self.dbManager.AddClientSetting(self.ClientInfo)
+            else:
+                self.lineEdit_5.setText('Ctrl + ')
+        elif modifiers == Qt.AltModifier:
+            if keyevent.text():
+                self.lineEdit_5.setText('Alt + ' + chr(keyevent.key()))
+                self.ClientInfo['MSK'] = 'Alt + '+chr(keyevent.key())
+                self.dbManager.DelClientSettingAllRecords()
+                self.dbManager.AddClientSetting(self.ClientInfo)
+            else:
+                self.lineEdit_5.setText('Alt + ')
+        elif modifiers == (Qt.ControlModifier|Qt.AltModifier ):
+            if keyevent.text():
+                self.lineEdit_5.setText('Ctrl + Alt + ' + chr(keyevent.key()))
+                self.ClientInfo['MSK'] = 'Ctrl + Alt + '+chr(keyevent.key())
+                self.dbManager.DelClientSettingAllRecords()
+                self.dbManager.AddClientSetting(self.ClientInfo)
+            else:
+                self.lineEdit_5.setText('Ctrl + Alt + ')
+        else:
+            self.lineEdit_5.setText('')
     def init(self):
         self.setupUi(self.Dialog)
         self.label_2.setText('')
@@ -86,8 +197,12 @@ class SettingShow(Settingui.Ui_Dialog):
         self.label_25.setText('')
         self.label_35.setText('')
         self.label_36.setText('')
+        self.lineEdit_2.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.lineEdit_3.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.lineEdit_4.setFocusPolicy(QtCore.Qt.NoFocus)
         self.tabWidget.tabBar().hide()
         self.label.mousePressEvent = partial(self.NavOper,'NetCon')
+        self.label_17.mousePressEvent = self.DownFilePathSetting
         self.label_4.mousePressEvent = partial(self.NavOper, 'UpDOwn')
         self.label_6.mousePressEvent = partial(self.NavOper, 'Syn')
         self.label_8.mousePressEvent = partial(self.NavOper, 'Other')
@@ -95,6 +210,13 @@ class SettingShow(Settingui.Ui_Dialog):
         self.LoadClienttingConfig()
         self.pushButton.clicked.connect(self.hosttest)
         self.pushButton_2.clicked.connect(self.SaveConnect)
+        self.label_18.mousePressEvent = self.creat_DowNummenu
+        self.label_20.mousePressEvent = self.creat_UpNummenu
+        self.radioButton.clicked.connect(self.SycOpen_radio_button)
+        self.label_28.mousePressEvent = self.creat_SycFreNummenu
+        # self.lineEdit_5.textChanged.connect(self.MSKinput)
+        # self.lineEdit_5.changeEvent = self.MSKinput
+        self.lineEdit_5.keyPressEvent = self.MSKinput
     def ClearNavStyle(self):
         self.frame.setStyleSheet("#frame:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")
         self.frame_2.setStyleSheet("#frame_2:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")
