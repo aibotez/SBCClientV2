@@ -60,9 +60,6 @@ class FileSyc():
         return Files
 
 
-    def UpLoFile(self,info):
-        pass
-
     def SycMode1act(self):
         while True:
             print('Mode1 Start Scan')
@@ -86,9 +83,30 @@ class FileSyc():
                     else:
                         print('Have',FilesLo[i]['rofepath'])
             time.sleep(self.timeFre)
+    def SycMode3act(self):
+        while True:
+            print('Mode3 Start Scan')
+            if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
+                FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
+                FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
+                for i in FilesRo:
+                    if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']:
+                        pass
+            time.sleep(self.timeFre)
     def SycMode2act(self):
         while True:
             print('Mode2 Start Scan')
+            if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
+                FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
+                FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
+                for i in FilesRo:
+                    if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']:
+                        info ={}
+                        # info['LoFilePath'] = FilesLo[i]['fepath']
+                        # info['RoFilePath'] = FilesLo[i]['rofepath']
+                        # info['FileSize'] = FilesLo[i]['size']
+                        # info['RoFileFaPath'] = FilesLo[i]['rofapath']
+                        # info['FileName'] = FilesLo[i]['fename']
             time.sleep(self.timeFre)
     def GetSycFre(self):
         SycFre = self.ClientInfo['SycFre']
@@ -105,6 +123,12 @@ class FileSyc():
             self.timeFre = 60 * 60
         elif '2小时' in SycFre:
             self.timeFre = 2 * 60 * 60
+
+    def SycMode3(self):
+        self.GetSycFre()
+        t = threading.Thread(target=self.SycMode3act)
+        t.setDaemon(True)
+        t.start()
     def SycMode2(self):
         self.GetSycFre()
         t = threading.Thread(target=self.SycMode2act)
