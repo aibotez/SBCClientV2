@@ -417,8 +417,11 @@ class initWindow(QObject):
             self.SBCMain.usedCap.setMaximumSize(QtCore.QSize(usedper, 10))
 
     def init(self):
-
+        self.SBCMain.signalUpdateUser.emit()
         self.initBindSignal()
+        # self.SBCMain.FileUpdate = threading.Thread(target=self.FileUpdates.run)
+        # self.SBCMain.FileUpdate.setDaemon(True)
+        # self.SBCMain.FileUpdate.start()
         self.FileUpdates.start()
         FileShare_ = FileShare.FileShare(self.SBCMain)
 
@@ -434,7 +437,7 @@ class initWindow(QObject):
         self.SBCMain.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
 
 
-        self.SBCMain.signalUpdateUser.emit()
+
 
 
 
