@@ -3,6 +3,10 @@ from pack import DBManager
 import threading,json,hashlib
 from pack import UpFile2SBC
 from pack import DownFIleFromSBC
+from pynput import keyboard
+from PyQt5.QtWidgets import QApplication, QWidget
+
+from PyQt5.QtCore import *
 
 
 
@@ -29,6 +33,12 @@ class FileSyc():
         self.ui = ui
         self.dbManager = DBManager.DBManager()
         self.UpFile2SBCs = UpFile2SBC.UpFile2SBC(self.ui)
+
+    def on_press(self,key):
+        print(key)
+    def Listen(self):
+        with keyboard.Listener(on_press=self.on_press) as listener:
+            listener.join()
 
 
     def GetClientInfo(self):
@@ -153,6 +163,9 @@ class FileSyc():
         t.setDaemon(True)
         t.start()
     def SycMain(self):
+        # t = threading.Thread(target=self.Listen)
+        # t.setDaemon(True)
+        # t.start()
         self.GetClientInfo()
         self.DownFileFromSBC = DownFIleFromSBC.DownFile(self.ui,self.ClientInfo['BackupLoPath'])
         if not self.ClientInfo['SycOpen']:

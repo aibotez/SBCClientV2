@@ -182,8 +182,17 @@ class initWindow(QObject):
         self.FileSycs = FileSyc.FileSyc(self.SBCMain)
         self.FileSycs.SycMain()
 
-
+        self.WrVer()
         self.init()
+
+    def WrVer(self):
+        Ver = self.SBCMain.Version
+        if not os.path.isdir('Ver/'):
+            os.mkdir('Ver/')
+        if not os.path.exists('Ver/'+Ver):
+            with open('Ver/'+Ver,'w'):
+                pass
+
 
     def dragEnterEvent(self, evn):
         self.DrageFileIntoPath = evn.mimeData().text()
