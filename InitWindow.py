@@ -29,6 +29,7 @@ from SubUi import Setting1
 from PyQt5.QtCore import QObject, pyqtSignal
 from pack import UserCheck
 from pack import GetMoniterPPi
+from pack import FileSyc
 
 
 
@@ -178,6 +179,8 @@ class initWindow(QObject):
         # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
+        self.FileSycs = FileSyc.FileSyc(self.SBCMain)
+        self.FileSycs.SycMain()
 
 
         self.init()

@@ -140,6 +140,18 @@ class SBCRe():
 
         # FileDatas = json.loads(res.text)
         return json.loads(res.text)
+    def SycCheckSBCFile(self,data):
+        url = 'http://' + self.host + '/SycCheckSBCFile/'
+        res = requests.post(url, data=data, headers=self.headers)
+        return json.loads(res.text)
+
+    def GetAllFilesSyc(self,data):
+        url = 'http://' + self.host + '/GetAllFilesSyc/'
+        # print(self.headers)
+        res = requests.post(url, data=data,headers=self.headers)
+        # print(res)
+        FileDatas = json.loads(res.text)
+        return FileDatas
     def GetAllFilesfromFolder(self,data):
         url = 'http://' + self.host + '/GetAllFilesfromFolder/'
         # print(self.headers)

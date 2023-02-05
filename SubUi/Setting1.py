@@ -237,6 +237,7 @@ class SettingShow(Settingui.Ui_Dialog):
         self.lineEdit_3.setFocusPolicy(QtCore.Qt.NoFocus)
         self.lineEdit_4.setFocusPolicy(QtCore.Qt.NoFocus)
         self.lineEdit_6.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.textEdit_2.setFocusPolicy(QtCore.Qt.NoFocus)
         self.tabWidget.tabBar().hide()
         self.label.mousePressEvent = partial(self.NavOper,'NetCon')
         self.label_17.mousePressEvent = self.DownFilePathSetting
