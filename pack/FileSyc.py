@@ -2,6 +2,7 @@ import os,time,shutil,requests
 from pack import DBManager
 import threading,json,hashlib
 from pack import UpFile2SBC
+from pack import DownFIleFromSBC
 
 
 
@@ -29,6 +30,7 @@ class FileSyc():
         self.dbManager = DBManager.DBManager()
         self.UpFile2SBCs = UpFile2SBC.UpFile2SBC(self.ui)
 
+
     def GetClientInfo(self):
         self.ClientInfo = self.dbManager.GetClientSetting()
 
@@ -55,10 +57,27 @@ class FileSyc():
                     FileInfo['rofepath'] = self.ClientInfo['BackupRoPath'][0:-1] + fepath.replace(path,'/')
                     FileInfo['size'] = os.path.getsize(fepath)
                     FileInfo['date'] = os.stat(fepath).st_mtime
+                    FileInfo['filemd5'] = getfileMd5(fepath)
                     # FileInfo['fepath1'] = fepath.replace(path,'/')
                     Files[str_trans_to_md5(FileInfo['rofepath'])] = FileInfo
         return Files
 
+
+    def SycMode1act_(self,FilesLo,FilesRo):
+        FilesLo_ = [i for i in FilesLo if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
+        for i in FilesLo_:
+            if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']:
+                info = {}
+                info['LoFilePath'] = FilesLo[i]['fepath']
+                info['RoFilePath'] = FilesLo[i]['rofepath']
+                info['FileSize'] = FilesLo[i]['size']
+                info['RoFileFaPath'] = FilesLo[i]['rofapath']
+                info['FileName'] = FilesLo[i]['fename']
+                info['LoMD5'] = getfileMd5(FilesLo[i]['fepath'])
+                checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
+                info['FileSeekStart'] = checkinfo['FileStart']
+                self.UpFile2SBCs.UpFile(info)
+                time.sleep(0.2)
 
     def SycMode1act(self):
         while True:
@@ -66,47 +85,41 @@ class FileSyc():
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
-                for i in FilesLo:
-                    if i not in FilesRo or FilesLo[i]['date']>FilesRo[i]['date']:
-                        info ={}
-                        info['LoFilePath'] = FilesLo[i]['fepath']
-                        info['RoFilePath'] = FilesLo[i]['rofepath']
-                        info['FileSize'] = FilesLo[i]['size']
-                        info['RoFileFaPath'] = FilesLo[i]['rofapath']
-                        info['FileName'] = FilesLo[i]['fename']
-                        info['LoMD5'] = getfileMd5(FilesLo[i]['fepath'])
-                        checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
-                        info['FileSeekStart'] = checkinfo['FileStart']
-                        self.UpFile2SBCs.UpFile(info)
-                        print(FilesLo[i]['rofepath'],checkinfo)
-                        time.sleep(1)
-                    else:
-                        print('Have',FilesLo[i]['rofepath'])
+                self.SycMode1act_(FilesLo,FilesRo)
             time.sleep(self.timeFre)
+
+
     def SycMode3act(self):
         while True:
             print('Mode3 Start Scan')
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
-                for i in FilesRo:
-                    if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']:
-                        pass
+                self.SycMode1act_(FilesLo, FilesRo)
+                self.SycMode2act_(FilesLo,FilesRo)
+            # time.sleep(10)
             time.sleep(self.timeFre)
+
+    def SycMode2act_(self,FilesLo,FilesRo):
+        FilesRo_ = [i for i in FilesRo if i not in FilesLo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
+        for i in FilesRo_:
+            if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']:
+                info = {}
+                # info['LoFilePath'] = FilesLo[i]['fepath']
+                info['RoFilePath'] = FilesRo[i]['fepath']
+                # info['FileSize'] = FilesLo[i]['size']
+                info['RoFilePathdif'] = FilesRo[i]['fapath1']
+                info['FileName'] = FilesRo[i]['fename']
+                info['FileMD5'] = FilesRo[i]['filemd5']
+                self.DownFileFromSBC.Down(info)
+                time.sleep(0.2)
     def SycMode2act(self):
         while True:
             print('Mode2 Start Scan')
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
-                for i in FilesRo:
-                    if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']:
-                        info ={}
-                        # info['LoFilePath'] = FilesLo[i]['fepath']
-                        # info['RoFilePath'] = FilesLo[i]['rofepath']
-                        # info['FileSize'] = FilesLo[i]['size']
-                        # info['RoFileFaPath'] = FilesLo[i]['rofapath']
-                        # info['FileName'] = FilesLo[i]['fename']
+                self.SycMode2act_(FilesLo,FilesRo)
             time.sleep(self.timeFre)
     def GetSycFre(self):
         SycFre = self.ClientInfo['SycFre']
@@ -141,6 +154,7 @@ class FileSyc():
         t.start()
     def SycMain(self):
         self.GetClientInfo()
+        self.DownFileFromSBC = DownFIleFromSBC.DownFile(self.ui,self.ClientInfo['BackupLoPath'])
         if not self.ClientInfo['SycOpen']:
             return
         if self.ClientInfo['SycMode'] == 1:
@@ -148,4 +162,4 @@ class FileSyc():
         elif self.ClientInfo['SycMode'] == 2:
             self.SycMode2()
         elif self.ClientInfo['SycMode'] == 3:
-            pass
+            self.SycMode3()
