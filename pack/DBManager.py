@@ -109,7 +109,7 @@ class DBManager():
         self.conn.close()
 
     def creatClientSettingform(self):
-        sql = "create table ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate)"
+        sql = "create table ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate,SycMode)"
         self.cur.execute(sql)
         self.conn.commit()
     def creatUserDownRecordform(self):
@@ -133,16 +133,17 @@ class DBManager():
         for i in self.cur:
             info = list(i)
             Result = {'DownPath':info[0],'BackupLoPath':info[1],'host':info[2],'BackupRoPath':info[3],'DowNum':info[4],
-                      'UpNum':info[5],'SycOpen':info[6],'SycFre':info[7],'MSK':info[8],'AutoUpdate':info[9]}
+                      'UpNum':info[5],'SycOpen':info[6],'SycFre':info[7],'MSK':info[8],'AutoUpdate':info[9],
+                      'SycMode':info[10]}
         return Result
     def DelClientSettingAllRecords(self):
         sql = "DELETE FROM ClientSetting"
         self.cur.execute(sql)
         self.conn.commit()
     def AddClientSetting(self,info):
-        sql = "insert into ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate) values (?,?,?,?,?,?,?,?,?,?)"
+        sql = "insert into ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate,SycMode) values (?,?,?,?,?,?,?,?,?,?,?)"
         data = (info['DownPath'], info['BackupLoPath'], info['host'], info['BackupRoPath'],
-                info['DowNum'],info['UpNum'],info['SycOpen'],info['SycFre'],info['MSK'],info['AutoUpdate'])
+                info['DowNum'],info['UpNum'],info['SycOpen'],info['SycFre'],info['MSK'],info['AutoUpdate'],info['SycMode'])
         self.cur.execute(sql, data)
         self.conn.commit()
         return 1

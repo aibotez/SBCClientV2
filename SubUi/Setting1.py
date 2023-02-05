@@ -6,6 +6,7 @@ from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
 from PyQt5.QtCore import *
 from pack import DBManager
 from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog
+from pack import ChoseRoPathUi
 
 
 class SettingShow(Settingui.Ui_Dialog):
@@ -47,6 +48,7 @@ class SettingShow(Settingui.Ui_Dialog):
         self.radioButton_2.setChecked(self.ClientInfo['AutoUpdate'])
         self.lineEdit_4.setText(str(self.ClientInfo['SycFre']))
         self.lineEdit_5.setText(self.ClientInfo['MSK'])
+        self.lineEdit_6.setText(str(self.ClientInfo['SycMode']))
 
         # Filei['checkBox'].setChecked(False)
 
@@ -83,14 +85,22 @@ class SettingShow(Settingui.Ui_Dialog):
         FolderPath = QFileDialog.getExistingDirectory(self.ui.MainWindow, "选择文件夹", "./")
         if FolderPath:
             FolderPath += '/'
-            print(FolderPath)
             Result = self.dbManager.GetClientSetting()
             self.ClientInfo = Result
             self.ClientInfo['DownPath'] = FolderPath
             self.dbManager.DelClientSettingAllRecords()
             self.dbManager.AddClientSetting(self.ClientInfo)
             self.LoadClienttingConfig()
-
+    def SycLoPathSetting(self,e):
+        FolderPath = QFileDialog.getExistingDirectory(self.ui.MainWindow, "选择文件夹", "./")
+        if FolderPath:
+            FolderPath += '/'
+            Result = self.dbManager.GetClientSetting()
+            self.ClientInfo = Result
+            self.ClientInfo['BackupLoPath'] = FolderPath
+            self.dbManager.DelClientSettingAllRecords()
+            self.dbManager.AddClientSetting(self.ClientInfo)
+            self.LoadClienttingConfig()
     def saveDownNum(self,num,up = None):
         self.ClientInfo = self.dbManager.GetClientSetting()
         if up:
@@ -157,6 +167,23 @@ class SettingShow(Settingui.Ui_Dialog):
         self.action3.triggered.connect(lambda: self.saveSycFre('1小时'))
         self.action4.triggered.connect(lambda: self.saveSycFre('2小时'))
         self.action5.triggered.connect(lambda: self.saveSycFre('5分钟'))
+
+    def saveSycMode(self,num):
+        self.ClientInfo = self.dbManager.GetClientSetting()
+        self.ClientInfo['SycMode'] = num
+        self.dbManager.DelClientSettingAllRecords()
+        self.dbManager.AddClientSetting(self.ClientInfo)
+        self.LoadClienttingConfig()
+    def creat_SycModemenu(self,e):
+        self.groupBox_Upmenu = QMenu()
+        self.action1= self.groupBox_Upmenu.addAction(u'1')
+        self.action2 = self.groupBox_Upmenu.addAction(u'2')
+        self.action3 = self.groupBox_Upmenu.addAction(u'3')
+        self.groupBox_Upmenu.popup(QCursor.pos())
+        self.groupBox_Upmenu.setStyleSheet("QMenu{margin:0px 2px 2px 2px;color:blue;font-size:10px;}")
+        self.action1.triggered.connect(lambda :self.saveSycMode(1))
+        self.action2.triggered.connect(lambda: self.saveSycMode(2))
+        self.action3.triggered.connect(lambda: self.saveSycMode(3))
     def MSKinput(self,keyevent):
         self.ClientInfo = self.dbManager.GetClientSetting()
         modifiers = keyevent.modifiers()
@@ -186,6 +213,15 @@ class SettingShow(Settingui.Ui_Dialog):
                 self.lineEdit_5.setText('Ctrl + Alt + ')
         else:
             self.lineEdit_5.setText('')
+    def SycRoPathSetting(self,e):
+        ChoseRoPathui = ChoseRoPathUi.ChoseRoPathUi(self.ui)
+        if ChoseRoPathui.ChosedRoPath:
+            self.ClientInfo = self.dbManager.GetClientSetting()
+            self.ClientInfo['BackupRoPath'] = ChoseRoPathui.ChosedRoPath
+            self.dbManager.DelClientSettingAllRecords()
+            self.dbManager.AddClientSetting(self.ClientInfo)
+            self.LoadClienttingConfig()
+
     def init(self):
         self.setupUi(self.Dialog)
         self.label_2.setText('')
@@ -200,6 +236,7 @@ class SettingShow(Settingui.Ui_Dialog):
         self.lineEdit_2.setFocusPolicy(QtCore.Qt.NoFocus)
         self.lineEdit_3.setFocusPolicy(QtCore.Qt.NoFocus)
         self.lineEdit_4.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.lineEdit_6.setFocusPolicy(QtCore.Qt.NoFocus)
         self.tabWidget.tabBar().hide()
         self.label.mousePressEvent = partial(self.NavOper,'NetCon')
         self.label_17.mousePressEvent = self.DownFilePathSetting
@@ -217,6 +254,9 @@ class SettingShow(Settingui.Ui_Dialog):
         # self.lineEdit_5.textChanged.connect(self.MSKinput)
         # self.lineEdit_5.changeEvent = self.MSKinput
         self.lineEdit_5.keyPressEvent = self.MSKinput
+        self.label_39.mousePressEvent = self.creat_SycModemenu
+        self.label_23.mousePressEvent = self.SycLoPathSetting
+        self.label_26.mousePressEvent = self.SycRoPathSetting
     def ClearNavStyle(self):
         self.frame.setStyleSheet("#frame:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")
         self.frame_2.setStyleSheet("#frame_2:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")

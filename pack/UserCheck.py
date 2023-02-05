@@ -28,7 +28,8 @@ class UserCheck():
         self.SBCDownDisk = Diskexist[-1]
         self.SBCDownPath = self.SBCDownDisk+'小黑云下载/'
         self.dbManager = DBManager.DBManager({'BackupLoPath':'','DownPath':self.SBCDownPath,'host':self.ui.YM0,'BackupRoPath':'',
-                                              'DowNum':2,'UpNum':2,'SycOpen':0,'SycFre':'','MSK':'','AutoUpdate':1})
+                                              'DowNum':2,'UpNum':2,'SycOpen':0,'SycFre':'','MSK':'','AutoUpdate':1,
+                                              'SycMode':1})
 
 
 
@@ -108,7 +109,7 @@ class UserCheck():
         if not Result:
             self.dbManager.AddClientSetting(
                 {'BackupLoPath': '', 'DownPath': self.SBCDownPath, 'host': self.ui.YM0, 'BackupRoPath': '',
-                 'DowNum': 2, 'UpNum': 2, 'SycOpen': 0, 'SycFre': '', 'MSK': '', 'AutoUpdate': 1})
+                 'DowNum': 2, 'UpNum': 2, 'SycOpen': 0, 'SycFre': '', 'MSK': '', 'AutoUpdate': 1,'SycMode':1})
             Result = self.dbManager.GetClientSetting()
         self.ui.DownPath = Result['DownPath']
         hosts = Result['host']

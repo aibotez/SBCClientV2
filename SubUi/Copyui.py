@@ -115,7 +115,7 @@ class CopyUi(Moveui.Ui_Dialog):
                 'movefilesinfo':ChosedFiles
             }
             res = self.ui.SBCRe.SBCFileCopy(moveinfo)
-            self.Dialog.destroy()
+            self.Dialog.close()
 
     def GetBranch(self,path,FaTree):
         childs = [FaTree.child(i) for i in range(FaTree.childCount())]
