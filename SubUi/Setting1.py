@@ -7,17 +7,25 @@ from PyQt5.QtCore import *
 from pack import DBManager
 from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QFileDialog,QMessageBox,QDialog
 from pack import ChoseRoPathUi
+from pack import Update
+import sys
 
 
-class SettingShow(Settingui.Ui_Dialog):
+class SettingShow(Settingui.Ui_Dialog,QObject):
+    signalUpdateProgress = pyqtSignal(str)
+    signalexit = pyqtSignal()
     def __init__(self,Dialog,ui):
         super().__init__()
         self.ui = ui
+        self.signalUpdateProgress.connect(self.UpdateProgress)
+        self.signalexit.connect(lambda :sys.exit())
+        self.update = Update.Update(self.ui)
         self.Dialog = Dialog
         self.dbManager = DBManager.DBManager()
         self.init()
 
-
+    def UpdateProgress(self,progress):
+        self.label_36.setText(progress)
     def GetClientInfo(self):
         Result = self.dbManager.GetClientSetting()
         # self.ui.DownPath = Result['DownPath']
@@ -221,7 +229,16 @@ class SettingShow(Settingui.Ui_Dialog):
             self.dbManager.DelClientSettingAllRecords()
             self.dbManager.AddClientSetting(self.ClientInfo)
             self.LoadClienttingConfig()
-
+    def Update(self,e):
+        RoVer = self.update.GetRoVersion()
+        RoVerstr = RoVer['Ver']
+        # self.update.RoVer = RoVerstr
+        RoVerint = RoVer['Verint']
+        LoVerstr = self.ui.Version
+        LoVerint = int(LoVerstr.replace('.',''))
+        self.label_35.setText(RoVerstr)
+        if RoVerint> LoVerint:
+            self.label_36.setText('立即更新')
     def init(self):
         self.setupUi(self.Dialog)
         self.label_2.setText('')
@@ -258,6 +275,8 @@ class SettingShow(Settingui.Ui_Dialog):
         self.label_39.mousePressEvent = self.creat_SycModemenu
         self.label_23.mousePressEvent = self.SycLoPathSetting
         self.label_26.mousePressEvent = self.SycRoPathSetting
+        self.label_33.mousePressEvent = self.Update
+        self.label_36.mousePressEvent = lambda e: self.update.Downact(self.signalUpdateProgress,self.signalexit)
     def ClearNavStyle(self):
         self.frame.setStyleSheet("#frame:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")
         self.frame_2.setStyleSheet("#frame_2:hover{background:#D0D3D4;border-radius:18px;opacity:0.5;}")
