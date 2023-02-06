@@ -241,6 +241,7 @@ class SettingShow(Settingui.Ui_Dialog,QObject):
             self.label_36.setText('立即更新')
     def init(self):
         self.setupUi(self.Dialog)
+        self.label_32.setText(self.ui.Version)
         self.label_2.setText('')
         self.label_3.setText('')
         self.label_5.setText('')

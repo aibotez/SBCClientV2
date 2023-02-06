@@ -182,7 +182,7 @@ class initWindow(QObject):
         self.FileSycs = FileSyc.FileSyc(self.SBCMain)
         self.FileSycs.SycMain()
 
-        self.WrVer()
+        # self.WrVer()
         self.init()
 
     def WrVer(self):

@@ -48,9 +48,10 @@ class Update():
                     f.write(chunk)
         LoFIleMD5 = self.GetFileMd5(fepath)
         if LoFIleMD5 == r.headers['FileMd5']:
-            os.system('start UpdateSoft.py &')
+            os.system('start UpdateSoft.exe &')
             # subprocess.Popen('start D:/项目/SBCClientV2/UpdateSoft.py')
             signalexit.emit()
             # sys.exit()
+
         else:
             os.remove(fepath)

@@ -33,6 +33,7 @@ class Update():
         VerMax = self.GetMaxVer()
         srcpath = '{}SBC_{}_.7z'.format(self.path,VerMax)
         self.un7z_file(srcpath,'./')
+        os.system('start SBCclient0.exe &')
 
 time.sleep(2)
 Update = Update()
