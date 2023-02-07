@@ -1,1 +1,0 @@
-pyuic5 -o DelFileMessage.py DelFile.ui

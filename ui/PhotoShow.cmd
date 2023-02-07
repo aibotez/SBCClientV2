@@ -1,1 +1,0 @@
-pyuic5 -o PhotoShow.py PhotoShow.ui

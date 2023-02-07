@@ -1,0 +1,1 @@
+pyinstaller SBCclient0.spec
