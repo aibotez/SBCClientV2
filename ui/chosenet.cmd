@@ -1,0 +1,1 @@
+pyuic5 -o chosenetframe.py chosenetframe.ui

@@ -1,0 +1,1 @@
+pyuic5 -o Transmitui.py Transmit.ui

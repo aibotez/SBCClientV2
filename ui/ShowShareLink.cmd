@@ -1,0 +1,1 @@
+pyuic5 -o ShowShareLinkui.py ShowShareLink.ui
