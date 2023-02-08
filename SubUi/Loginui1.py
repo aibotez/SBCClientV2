@@ -45,6 +45,8 @@ class LoginUi(Loginui.Ui_Dialog):
                 self.WRUserLoginInfo()
                 # self.ui.SBCLoginWindowDialog.destroy()
                 self.ui.SBCLoginWindowDialog.close()
+            else:
+                self.label_6.setText('账号或密码错误')
 
     def Login(self):
         self.ui.SBCLoginWindowDialog = QDialog()

@@ -2,6 +2,7 @@
 import sys,threading,os,hashlib
 import time
 
+sys.path.append('.')
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -152,9 +153,10 @@ class initWindow(QObject):
         self.SBCMain.PPIh0 = 33.75
         self.SBCMain.signalUpdateUser = self.signalUpdateUser
         self.SBCMain.signalUpdateUser.connect(self.UpdateUserInfo)
-        [PPIw,PPIh] = GetMoniterPPi.GetMoniterPPI()
-        self.SBCMain.PPIwper = PPIw/self.SBCMain.PPIw0
-        self.SBCMain.PPIhper = PPIh/self.SBCMain.PPIh0
+
+        # [PPIw,PPIh] = GetMoniterPPi.GetMoniterPPI()
+        # self.SBCMain.PPIwper = PPIw/self.SBCMain.PPIw0
+        # self.SBCMain.PPIhper = PPIh/self.SBCMain.PPIh0
         self.SBCMain.MainWindow = self.Main
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         # self.SBCMain.MainWindow.hide()
