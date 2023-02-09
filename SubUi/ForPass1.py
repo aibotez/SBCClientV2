@@ -63,11 +63,12 @@ class ForPassUi(ForPassui.Ui_Dialog):
         else:
             self.label_6.setText(Res)
     def ForPass(self,e):
-        self.label_7.setText('Ver {} Copyright by zz'.format(self.ui.Version))
+
         self.ui.SBCLoginWindowDialog.hide()
         self.ui.SBCForPassWindowDialog = QDialog()
         # self.ui.SBCLoginWindowDialog.setWindowModality(Qt.ApplicationModal)
         self.ui.SBCRegiWindow = self.setupUi(self.ui.SBCForPassWindowDialog)
+        self.label_7.setText('Ver {} Copyright by zz'.format(self.ui.Version))
         # self.ui.SBCForPassWindowDialog.resize(1000, 870)
         # self.frame_9.setMaximumSize(QtCore.QSize(16777215, 55))
         self.ui.SBCForPassWindowDialog.setStyleSheet("#Dialog{border-image:url(img/login.jpg)}")

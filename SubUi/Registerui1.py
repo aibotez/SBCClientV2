@@ -62,11 +62,12 @@ class RegisterUi(Registerui.Ui_Dialog):
         Loginui = Loginui1.LoginUi(self.ui)
         Loginui.Login()
     def Regi(self,e):
-        self.label_7.setText('Ver {} Copyright by zz'.format(self.ui.Version))
+
         self.ui.SBCLoginWindowDialog.hide()
         self.ui.SBCRegiWindowDialog = QDialog()
         # self.ui.SBCLoginWindowDialog.setWindowModality(Qt.ApplicationModal)
         self.ui.SBCRegiWindow = self.setupUi(self.ui.SBCRegiWindowDialog)
+        self.label_7.setText('Ver {} Copyright by zz'.format(self.ui.Version))
         # self.ui.SBCRegiWindowDialog.resize(1000, 870)
         # self.frame_9.setMaximumSize(QtCore.QSize(16777215, 55))
         # self.ui.SBCLoginWindowDialog.setStyleSheet("#Dialog{border-image:url(img/login.jpg)}")
