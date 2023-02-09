@@ -24,7 +24,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">#frame_3{
-	background:#ffffff;
+	background:#e8e8e8;
 	border-radius:26px;
 }</string>
    </property>

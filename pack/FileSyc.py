@@ -134,8 +134,8 @@ class FileSyc(QObject):
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 self.SycMode1act_(FilesLo, FilesRo)
                 self.signalScan.emit(0)
-            # time.sleep(self.timeFre)
-            time.sleep(10)
+            time.sleep(self.timeFre)
+            # time.sleep(10)
 
 
     def SycMode3act(self):

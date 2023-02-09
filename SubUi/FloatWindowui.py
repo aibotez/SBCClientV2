@@ -15,7 +15,7 @@ class Ui_Dialog(object):
         self.frame_3 = QtWidgets.QFrame(Dialog)
         self.frame_3.setGeometry(QtCore.QRect(90, 140, 241, 71))
         self.frame_3.setStyleSheet("#frame_3{\n"
-"    background:#ffffff;\n"
+"    background:#e8e8e8;\n"
 "    border-radius:26px;\n"
 "}")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
