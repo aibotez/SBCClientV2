@@ -49,6 +49,7 @@ class LoginUi(Loginui.Ui_Dialog):
                 self.label_6.setText('账号或密码错误')
 
     def Login(self):
+        self.label_7.setText('Ver {} Copyright by zz'.format(self.ui.Version))
         self.ui.SBCLoginWindowDialog = QDialog()
         # self.ui.SBCLoginWindowDialog.setWindowModality(Qt.ApplicationModal)
         self.ui.SBCLoginWindow = self.setupUi(self.ui.SBCLoginWindowDialog)

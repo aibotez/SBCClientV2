@@ -6,7 +6,7 @@ class Update():
     def un7z_file(self,zip_file,extract_dir):
         with py7zr.SevenZipFile(zip_file, 'r') as archive:
             fies = archive.getnames()
-            files = [i for i in fies if 'UpdateSoft' not in fies and 'UserDB' not in fies]
+            files = [i for i in fies if 'UpdateSoft' not in i and 'UserDB' not in i]
             archive.extract(path=extract_dir,targets = files)
 
     def GetMaxVer(self,client = 'windows'):

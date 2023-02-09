@@ -63,6 +63,7 @@ class ForPassUi(ForPassui.Ui_Dialog):
         else:
             self.label_6.setText(Res)
     def ForPass(self,e):
+        self.label_7.setText('Ver {} Copyright by zz'.format(self.ui.Version))
         self.ui.SBCLoginWindowDialog.hide()
         self.ui.SBCForPassWindowDialog = QDialog()
         # self.ui.SBCLoginWindowDialog.setWindowModality(Qt.ApplicationModal)

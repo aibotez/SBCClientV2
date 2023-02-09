@@ -62,6 +62,7 @@ class RegisterUi(Registerui.Ui_Dialog):
         Loginui = Loginui1.LoginUi(self.ui)
         Loginui.Login()
     def Regi(self,e):
+        self.label_7.setText('Ver {} Copyright by zz'.format(self.ui.Version))
         self.ui.SBCLoginWindowDialog.hide()
         self.ui.SBCRegiWindowDialog = QDialog()
         # self.ui.SBCLoginWindowDialog.setWindowModality(Qt.ApplicationModal)
