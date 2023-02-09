@@ -132,8 +132,9 @@ class FileSyc(QObject):
                 self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
-                self.SycMode1act_(FilesLo, FilesRo)
                 self.signalScan.emit(0)
+                self.SycMode1act_(FilesLo, FilesRo)
+
             time.sleep(self.timeFre)
             # time.sleep(10)
 
@@ -145,9 +146,10 @@ class FileSyc(QObject):
                 self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
+                self.signalScan.emit(0)
                 self.SycMode1act_(FilesLo, FilesRo)
                 self.SycMode2act_(FilesLo,FilesRo)
-                self.signalScan.emit(0)
+
             # time.sleep(10)
             time.sleep(self.timeFre)
 
@@ -182,8 +184,9 @@ class FileSyc(QObject):
                 self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
-                self.SycMode2act_(FilesLo,FilesRo)
                 self.signalScan.emit(0)
+                self.SycMode2act_(FilesLo,FilesRo)
+
             time.sleep(self.timeFre)
     def GetSycFre(self):
         SycFre = self.ClientInfo['SycFre']
