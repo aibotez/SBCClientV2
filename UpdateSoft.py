@@ -1,7 +1,4 @@
-import os,py7zr,requests,hashlib,time
-import shutil,re
-from py7zr import unpack_7zarchive
-import multivolumefile
+import os,py7zr,time
 
 class Update():
     def __init__(self):

@@ -77,17 +77,22 @@ class FileSyc():
         FilesLo_ = [i for i in FilesLo if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
         for i in FilesLo_:
             if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']:
-                info = {}
-                info['LoFilePath'] = FilesLo[i]['fepath']
-                info['RoFilePath'] = FilesLo[i]['rofepath']
-                info['FileSize'] = FilesLo[i]['size']
-                info['RoFileFaPath'] = FilesLo[i]['rofapath']
-                info['FileName'] = FilesLo[i]['fename']
-                info['LoMD5'] = getfileMd5(FilesLo[i]['fepath'])
-                checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
-                info['FileSeekStart'] = checkinfo['FileStart']
-                self.UpFile2SBCs.UpFile(info)
+                try:
+                    info = {}
+                    info['LoFilePath'] = FilesLo[i]['fepath']
+                    info['RoFilePath'] = FilesLo[i]['rofepath']
+                    info['FileSize'] = FilesLo[i]['size']
+                    info['RoFileFaPath'] = FilesLo[i]['rofapath']
+                    info['FileName'] = FilesLo[i]['fename']
+                    info['LoMD5'] = getfileMd5(FilesLo[i]['fepath'])
+                    checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
+                    info['FileSeekStart'] = checkinfo['FileStart']
+                    self.UpFile2SBCs.UpFile(info)
+                except Exception as e:
+                    self.ui.OutErrorInfo(str(e))
                 time.sleep(0.2)
+
+
 
     def SycMode1act(self):
         while True:
@@ -95,7 +100,7 @@ class FileSyc():
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
-                self.SycMode1act_(FilesLo,FilesRo)
+                self.SycMode1act_(FilesLo, FilesRo)
             time.sleep(self.timeFre)
 
 
@@ -114,14 +119,17 @@ class FileSyc():
         FilesRo_ = [i for i in FilesRo if i not in FilesLo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
         for i in FilesRo_:
             if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']:
-                info = {}
-                # info['LoFilePath'] = FilesLo[i]['fepath']
-                info['RoFilePath'] = FilesRo[i]['fepath']
-                # info['FileSize'] = FilesLo[i]['size']
-                info['RoFilePathdif'] = FilesRo[i]['fapath1']
-                info['FileName'] = FilesRo[i]['fename']
-                info['FileMD5'] = FilesRo[i]['filemd5']
-                self.DownFileFromSBC.Down(info)
+                try:
+                    info = {}
+                    # info['LoFilePath'] = FilesLo[i]['fepath']
+                    info['RoFilePath'] = FilesRo[i]['fepath']
+                    # info['FileSize'] = FilesLo[i]['size']
+                    info['RoFilePathdif'] = FilesRo[i]['fapath1']
+                    info['FileName'] = FilesRo[i]['fename']
+                    info['FileMD5'] = FilesRo[i]['filemd5']
+                    self.DownFileFromSBC.Down(info)
+                except Exception as e:
+                    self.ui.OutErrorInfo(str(e))
                 time.sleep(0.2)
     def SycMode2act(self):
         while True:

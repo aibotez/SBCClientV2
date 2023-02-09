@@ -147,8 +147,8 @@ class initWindow(QObject):
         # return
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
-        self.SBCMain.Version = '2.0.0'
-        self.SBCMain.YM0 = 'pi.sbc.plus:90'
+        self.SBCMain.Version = '2.0.0.0'
+        self.SBCMain.YM0 = 'pi.sbc.plus:800'
         self.SBCMain.PPIw0 = 36.92
         self.SBCMain.PPIh0 = 33.75
         self.SBCMain.signalUpdateUser = self.signalUpdateUser
@@ -182,6 +182,7 @@ class initWindow(QObject):
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         self.FileSycs = FileSyc.FileSyc(self.SBCMain)
+        self.SBCMain.OutErrorInfo = self.OutErrorInfo
         self.FileSycs.SycMain()
 
         # self.WrVer()
@@ -195,6 +196,10 @@ class initWindow(QObject):
             with open('Ver/'+Ver,'w'):
                 pass
 
+    def OutErrorInfo(self,err):
+        localtime = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        with open('SBCErrorlog.txt','a') as f:
+            f.write(localtime+'\n'+err+'\n')
 
     def dragEnterEvent(self, evn):
         self.DrageFileIntoPath = evn.mimeData().text()

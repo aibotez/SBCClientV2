@@ -37,6 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+	icon='D:\\zz\\代码项目\\SBC\\SBCClientV2\\img\\SBCCon.ico',
 )
 coll = COLLECT(
     exe,
