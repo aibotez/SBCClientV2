@@ -21,7 +21,7 @@ class FloatWd(FloatWindowui.Ui_Dialog):
         self.Dialog.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.Dialog.setWindowOpacity(0.9)
         self.Dialog.setCursor(Qt.PointingHandCursor)
-        self.Dialog.setWindowFlags(Qt.FramelessWindowHint)
+        # self.Dialog.setWindowFlags(Qt.FramelessWindowHint|Qt.Tool)
         self.Dialog.setAttribute(Qt.WA_TranslucentBackground)
         self.Dialog.mousePressEvent = self.mousePressEvent
         self.Dialog.mouseMoveEvent = self.mouseMoveEvent
