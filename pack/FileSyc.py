@@ -32,6 +32,7 @@ def getfileMd5(filename):
 class FileSyc(QObject):
     signalUpdateProgress = pyqtSignal(list)
     signalScan = pyqtSignal(int)
+    signalUpDow = pyqtSignal(int)
     def __init__(self,ui):
         super().__init__()
         self.ui = ui
@@ -39,13 +40,18 @@ class FileSyc(QObject):
         self.UpFile2SBCs = UpFile2SBC.UpFile2SBC(self.ui)
         self.signalUpdateProgress.connect(self.UpdateProgress)
         self.signalScan.connect(self.Scancon)
+        self.signalUpDow.connect(self.SUpDownCon)
 
+    def SUpDownCon(self,judge):
+        if judge:
+            self.ui.FloatWind.label_8.setText('↑')
+        else:
+            self.ui.FloatWind.label_8.setText('↓')
     def Scancon(self,judge):
         if judge:
             self.ui.FloatWind.label_9.setPixmap(QtGui.QPixmap('img/scan.png'))
             self.ui.FloatWind.label_9.setScaledContents(True)
         else:
-
             self.ui.FloatWind.label_9.setPixmap(QtGui.QPixmap(""))
     def UpdateProgress(self,progess):
         Uped = str(progess[0])
@@ -95,6 +101,7 @@ class FileSyc(QObject):
         FilesLo_ = [i for i in FilesLo if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
         FileWaits = [i for i in FilesLo_ if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']]
         self.signalUpdateProgress.emit([0,len(FileWaits)])
+        self.signalUpDow.emit(1)
         SycUped = 0
         for i in FileWaits:
             try:
@@ -127,7 +134,8 @@ class FileSyc(QObject):
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 self.SycMode1act_(FilesLo, FilesRo)
                 self.signalScan.emit(0)
-            time.sleep(self.timeFre)
+            # time.sleep(self.timeFre)
+            time.sleep(10)
 
 
     def SycMode3act(self):
@@ -148,6 +156,7 @@ class FileSyc(QObject):
 
         FileWaits = [i for i in FilesRo_ if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']]
         self.signalUpdateProgress.emit([0,len(FileWaits)])
+        self.signalUpDow.emit(0)
         SycUped = 0
         for i in FileWaits:
             try:
