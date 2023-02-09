@@ -197,9 +197,13 @@ class initWindow(QObject):
                 pass
 
     def OutErrorInfo(self,err):
-        localtime = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        with open('SBCErrorlog.txt','a') as f:
-            f.write(localtime+'\n'+err+'\n')
+        localtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        if not os.path.exists('SBCErrorlog.txt'):
+            with open('SBCErrorlog.txt', 'w') as f:
+                f.write(localtime + '\n' + err + '\n')
+        else:
+            with open('SBCErrorlog.txt','a') as f:
+                f.write(localtime+'\n'+err+'\n')
 
     def dragEnterEvent(self, evn):
         self.DrageFileIntoPath = evn.mimeData().text()
