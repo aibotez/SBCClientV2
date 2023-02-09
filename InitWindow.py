@@ -31,6 +31,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from pack import UserCheck
 from pack import GetMoniterPPi
 from pack import FileSyc
+from SubUi import FloatWindowui1
 
 
 
@@ -158,6 +159,8 @@ class initWindow(QObject):
         # self.SBCMain.PPIwper = PPIw/self.SBCMain.PPIw0
         # self.SBCMain.PPIhper = PPIh/self.SBCMain.PPIh0
         self.SBCMain.MainWindow = self.Main
+        self.SBCMain.FloatWind = FloatWindowui1.FloatWd(self.SBCMain)
+        # self.SBCMain.FloatWind.setupUi(self.Main)
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         # self.SBCMain.MainWindow.hide()
         self.SBCMain.setupUi(self.Main)
@@ -171,7 +174,7 @@ class initWindow(QObject):
         # self.SBCMain.setupUi(self.Main)
         # self.SBCMain.MainWindow.show()
         self.SBCMain.TranspArrow = self.SBCMain.label_23
-        # self.SBCMain.TranspArrow.setText("↑↓")
+        # self.SBCMain.TranspArrow.setText("↓↑")
         self.SBCMain.DownRecordFile = 'DownRecord.txt'
         self.SBCMain.UpRecordFile = 'UpRecord.txt'
         self.SBCMain.FinishRcordFile = 'FinishRcord.txt'
