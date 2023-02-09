@@ -89,7 +89,8 @@ class FileSyc():
                     info['FileSeekStart'] = checkinfo['FileStart']
                     self.UpFile2SBCs.UpFile(info)
                 except Exception as e:
-                    self.ui.OutErrorInfo(str(e))
+                    self.ui.OutErrorInfo(str(e)+'#'+FilesLo[i]['fepath'])
+                    continue
                 time.sleep(0.2)
 
 
@@ -129,7 +130,8 @@ class FileSyc():
                     info['FileMD5'] = FilesRo[i]['filemd5']
                     self.DownFileFromSBC.Down(info)
                 except Exception as e:
-                    self.ui.OutErrorInfo(str(e))
+                    self.ui.OutErrorInfo(str(e)+'#'+FilesRo[i]['fepath'])
+                    continue
                 time.sleep(0.2)
     def SycMode2act(self):
         while True:
