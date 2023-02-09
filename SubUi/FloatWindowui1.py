@@ -26,7 +26,19 @@ class FloatWd(FloatWindowui.Ui_Dialog):
         self.Dialog.mousePressEvent = self.mousePressEvent
         self.Dialog.mouseMoveEvent = self.mouseMoveEvent
         self.Dialog.mouseMoveEvent = self.mouseMoveEvent
-        # self.setupUi(self.ui.MainWindow)
+        self.label_6.setText('')
+        self.label_7.setText('')
+        self.label_9.setText('')
+        self.label_9.setMaximumSize(QtCore.QSize(20, 20))
+        self.label_9.setMinimumSize(QtCore.QSize(20, 20))
+
+        desktop = QApplication.desktop()
+        self.Screenwidth = desktop.width()
+        self.Screenheight = desktop.height()
+        window_width = self.Dialog.geometry().width()
+        window_height = self.Dialog.geometry().height()
+        self.Dialog.setGeometry(self.Screenwidth - window_width - 10, self.Screenheight - window_height-10, window_width, window_height)
+
         # 鼠标按下时，记录鼠标相对窗口的位置
 
 

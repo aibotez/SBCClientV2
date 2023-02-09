@@ -5,6 +5,7 @@ from pack import UpFile2SBC
 from pack import DownFIleFromSBC
 from pynput import keyboard
 from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from PyQt5.QtCore import *
 
@@ -28,12 +29,29 @@ def getfileMd5(filename):
         myhash.update(b)
     f.close()
     return myhash.hexdigest()
-class FileSyc():
+class FileSyc(QObject):
+    signalUpdateProgress = pyqtSignal(list)
+    signalScan = pyqtSignal(int)
     def __init__(self,ui):
+        super().__init__()
         self.ui = ui
         self.dbManager = DBManager.DBManager()
         self.UpFile2SBCs = UpFile2SBC.UpFile2SBC(self.ui)
+        self.signalUpdateProgress.connect(self.UpdateProgress)
+        self.signalScan.connect(self.Scancon)
 
+    def Scancon(self,judge):
+        if judge:
+            self.ui.FloatWind.label_9.setPixmap(QtGui.QPixmap('img/scan.png'))
+            self.ui.FloatWind.label_9.setScaledContents(True)
+        else:
+
+            self.ui.FloatWind.label_9.setPixmap(QtGui.QPixmap(""))
+    def UpdateProgress(self,progess):
+        Uped = str(progess[0])
+        total = str(progess[-1])
+        self.ui.FloatWind.label_6.setText(Uped)
+        self.ui.FloatWind.label_7.setText(total)
     def on_press(self,key):
         print(key)
     def Listen(self):
@@ -75,23 +93,28 @@ class FileSyc():
 
     def SycMode1act_(self,FilesLo,FilesRo):
         FilesLo_ = [i for i in FilesLo if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
-        for i in FilesLo_:
-            if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']:
-                try:
-                    info = {}
-                    info['LoFilePath'] = FilesLo[i]['fepath']
-                    info['RoFilePath'] = FilesLo[i]['rofepath']
-                    info['FileSize'] = FilesLo[i]['size']
-                    info['RoFileFaPath'] = FilesLo[i]['rofapath']
-                    info['FileName'] = FilesLo[i]['fename']
-                    info['LoMD5'] = getfileMd5(FilesLo[i]['fepath'])
-                    checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
-                    info['FileSeekStart'] = checkinfo['FileStart']
-                    self.UpFile2SBCs.UpFile(info)
-                except Exception as e:
-                    self.ui.OutErrorInfo(str(e)+'#'+FilesLo[i]['fepath'])
-                    continue
-                time.sleep(0.2)
+        FileWaits = [i for i in FilesLo_ if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']]
+        self.signalUpdateProgress.emit([0,len(FileWaits)])
+        SycUped = 0
+        for i in FileWaits:
+            try:
+                info = {}
+                info['LoFilePath'] = FilesLo[i]['fepath']
+                info['RoFilePath'] = FilesLo[i]['rofepath']
+                info['FileSize'] = FilesLo[i]['size']
+                info['RoFileFaPath'] = FilesLo[i]['rofapath']
+                info['FileName'] = FilesLo[i]['fename']
+                info['LoMD5'] = getfileMd5(FilesLo[i]['fepath'])
+                checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
+                info['FileSeekStart'] = checkinfo['FileStart']
+                self.UpFile2SBCs.UpFile(info)
+                SycUped += 1
+                self.signalUpdateProgress.emit([SycUped, len(FileWaits)])
+            except Exception as e:
+                self.ui.OutErrorInfo(str(e) + '#' + FilesLo[i]['fepath'])
+                continue
+            time.sleep(0.2)
+        self.signalUpdateProgress.emit([0, 0])
 
 
 
@@ -99,9 +122,11 @@ class FileSyc():
         while True:
             print('Mode1 Start Scan')
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
+                self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 self.SycMode1act_(FilesLo, FilesRo)
+                self.signalScan.emit(0)
             time.sleep(self.timeFre)
 
 
@@ -109,37 +134,47 @@ class FileSyc():
         while True:
             print('Mode3 Start Scan')
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
+                self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 self.SycMode1act_(FilesLo, FilesRo)
                 self.SycMode2act_(FilesLo,FilesRo)
+                self.signalScan.emit(0)
             # time.sleep(10)
             time.sleep(self.timeFre)
 
     def SycMode2act_(self,FilesLo,FilesRo):
         FilesRo_ = [i for i in FilesRo if i not in FilesLo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
-        for i in FilesRo_:
-            if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']:
-                try:
-                    info = {}
-                    # info['LoFilePath'] = FilesLo[i]['fepath']
-                    info['RoFilePath'] = FilesRo[i]['fepath']
-                    # info['FileSize'] = FilesLo[i]['size']
-                    info['RoFilePathdif'] = FilesRo[i]['fapath1']
-                    info['FileName'] = FilesRo[i]['fename']
-                    info['FileMD5'] = FilesRo[i]['filemd5']
-                    self.DownFileFromSBC.Down(info)
-                except Exception as e:
-                    self.ui.OutErrorInfo(str(e)+'#'+FilesRo[i]['fepath'])
-                    continue
-                time.sleep(0.2)
+
+        FileWaits = [i for i in FilesRo_ if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']]
+        self.signalUpdateProgress.emit([0,len(FileWaits)])
+        SycUped = 0
+        for i in FileWaits:
+            try:
+                info = {}
+                # info['LoFilePath'] = FilesLo[i]['fepath']
+                info['RoFilePath'] = FilesRo[i]['fepath']
+                # info['FileSize'] = FilesLo[i]['size']
+                info['RoFilePathdif'] = FilesRo[i]['fapath1']
+                info['FileName'] = FilesRo[i]['fename']
+                info['FileMD5'] = FilesRo[i]['filemd5']
+                self.DownFileFromSBC.Down(info)
+                SycUped += 1
+                self.signalUpdateProgress.emit([SycUped, len(FileWaits)])
+            except Exception as e:
+                self.ui.OutErrorInfo(str(e) + '#' + FilesRo[i]['fepath'])
+                continue
+            time.sleep(0.2)
+        self.signalUpdateProgress.emit([0, 0])
     def SycMode2act(self):
         while True:
             print('Mode2 Start Scan')
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
+                self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 self.SycMode2act_(FilesLo,FilesRo)
+                self.signalScan.emit(0)
             time.sleep(self.timeFre)
     def GetSycFre(self):
         SycFre = self.ClientInfo['SycFre']
