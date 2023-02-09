@@ -337,9 +337,10 @@ class FileOperClick(QThread):
             self.ui.SBCShareWindow.label_4.mousePressEvent = self.ShareMenu
             self.ui.SBCShareWindow.pushButton.clicked.connect(lambda: self.SBCShareact(ChosedFiles))
     def NewFolderact(self,info):
-        self.ui.SBCNewWindowDialog.destroy()
+        self.ui.SBCNewWindowDialog.close()
         NewNameValue = self.ui.SBCNewWindow.lineEdit.text()
         if NewNameValue and NewNameValue not in info['FileNames']:
+            info['NewFolderName'] = NewNameValue
             self.ui.SBCRe.NewFolder(info)
             self.ui.signalRefresh.emit()
 
