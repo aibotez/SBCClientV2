@@ -8,14 +8,12 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(453, 341)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.frame_3 = QtWidgets.QFrame(self.centralwidget)
-        self.frame_3.setGeometry(QtCore.QRect(156, 212, 221, 71))
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(463, 331)
+        self.frame_3 = QtWidgets.QFrame(Dialog)
+        self.frame_3.setGeometry(QtCore.QRect(90, 140, 241, 71))
         self.frame_3.setStyleSheet("#frame_3{\n"
 "    background:#ffffff;\n"
 "    border-radius:26px;\n"
@@ -38,7 +36,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(self.frame)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(15)
         font.setBold(True)
         font.setWeight(75)
         self.label.setFont(font)
@@ -47,9 +45,12 @@ class Ui_MainWindow(object):
 "}")
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
+        self.label_9 = QtWidgets.QLabel(self.frame)
+        self.label_9.setObjectName("label_9")
+        self.verticalLayout.addWidget(self.label_9)
         self.label_2 = QtWidgets.QLabel(self.frame)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(15)
         font.setBold(True)
         font.setWeight(75)
         self.label_2.setFont(font)
@@ -108,20 +109,20 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addLayout(self.verticalLayout_2)
         self.horizontalLayout_4.addWidget(self.frame_2)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
-        MainWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "↑"))
-        self.label_2.setText(_translate("MainWindow", "↓"))
-        self.label_3.setText(_translate("MainWindow", "同步进度："))
-        self.label_8.setText(_translate("MainWindow", "↑"))
-        self.label_5.setText(_translate("MainWindow", "总数："))
-        self.label_7.setText(_translate("MainWindow", "36000"))
-        self.label_4.setText(_translate("MainWindow", "完成："))
-        self.label_6.setText(_translate("MainWindow", "TextLabel"))
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.label.setText(_translate("Dialog", "↑"))
+        self.label_9.setText(_translate("Dialog", "con"))
+        self.label_2.setText(_translate("Dialog", "↓"))
+        self.label_3.setText(_translate("Dialog", "同步进度："))
+        self.label_8.setText(_translate("Dialog", "↑"))
+        self.label_5.setText(_translate("Dialog", "总数："))
+        self.label_7.setText(_translate("Dialog", "36000"))
+        self.label_4.setText(_translate("Dialog", "完成："))
+        self.label_6.setText(_translate("Dialog", "TextLabel"))
 

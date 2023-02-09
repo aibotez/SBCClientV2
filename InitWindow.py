@@ -159,7 +159,6 @@ class initWindow(QObject):
         # self.SBCMain.PPIwper = PPIw/self.SBCMain.PPIw0
         # self.SBCMain.PPIhper = PPIh/self.SBCMain.PPIh0
         self.SBCMain.MainWindow = self.Main
-        self.SBCMain.FloatWind = FloatWindowui1.FloatWd(self.SBCMain)
         # self.SBCMain.FloatWind.setupUi(self.Main)
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         # self.SBCMain.MainWindow.hide()
@@ -186,6 +185,7 @@ class initWindow(QObject):
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
         self.FileSycs = FileSyc.FileSyc(self.SBCMain)
         self.SBCMain.OutErrorInfo = self.OutErrorInfo
+        self.FloatShow()
         self.FileSycs.SycMain()
 
         # self.WrVer()
@@ -290,10 +290,16 @@ class initWindow(QObject):
         sys.exit()
         # self.init()
         # self.SBCMain.SBCLoginWindowDialog.show()
+
+    def FloatShow(self):
+        self.SBCMain.SBCFloatWindowDialog = QDialog()
+        self.SBCMain.FloatWind = FloatWindowui1.FloatWd(self.SBCMain,self.SBCMain.SBCFloatWindowDialog)
+        self.SBCMain.SBCFloatWindowDialog.show()
     def SettingShow(self,e):
         self.SBCMain.SBCSettingWindowDialog = QDialog()
         self.SBCMain.SBCSettingWindow = Setting1.SettingShow(self.SBCMain.SBCSettingWindowDialog,self.SBCMain)
         self.SBCMain.SBCSettingWindowDialog.show()
+
     def creat_Usermenu(self,e):
         self.groupBox_Upmenu = QMenu()
         self.actionSetting = self.groupBox_Upmenu.addAction(u'设置')
