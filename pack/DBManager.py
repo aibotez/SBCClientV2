@@ -108,6 +108,11 @@ class DBManager():
         # 关闭连接
         self.conn.close()
 
+    def creatSycFileRecords(self):
+        sql = "create table SycFileRecords(FileMd5,FileName,date,FilePath)"
+        self.cur.execute(sql)
+        self.conn.commit()
+
     def creatClientSettingform(self):
         sql = "create table ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate,SycMode)"
         self.cur.execute(sql)
@@ -171,6 +176,15 @@ class DBManager():
         # self.conn.commit()
         self.lock.release()
         return 1
+
+    def AddSycRecords(self,infos):
+        sql = "insert into SycFileRecords(FileMd5,FileName,date,FilePath) values (?,?,?,?)"
+        for i in infos:
+            data = (i['LoMD5'], i['fename'], i['date'], i['fepath'])
+            self.cur.execute(sql, data)
+        self.conn.commit()
+
+
 
     def AddUserUpRecord(self,UpInfo):
         if self.GetUserUpRecord(UpInfo['RoFilePath'],UpInfo['FileName']):
@@ -297,6 +311,11 @@ class DBManager():
         self.cur.execute(sql, data)
         self.conn.commit()
         self.lock.release()
+    def DelSycRecords(self,infos):
+        for i in infos:
+            sql = "delete from SycFileRecords where FilePath ='{}' and FileName='{}'".format(i['fepath'], i['fename'])
+            self.cur.execute(sql)
+        self.conn.commit()
 
     def DelUserUpRecords(self,FilePath,FileName):
         sql = "delete from UserUp where LoFilePath ='{}' and FileName='{}'".format(FilePath, FileName)
