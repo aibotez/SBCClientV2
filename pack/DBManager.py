@@ -1,6 +1,11 @@
-import sys,sqlite3,os,threading,json
+import sys,sqlite3,os,threading,json,hashlib
 
-
+def str_trans_to_md5(src):
+    src = src.encode("utf-8")
+    myMd5 = hashlib.md5()
+    myMd5.update(src)
+    myMd5_Digest = myMd5.hexdigest()
+    return myMd5_Digest
 class DBManager1():
     def __init__(self):
         self.lock = threading.Lock()
@@ -109,7 +114,7 @@ class DBManager():
         self.conn.close()
 
     def creatSycFileRecords(self):
-        sql = "create table SycFileRecords(FileMd5,FileName,date,FilePath)"
+        sql = "create table SycFileRecords(FileMd5,FileName,date,FilePath,rofepath)"
         self.cur.execute(sql)
         self.conn.commit()
 
@@ -178,9 +183,9 @@ class DBManager():
         return 1
 
     def AddSycRecords(self,infos):
-        sql = "insert into SycFileRecords(FileMd5,FileName,date,FilePath) values (?,?,?,?)"
+        sql = "insert into SycFileRecords(FileMd5,FileName,date,FilePath,rofepath) values (?,?,?,?,?)"
         for i in infos:
-            data = (i['LoMD5'], i['fename'], i['date'], i['fepath'])
+            data = (i['filemd5'], i['fename'], i['date'], i['fepath'],i['rofepath'])
             self.cur.execute(sql, data)
         self.conn.commit()
 
@@ -283,6 +288,17 @@ class DBManager():
             Result.append(Resulti)
 
         return Result
+
+    def GetSycRecordAll(self):
+        sql = "select * from SycFileRecords"
+        self.cur.execute(sql)
+        # self.conn.commit()
+        Result = {}
+        for i in self.cur:
+            info = list(i)
+            Resulti = {'filemd5':info[0],'fename':info[1],'date':info[2],'fepath':info[3],'rofepath':info[4]}
+            Result[str_trans_to_md5(info[4])] = Resulti
+        return Result
     def UpdataUserUpRecords(self,FilePath,FileName,changeVaule):
         # self.close()
         # self.Connect()
@@ -311,6 +327,12 @@ class DBManager():
         self.cur.execute(sql, data)
         self.conn.commit()
         self.lock.release()
+    def UpdataSycRecords(self,infos):
+        for i in infos:
+            sql = "update SycFileRecords set FileMd5=?,date=? where FilePath ='{}' and FileName='{}'".format(i['fepath'], i['fename'])
+            data = (i['filemd5'],i['date'])
+            self.cur.execute(sql, data)
+        self.conn.commit()
     def DelSycRecords(self,infos):
         for i in infos:
             sql = "delete from SycFileRecords where FilePath ='{}' and FileName='{}'".format(i['fepath'], i['fename'])
