@@ -114,6 +114,7 @@ class MoveUi(Moveui.Ui_Dialog):
                 'movefilesinfo':ChosedFiles
             }
             res = self.ui.SBCRe.SBCFileMove(moveinfo)
+            self.ui.signalRefresh.emit()
             self.Dialog.close()
 
     def GetBranch(self,path,FaTree):
