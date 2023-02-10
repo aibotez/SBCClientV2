@@ -189,7 +189,7 @@ class initWindow(QObject):
         self.SBCMain.OutErrorInfo = self.OutErrorInfo
         self.FloatShow()
         self.FileSycs.SycMain()
-        self.GetNetSpeeds = GetNetSpeed.NetSpeed()
+        self.GetNetSpeeds = GetNetSpeed.NetSpeed(self.SBCMain)
 
         # self.WrVer()
         self.init()

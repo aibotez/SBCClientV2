@@ -38,8 +38,8 @@ class NetSpeed(QObject):
         objRefresher.Refresh()
         # 循环访问刷新器集合对象
         for NetInterface in NetInterfaces.ObjectSet:
-            DownSpeed += int(NetInterface.BytesSentPersec)
-            UpSpeed += int(NetInterface.BytesReceivedPersec)
+            UpSpeed += int(NetInterface.BytesSentPersec)
+            DownSpeed += int(NetInterface.BytesReceivedPersec)
         return [DownSpeed,UpSpeed]
     def Updateact(self,info):
         self.ui.FloatWind.label_10.setText(size_format(info[1])+'/S')
