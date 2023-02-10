@@ -92,6 +92,7 @@ class DBManager():
             self.creatUserDownRecordform()
             self.creatUserUpRecordform()
             self.creatUserTransFinshRecordform()
+            self.creatSycFileRecords()
             self.AddClientSetting(info)
             # # 关闭资源
             # cur.close()

@@ -235,7 +235,7 @@ class SettingShow(Settingui.Ui_Dialog,QObject):
         # self.update.RoVer = RoVerstr
         RoVerint = RoVer['Verint']
         LoVerstr = self.ui.Version
-        LoVerint = int(LoVerstr.replace('.',''))
+        LoVerint = float('0.'+LoVerstr.replace('.',''))
         self.label_35.setText(RoVerstr)
         if RoVerint> LoVerint:
             self.label_36.setText('立即更新')

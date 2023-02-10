@@ -104,15 +104,15 @@ class FileSyc(QObject):
         return Files
 
 
-    def SycMode1act_(self,FilesLo):
-        loFilesdb = self.dbManager.creatSycFileRecords()
-        FilesRo = loFilesdb
-        dbFilesWaitDel = [loFilesdb[i] for i in loFilesdb if i not in FilesLo]
-        self.dbManager.DelSycRecords(dbFilesWaitDel)
+    def SycMode1act_(self,FilesLo,FilesRo):
+        # loFilesdb = self.dbManager.GetSycRecordAll()
+        # FilesRo = loFilesdb
+        # dbFilesWaitDel = [loFilesdb[i] for i in loFilesdb if i not in FilesLo]
+        # self.dbManager.DelSycRecords(dbFilesWaitDel)
         FilesLo_ = [i for i in FilesLo if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
         FileWaits = [i for i in FilesLo_ if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']]
-        dbFilesWaitUpdate = []
-        dbFilesWaitAdd = []
+        # dbFilesWaitUpdate = []
+        # dbFilesWaitAdd = []
         self.signalUpdateProgress.emit([0,len(FileWaits)])
         self.signalUpDow.emit(1)
         SycUped = 0
@@ -120,26 +120,32 @@ class FileSyc(QObject):
             try:
                 info = {}
                 info['LoFilePath'] = FilesLo[i]['fepath']
+                info['CurPath'] = FilesLo[i]['rofapath']+'/'
                 info['RoFilePath'] = FilesLo[i]['rofepath']
                 info['FileSize'] = FilesLo[i]['size']
                 info['RoFileFaPath'] = FilesLo[i]['rofapath']
                 info['FileName'] = FilesLo[i]['fename']
                 info['LoMD5'] = FilesLo[i]['filemd5']
-                checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
-                info['FileSeekStart'] = checkinfo['FileStart']
-                self.UpFile2SBCs.UpFile(info)
-                if i in FilesRo:
-                    dbFilesWaitUpdate.append(FilesLo[i])
-                else:
-                    dbFilesWaitAdd.append(FilesLo[i])
+                info['FileMd5'] = FilesLo[i]['filemd5']
+                info['webkitRelativePath'] = ''
+                # checkinfo = self.ui.SBCRe.SycCheckSBCFile(json.dumps(info))
+                # info['FileSeekStart'] = checkinfo['FileStart']
+
+                res = self.UpFile2SBCs.UpFile(info)
+                # if res =='finsh':
+                #     if i in FilesRo:
+                #         dbFilesWaitUpdate.append(FilesLo[i])
+                #     else:
+                #         dbFilesWaitAdd.append(FilesLo[i])
+
                 SycUped += 1
                 self.signalUpdateProgress.emit([SycUped, len(FileWaits)])
             except Exception as e:
                 self.ui.OutErrorInfo(str(e) + '#' + FilesLo[i]['fepath'])
                 continue
             time.sleep(0.2)
-        self.dbManager.UpdataSycRecords(dbFilesWaitUpdate)
-        self.dbManager.AddSycRecords(dbFilesWaitAdd)
+        # self.dbManager.UpdataSycRecords(dbFilesWaitUpdate)
+        # self.dbManager.AddSycRecords(dbFilesWaitAdd)
         self.signalUpdateProgress.emit([0, 0])
 
     # def judgeloFile(self,FilesLo):
@@ -153,9 +159,9 @@ class FileSyc(QObject):
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
                 self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
-                # FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
+                FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 self.signalScan.emit(0)
-                self.SycMode1act_(FilesLo)
+                self.SycMode1act_(FilesLo,FilesRo)
 
             time.sleep(self.timeFre)
             # time.sleep(10)
@@ -169,7 +175,7 @@ class FileSyc(QObject):
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 self.signalScan.emit(0)
-                self.SycMode1act_(FilesLo, FilesRo)
+                self.SycMode1act_(FilesLo,FilesRo)
                 self.SycMode2act_(FilesLo,FilesRo)
 
             # time.sleep(10)
@@ -177,7 +183,6 @@ class FileSyc(QObject):
 
     def SycMode2act_(self,FilesLo,FilesRo):
         FilesRo_ = [i for i in FilesRo if i not in FilesLo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
-
         FileWaits = [i for i in FilesRo_ if i not in FilesLo or FilesRo[i]['date'] > FilesLo[i]['date']]
         self.signalUpdateProgress.emit([0,len(FileWaits)])
         self.signalUpDow.emit(0)
