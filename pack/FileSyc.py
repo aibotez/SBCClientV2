@@ -118,6 +118,7 @@ class FileSyc(QObject):
         SycUped = 0
         for i in FileWaits:
             try:
+                # print(FilesLo[i]['filemd5'],FilesRo[i]['filemd5'])
                 info = {}
                 info['LoFilePath'] = FilesLo[i]['fepath']
                 info['CurPath'] = FilesLo[i]['rofapath']+'/'
@@ -160,6 +161,8 @@ class FileSyc(QObject):
                 self.signalScan.emit(1)
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
+                # print(FilesRo)
+                # print(FilesLo)
                 self.signalScan.emit(0)
                 self.SycMode1act_(FilesLo,FilesRo)
 
