@@ -32,6 +32,7 @@ from pack import UserCheck
 from pack import GetMoniterPPi
 from pack import FileSyc
 from SubUi import FloatWindowui1
+from pack import GetNetSpeed
 
 
 
@@ -188,6 +189,7 @@ class initWindow(QObject):
         self.SBCMain.OutErrorInfo = self.OutErrorInfo
         self.FloatShow()
         self.FileSycs.SycMain()
+        self.GetNetSpeeds = GetNetSpeed.NetSpeed()
 
         # self.WrVer()
         self.init()

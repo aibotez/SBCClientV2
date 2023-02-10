@@ -29,6 +29,8 @@ class FloatWd(FloatWindowui.Ui_Dialog):
         self.label_6.setText('')
         self.label_7.setText('')
         self.label_9.setText('')
+        self.label_10.setText('')
+        self.label_11.setText('')
         self.label_9.setMaximumSize(QtCore.QSize(20, 20))
         self.label_9.setMinimumSize(QtCore.QSize(20, 20))
 
