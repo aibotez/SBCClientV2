@@ -145,8 +145,12 @@ class FileOperClick(QThread):
             self.Up([{'Path': FolderPath, 'isDir': 1}])
 
     def GetMoreInfo(self,LoPath,CurRopath):
-        LoFileMd5 = getfileMd5(LoPath)
+        LoFileMd5 = ''
+        # LoFileMd5 = getfileMd5(LoPath)
         Upinfo = {}
+        Upinfo['Size'] = os.path.getsize(LoPath)
+        if Upinfo['Size'] < 1024*1024*300:
+            LoFileMd5 = getfileMd5(LoPath)
         Upinfo['FileMd5'] = LoFileMd5
         Upinfo['CurPath'] = CurRopath
         Upinfo['webkitRelativePath'] = ''
@@ -156,7 +160,6 @@ class FileOperClick(QThread):
         fetypeObj = FileType.FileType()
         fetype = fetypeObj.FileType(LoPath)
         Upinfo['fetype'] = fetype[1]
-        Upinfo['Size'] = os.path.getsize(LoPath)
         Upinfo['FileSize'] = Upinfo['Size']
         # print(Upinfo)
         # self.ui.TransFilesManager.AddUpRecord(Upinfo)

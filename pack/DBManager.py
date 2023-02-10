@@ -30,6 +30,10 @@ class DBManager1():
             dbmanager.conn.commit()
         elif Oper == 'AddUserUpRecord':
             dbmanager.AddUserUpRecord(DownInfo)
+        elif Oper =='UpdataUserUpRecordMd5':
+            FilePath = DownInfo['LoFilePath']
+            FileName = DownInfo['FileName']
+            dbmanager.UpdataUserUpRecordMd5(FilePath,FileName,UpchangeVaule)
         elif Oper =='UpdataUserUpRecord':
             FilePath = DownInfo['LoFilePath']
             FileName = DownInfo['FileName']
@@ -306,6 +310,15 @@ class DBManager():
         sql = "update UserUp set isUp=? where LoFilePath ='{}' and FileName='{}'".format(FilePath,FileName)
         data = (str(changeVaule))
         self.cur.execute(sql, data)
+    def UpdataUserUpRecordMd5(self,FilePath,FileName,changeVaule):
+        # self.close()
+        # self.Connect()
+        sql = "update UserUp set FileMd5=? where LoFilePath ='{}' and FileName='{}'".format(FilePath,FileName)
+        data = [(changeVaule)]
+        self.lock.acquire(True)
+        self.cur.execute(sql, data)
+        self.conn.commit()
+        self.lock.release()
     def UpdataUserUpRecord(self,FilePath,FileName,changeVaule):
         # self.close()
         # self.Connect()

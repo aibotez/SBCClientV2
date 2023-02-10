@@ -12,6 +12,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
 import threading
+from PyQt5.QtCore import *
 
 
 
@@ -100,9 +101,10 @@ class UpdateShowThread(QThread):
     def run(self):
         self.Signal.emit(self.labelinfo,self.info)
 
-class TransUp():
+class TransUp(QObject):
     # signalWSQL = pyqtSignal(list)
     # signaladdUp = pyqtSignal(dict)
+    signalUpdateGetMd5 = pyqtSignal(dict,float)
     def __init__(self,ui,signaladdUp,signalaDelUp,signalaDelUp1,signalaUpdateUpProgress):
         super().__init__()
         self.ui = ui
@@ -119,6 +121,7 @@ class TransUp():
         self.dbManager1 = DBManager.DBManager1()
         self.ClientSetting = self.dbManager.GetClientSetting()
         self.UpInfosUpdateLabs = {}
+        self.signalUpdateGetMd5.connect(self.UpdateGetMd5Progress)
         self.signaladdUp.connect(self.AddUping1)
         self.signalaDelUp.connect(self.DelUp)
         self.signalaDelUp1.connect(self.DelUpact)
@@ -443,7 +446,34 @@ class TransUp():
             Labelinfo['statusLabel'].setText("{}/S".format(info['Speed']))
         except Exception as e:
             print('UpdateProgessError',e)
+    def UpdateGetMd5Progress(self,info,progress):
+        progress = int(progress)
+        info['statusLabel'].setText("扫描文件...已完成{}%".format(str(progress)))
+
+    def getfileMd5(self,info):
+        filename = info['LoFilePath']
+        if not os.path.isfile(filename):
+            return
+        Total = os.path.getsize(filename)
+        eta = 0
+        myhash = hashlib.md5()
+        f = open(filename, "rb")
+        while True:
+            b = f.read(10 * 1024 * 1024)
+            if not b:
+                break
+            eta += len(b)
+            progress = (eta/Total)*100
+            self.signalUpdateGetMd5.emit(info,progress)
+            myhash.update(b)
+        f.close()
+
+        return myhash.hexdigest()
     def Upact(self, info):
+        if not info['FileMd5']:
+            FileMd5 = self.getfileMd5(info)
+            info['FileMd5'] = FileMd5
+            self.dbManager1.WSQL(info, 'UpdataUserUpRecordMd5', FileMd5)
         # print('StartDown:',info['FileName'])
         # time.sleep(0.2)
         # self.UpFinsh(info)
