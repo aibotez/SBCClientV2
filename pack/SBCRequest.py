@@ -6,10 +6,10 @@ class SBCRe():
         self.headers = ''
         self.CurFileList = []
         self.host = 'pi.sbc.plus:800'
-        self.host = '127.0.0.1:90'
-        self.host = '10.147.17.148:90'
-        self.UserEmail = '2290227486@qq.com'
-        self.UserPassword = '12'
+        # self.host = '127.0.0.1:90'
+        # self.host = '10.147.17.148:90'
+        # self.UserEmail = '2290227486@qq.com'
+        # self.UserPassword = '12'
         # self.GetSBCCookie()
         # self.PublicHeaders()
 

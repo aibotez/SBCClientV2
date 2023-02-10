@@ -648,7 +648,7 @@ class TransShowUpdate(QThread):
                 data = {
                     'downinfo':downinfo
                 }
-                url_fileDown = 'http://'+self.ClientSetting['host']+'/FileDown1/'
+                url_fileDown = 'http://'+self.ui.host+'/FileDown1/'
                 # dbManager = DBManager.DBManager()
                 r = requests.post(url_fileDown,data=json.dumps(data),headers=self.ui.SBCRe.headers,stream=True)
                 with open(info['LoPath'], 'ab') as f:

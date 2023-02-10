@@ -537,7 +537,7 @@ class TransUp():
                         'file': (info['FileName'], chunk, 'application/octet-stream'),  # 文件1
                             }
                 )
-                url_fileUp = 'http://' + self.ClientSetting['host'] + '/Upfile1/'
+                url_fileUp = 'http://' + self.ui.host + '/Upfile1/'
                 m = MultipartEncoderMonitor(e,lambda e : Uping_callback(e,info))
                 # m = MultipartEncoderMonitor(e)
                 headers = self.ui.SBCRe.headers
