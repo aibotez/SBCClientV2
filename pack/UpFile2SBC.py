@@ -5,7 +5,7 @@ class UpFile2SBC():
     def __init__(self,ui):
         self.ui = ui
         self.s = requests.Session()
-    def chunked_file_reader(self,info,block_size=20*1024 * 1024):
+    def chunked_file_reader(self,info,block_size=60*1024 * 1024):
         """生成器函数：分块读取文件内容
         """
         file = info['LoFilePath']
