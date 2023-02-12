@@ -8,6 +8,7 @@ class previewpdf(previewPDFui.Ui_Dialog):
         self.Dialog = Dialog
         self.pixSize = None
         self.init()
+        self.resize0 = 0
 
 
     def init(self):
@@ -36,8 +37,11 @@ class previewpdf(previewPDFui.Ui_Dialog):
         px.setPixmap(pixmap)
         # px.resize(pixmap.size())
         self.pixSize = pixmap.size()
-        scal =  self.pixSize.height()/self.pixSize.width()
-        px.setMaximumSize(QtCore.QSize(800, 800 * scal))
+        scal = self.pixSize.height()/self.pixSize.width()
+        # if not self.resize0:
+        #     self.Dialog.resize(800, 800 * scal)
+        #     self.resize0 = 1
+        px.setMaximumSize(QtCore.QSize(760, 760 * scal))
         # print(self.pixSize)
         px.setScaledContents(True)
     def valueChanged(self):
