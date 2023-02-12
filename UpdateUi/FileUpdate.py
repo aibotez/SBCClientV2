@@ -2,8 +2,7 @@ import sys,threading
 sys.path.append('..')
 from functools import partial
 from PyQt5 import QtCore, QtGui, QtWidgets
-
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QAction,QDialog
 from PyQt5.Qt import QThread
 import SBCMainWindow
 from PyQt5.QtGui import QFontMetrics,QCursor, QIcon
@@ -12,6 +11,7 @@ import base64,time
 from pack import SBCRequest
 from pack.preview import ImgPreview
 from pack import FileOperClick
+from SubUi import previewPDF
 
 
 class Thread_LoadImg(QThread):
@@ -172,9 +172,15 @@ class FileUpdate(QThread):
             self.ImgPreviews = ImgPreview.ImageViewer()
             self.ImgPreviews.Previewact(imfdata)
             return
-        if FileInfo['fetype'] == 'folder':
+        elif FileInfo['fetype'] == 'pdf':
+            self.MainWindow.SBCpreviewPDFWindowDialog = QDialog()
+            PreviewPDF = previewPDF.previewpdf(self.MainWindow,self.MainWindow.SBCpreviewPDFWindowDialog)
+            self.MainWindow.show()
+            PreviewPDF.previewpdf(FileInfo)
+        elif FileInfo['fetype'] == 'folder':
             self.FileShow1(FileInfo['fepath'])
             return
+
 
     def DelChoseFiles(self,info):
         ChosedFiles = []

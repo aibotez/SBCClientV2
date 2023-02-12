@@ -233,6 +233,10 @@ class SBCRe():
         self.CurFileList = feinfos
         # return feinfos
 
+    def GetPdfImg(self,data):
+        url = 'http://' + self.host + '/preview/'
+        res = requests.post(url, data=json.dumps(data),headers=self.headers)
+        return json.loads(res.text)
     def getImgdata(self,path):
         url = 'http://' + self.host + '/preview/'
         data = {
