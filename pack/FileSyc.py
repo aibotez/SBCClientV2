@@ -159,12 +159,12 @@ class FileSyc(QObject):
             print('Mode1 Start Scan')
             if self.ClientInfo['BackupLoPath'] and self.ClientInfo['BackupRoPath']:
                 self.signalScan.emit(1)
-                # FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
+                FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
-                for i in FilesRo:
-                    if '/home/同步/refl/文件' in FilesRo[i]['fepath']:
-                        print(FilesRo[i]['fepath'])
-                return
+                # for i in FilesRo:
+                #     if '/home/同步/refl/文件' in FilesRo[i]['fepath']:
+                #         print(FilesRo[i]['fepath'])
+                # return
                 # print(FilesRo)
                 # print(FilesLo)
                 self.signalScan.emit(0)

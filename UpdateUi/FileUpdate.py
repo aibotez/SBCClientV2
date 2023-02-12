@@ -175,7 +175,7 @@ class FileUpdate(QThread):
         elif FileInfo['fetype'] == 'pdf':
             self.MainWindow.SBCpreviewPDFWindowDialog = QDialog()
             PreviewPDF = previewPDF.previewpdf(self.MainWindow,self.MainWindow.SBCpreviewPDFWindowDialog)
-            self.MainWindow.show()
+            self.MainWindow.SBCpreviewPDFWindowDialog.show()
             PreviewPDF.previewpdf(FileInfo)
         elif FileInfo['fetype'] == 'folder':
             self.FileShow1(FileInfo['fepath'])
