@@ -325,6 +325,12 @@ class TransUp(QObject):
         fp.seek(info['FileSeekStart'],os.SEEK_SET)
         return fp
 
+    def chunked_file(self,info):
+        file = info['LoFilePath']
+        FileSeekStart = info['FileSeekStart']
+        f = open(file, 'rb')
+        f.seek(FileSeekStart, os.SEEK_SET)
+        return f
     def chunked_file_reader(self,info,block_size=20*1024 * 1024):
         """生成器函数：分块读取文件内容
         """
@@ -555,6 +561,8 @@ class TransUp(QObject):
         info['statusButon'].setText("||")
         s = requests.Session()
         for chunk in self.chunked_file_reader(info):
+        # jud =1
+        # if jud == 1:
             # res = s.post(url_fileUp, data=info, files={'file': chunk},headers=headers)
             UpInfoi = dbManager.GetUserUpRecord(info['LoFilePath'], info['FileName'])
             if UpInfoi and int(UpInfoi['isUp']) == 1:
