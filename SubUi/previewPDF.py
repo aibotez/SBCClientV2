@@ -16,6 +16,7 @@ class previewpdf(previewPDFui.Ui_Dialog):
         self.scrollBar = self.scrollArea.verticalScrollBar()
         self.scrollBar.valueChanged.connect(lambda :self.valueChanged())
         self.PageLabels = []
+        self.Dialog.setWindowTitle('小黑云文件预览')
 
     def previewnopdf(self):
         pass
@@ -25,18 +26,27 @@ class previewpdf(previewPDFui.Ui_Dialog):
         pixmap = QtGui.QPixmap()
         pixmap.loadFromData(ba)
         px.setPixmap(pixmap)
-        px.resize(pixmap.size())
+        # px.resize(pixmap.size())
         self.pixSize = pixmap.size()
+        scal =  self.pixSize.height()/self.pixSize.width()
+        px.setMaximumSize(QtCore.QSize(800, 800 * scal))
+        # print(self.pixSize)
+        px.setScaledContents(True)
     def valueChanged(self):
         Maxmun = self.scrollBar.maximum()
         if self.scrollBar.value() >= Maxmun-200:
             self.page += 1
-
             label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            label.setAlignment(QtCore.Qt.AlignCenter)
             label.setObjectName("label")
+            # scal = self.pixSize[1]/self.pixSize[1]
+            # label.setMaximumSize(QtCore.QSize(800, scal*800))
             self.verticalLayout_2.addWidget(label)
             img_b64decode = self.GetpdfImg(self.info)
             self.ShowCon(label, img_b64decode)
+        CurPage = str(int(self.page*self.scrollBar.value()/self.scrollBar.maximum())+1)
+        # print(int(self.page*self.scrollBar.value()/self.scrollBar.maximum())+1)
+        self.label_3.setText('{}/{}'.format(CurPage, str(self.PdfMaxpage)))
 
 
     def GetpdfImg(self,info):
@@ -57,7 +67,9 @@ class previewpdf(previewPDFui.Ui_Dialog):
         print(info)
         self.page = 0
         self.label_2.setText(info['fename'])
+        self.label_3.setText('/')
         img_b64decode = self.GetpdfImg(info)
+        self.label_3.setText('{}/{}'.format('1',str(self.PdfMaxpage)))
         self.ShowCon(self.label, img_b64decode)
         self.PageLabels.append(self.label)
         # for i in range(self.PdfMaxpage-1):
