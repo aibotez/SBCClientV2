@@ -233,6 +233,10 @@ class SBCRe():
         self.CurFileList = feinfos
         # return feinfos
 
+    def Convert2PDF(self,data):
+        url = 'http://' + self.host + '/Convert2PDF/'
+        res = requests.post(url, data=json.dumps(data),headers=self.headers).text
+        return res
     def GetPdfImg(self,data):
         url = 'http://' + self.host + '/preview/'
         res = requests.post(url, data=json.dumps(data),headers=self.headers)

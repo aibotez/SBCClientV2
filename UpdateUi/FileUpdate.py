@@ -165,6 +165,7 @@ class FileUpdate(QThread):
 
     def FileLeftDeal(self,FileInfo):
         print('FileLeft',FileInfo)
+        filetype = FileInfo['fetype']
         # ImgPreviews = ImgPreview.ImageViewer()
         # self.FileShow1(FileInfo['fepath'])
         if FileInfo['fetype'] == 'img':
@@ -177,6 +178,12 @@ class FileUpdate(QThread):
             PreviewPDF = previewPDF.previewpdf(self.MainWindow,self.MainWindow.SBCpreviewPDFWindowDialog)
             self.MainWindow.SBCpreviewPDFWindowDialog.show()
             PreviewPDF.previewpdf(FileInfo)
+
+        elif filetype == 'word' or filetype == 'ppt' or filetype =='excel' or filetype == 'html':
+            self.MainWindow.SBCpreviewPDFWindowDialog = QDialog()
+            PreviewPDF = previewPDF.previewpdf(self.MainWindow,self.MainWindow.SBCpreviewPDFWindowDialog)
+            self.MainWindow.SBCpreviewPDFWindowDialog.show()
+            PreviewPDF.previewnopdf(FileInfo)
         elif FileInfo['fetype'] == 'folder':
             self.FileShow1(FileInfo['fepath'])
             return

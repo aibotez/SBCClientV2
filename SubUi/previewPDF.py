@@ -18,8 +18,16 @@ class previewpdf(previewPDFui.Ui_Dialog):
         self.PageLabels = []
         self.Dialog.setWindowTitle('小黑云文件预览')
 
-    def previewnopdf(self):
-        pass
+    def previewnopdf(self,info):
+        self.label.setText('转换文件中...稍等片刻！')
+        data = {
+            'client':'windows',
+            'path':info['fepath']
+        }
+        res = self.ui.SBCRe.Convert2PDF(data)
+        if res != '1':
+            self.label.setText('转换失败')
+        self.previewpdf(info)
 
     def ShowCon(self, px, base64data):
         ba = base64data
@@ -40,12 +48,10 @@ class previewpdf(previewPDFui.Ui_Dialog):
             label.setAlignment(QtCore.Qt.AlignCenter)
             label.setObjectName("label")
             # scal = self.pixSize[1]/self.pixSize[1]
-            # label.setMaximumSize(QtCore.QSize(800, scal*800))
             self.verticalLayout_2.addWidget(label)
             img_b64decode = self.GetpdfImg(self.info)
             self.ShowCon(label, img_b64decode)
         CurPage = str(int(self.page*self.scrollBar.value()/self.scrollBar.maximum())+1)
-        # print(int(self.page*self.scrollBar.value()/self.scrollBar.maximum())+1)
         self.label_3.setText('{}/{}'.format(CurPage, str(self.PdfMaxpage)))
 
 
@@ -71,7 +77,20 @@ class previewpdf(previewPDFui.Ui_Dialog):
         img_b64decode = self.GetpdfImg(info)
         self.label_3.setText('{}/{}'.format('1',str(self.PdfMaxpage)))
         self.ShowCon(self.label, img_b64decode)
-        self.PageLabels.append(self.label)
+
+
+        try:
+            self.page += 1
+            label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            label.setObjectName("label")
+            self.verticalLayout_2.addWidget(label)
+            img_b64decode = self.GetpdfImg(self.info)
+            self.ShowCon(label, img_b64decode)
+        except:
+            pass
+
+
         # for i in range(self.PdfMaxpage-1):
         #     label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
         #     label.setObjectName("label")

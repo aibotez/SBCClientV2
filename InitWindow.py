@@ -149,7 +149,7 @@ class initWindow(QObject):
         # return
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
-        self.SBCMain.Version = '2.0.0.2'
+        self.SBCMain.Version = '2.0.0.3'
         self.SBCMain.YM0 = 'local.sbc.plus:9090#pi.sbc.plus:800'
         # self.SBCMain.YM0 = 'pi.sbc.plus:800'
         self.SBCMain.PPIw0 = 36.92
