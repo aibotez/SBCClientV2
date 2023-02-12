@@ -48,13 +48,16 @@ class previewpdf(previewPDFui.Ui_Dialog):
         Maxmun = self.scrollBar.maximum()
         if self.scrollBar.value() >= Maxmun-200:
             self.page += 1
-            label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-            label.setAlignment(QtCore.Qt.AlignCenter)
-            label.setObjectName("label")
-            # scal = self.pixSize[1]/self.pixSize[1]
-            self.verticalLayout_2.addWidget(label)
-            img_b64decode = self.GetpdfImg(self.info)
-            self.ShowCon(label, img_b64decode)
+            if self.page < self.PdfMaxpage:
+                label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+                label.setAlignment(QtCore.Qt.AlignCenter)
+                label.setObjectName("label")
+                # scal = self.pixSize[1]/self.pixSize[1]
+                self.verticalLayout_2.addWidget(label)
+                img_b64decode = self.GetpdfImg(self.info)
+                self.ShowCon(label, img_b64decode)
+            else:
+                self.page = self.PdfMaxpage-1
         CurPage = str(int(self.page*self.scrollBar.value()/self.scrollBar.maximum())+1)
         self.label_3.setText('{}/{}'.format(CurPage, str(self.PdfMaxpage)))
 
