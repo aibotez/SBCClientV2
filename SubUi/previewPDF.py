@@ -1,3 +1,5 @@
+import requests
+
 from SubUi import previewPDFui
 from PyQt5 import QtCore, QtGui, QtWidgets
 import base64,json,sys,time
@@ -9,6 +11,7 @@ class previewpdf(previewPDFui.Ui_Dialog):
         self.pixSize = None
         self.init()
         self.resize0 = 0
+        self.s = requests.Session()
 
 
     def init(self):
@@ -68,7 +71,10 @@ class previewpdf(previewPDFui.Ui_Dialog):
             'client':'windows',
             'filepath':info['fepath']
         }
-        redata = self.ui.SBCRe.GetPdfImg(data)
+        url = 'http://' + self.ui.host + '/preview/'
+        res = self.s.post(url, data=json.dumps(data),headers=self.ui.SBCRe.headers)
+        redata = json.loads(res.text)
+        # redata = self.ui.SBCRe.GetPdfImg(data)
         data = redata['data']
         MaxPage = data['pages']
         base64data = data['data']
@@ -77,7 +83,7 @@ class previewpdf(previewPDFui.Ui_Dialog):
         return img_b64decode
     def previewpdf(self,info):
         self.info =info
-        print(info)
+
         self.page = 0
         self.label_2.setText(info['fename'])
         self.label_3.setText('/')
