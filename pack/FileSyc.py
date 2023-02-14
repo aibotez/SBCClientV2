@@ -162,7 +162,8 @@ class FileSyc(QObject):
                 FilesLo = self.GetAllFilesfromFolder(self.ClientInfo['BackupLoPath'])
                 FilesRo = self.GetAllFilesFromSBC(self.ClientInfo['BackupRoPath'])
                 # for i in FilesRo:
-                #     if '/home/同步/refl/文件' in FilesRo[i]['fepath']:
+                #     # print(FilesRo[i]['fepath'])
+                #     if '/home/新建' in FilesRo[i]['fepath']:
                 #         print(FilesRo[i]['fepath'])
                 # return
                 # print(FilesRo)

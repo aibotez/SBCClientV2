@@ -376,7 +376,7 @@ class FileOperClick(QThread):
         self.ui.SBCNewWindowDialog.show()
         self.ui.SBCNewWindow.pushButton.clicked.connect(lambda: self.NewFolderact(info))
     def ReNameact(self,info):
-        self.ui.SBCReNameWindowDialog.destroy()
+        self.ui.SBCReNameWindowDialog.close()
         reNameValue = self.ui.SBCReNameWindow.lineEdit.text()
         if reNameValue and reNameValue != info['fename']:
             info['NewName'] = reNameValue
