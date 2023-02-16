@@ -41,6 +41,31 @@ class ClickEventDeals():
     def __init__(self,ui,FileUpdates):
         self.ui = ui
         self.filepdate = FileUpdates
+        self.fileoperclick = FileOperClick.FileOperClick(self.ui)
+    def creat_Moremenu(self,e):
+        self.groupBox_Moremenu = QMenu()
+        self.actionUpFe = self.groupBox_Moremenu.addAction(u'上传文件')
+        self.groupBox_Moremenu.addSeparator()
+        self.actionUpFo = self.groupBox_Moremenu.addAction(u'上传文件夹')
+        self.groupBox_Moremenu.addSeparator()
+        self.actionNewFo = self.groupBox_Moremenu.addAction(u'新建文件夹')
+        self.groupBox_Moremenu.addSeparator()
+        self.actionRefresh = self.groupBox_Moremenu.addAction(u'刷新')
+        self.groupBox_Moremenu.popup(QCursor.pos())
+        self.groupBox_Moremenu.setStyleSheet("QMenu{\n"
+                                        "    margin:0px 20px 20px 0px;\n"
+                                        "    color:blue;\n"
+                                        "    font-size:18px;\n"
+                                        "}\n")
+        self.actionUpFe.triggered.connect(self.fileoperclick.UpFile)
+        self.actionUpFo.triggered.connect(self.fileoperclick.UpFolder)
+        self.actionNewFo.triggered.connect(self.fileoperclick.NewFolder)
+        self.actionRefresh.triggered.connect(lambda :self.ui.signalRefresh.emit())
+
+
+    def RightMeans(self,e):
+        if e.buttons() == QtCore.Qt.RightButton:
+            self.creat_Moremenu(0)
     def ClearNavStyle(self):
         self.ui.frame_2.setStyleSheet("")
         self.ui.frame_3.setStyleSheet("")
@@ -149,7 +174,7 @@ class initWindow(QObject):
         # return
         self.Main = Main
         self.SBCMain = SBCMainWindow.Ui_SBCclient()
-        self.SBCMain.Version = '2.0.0.4'
+        self.SBCMain.Version = '2.0.0.5'
         self.SBCMain.YM0 = 'local.sbc.plus:9090#pi.sbc.plus:800'
         # self.SBCMain.YM0 = 'pi.sbc.plus:800'
         self.SBCMain.PPIw0 = 36.92
@@ -165,6 +190,7 @@ class initWindow(QObject):
         self.SBCMain.SBCRe = SBCRequest.SBCRe()
         # self.SBCMain.MainWindow.hide()
         self.SBCMain.setupUi(self.Main)
+
         self.SBCMain.label_23.setText('')
         self.usercheck = UserCheck.UserCheck(self.SBCMain)
         if not self.usercheck.LoginStatu:
@@ -422,6 +448,12 @@ class initWindow(QObject):
 
         self.SBCMain.label_9.mousePressEvent = self.creat_Usermenu  # 用户
 
+        framw_14_width = self.SBCMain.frame_14.size().width()
+        MainWindow_height = self.SBCMain.MainWindow.size().height()
+        self.SBCMain.frame_14.setMinimumSize(QtCore.QSize(framw_14_width, MainWindow_height))
+        self.SBCMain.frame_14.mousePressEvent = CED.RightMeans
+
+
 
 
     def AniUpdate(self):
@@ -458,6 +490,8 @@ class initWindow(QObject):
         self.SBCMain.anim.setDuration(1000)  # 设置动画间隔时间
         self.SBCMain.anim.setStartValue(QtCore.QRect(200, 20, 40, 40))  # 设置动画对象的起始属性
         self.SBCMain.anim.setEndValue(QtCore.QRect(50, 360, 0, 0))  # 设置动画对象的结束属性
+
+
 
 
 

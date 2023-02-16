@@ -133,6 +133,7 @@ class FileUpdate(QThread):
         self.fileoperclick = FileOperClick.FileOperClick(ui)
 
     def Refreshshow(self):
+        self.UpdateUseract()
         self.start()
     def FileConChose(self,fetype):
         if fetype == 'folder':
@@ -480,7 +481,13 @@ class FileUpdate(QThread):
         self.Thread_LoadImgs.runthread1()
 
 
+    def UpdateUseract(self):
+        self.MainWindow.signalUpdateUser.emit()
+        t = threading.Thread(target=lambda :self.MainWindow.signalUpdateUser.emit())
+        t.setDaemon(True)
+        t.start()
     def run(self):
+
         self.SBCRe = self.MainWindow.SBCRe
         # if self.isRunning():
         #     return
@@ -493,7 +500,6 @@ class FileUpdate(QThread):
                 if self.MainWindow.CurFileListOld[CurNetChosed][CurNavChosed] != self.SBCRe.CurFileList or not self.SBCRe.CurFileList:
                     self.CurFileList = self.SBCRe.CurFileList
                     self.MainWindow.nav[CurNetChosed] = self.SBCRe.Nav
-                    # self.signal.emit()
                     self.MainWindow.CurFileListOld[CurNetChosed][
                         CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
