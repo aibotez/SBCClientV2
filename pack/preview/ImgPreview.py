@@ -1,22 +1,27 @@
+import threading
+
 import requests,time
 
 # coding:utf-8
 import sys
 
 from PyQt5.QtCore import QRect, QRectF, QSize, Qt
+from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtGui import QPainter, QPixmap, QWheelEvent
 from PyQt5.QtWidgets import (QApplication, QGraphicsItem, QGraphicsPixmapItem,
                              QGraphicsScene, QGraphicsView)
+from PyQt5.QtCore import *
 
 
 class ImageViewer(QGraphicsView):
     """ 图片查看器 """
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    signalShowImg = pyqtSignal(list)
+    def __init__(self):
+        super().__init__()
         self.setWindowTitle('小黑云图片预览')
         self.zoomInTimes = 0
         self.maxZoomInTimes = 22
+        self.signalShowImg.connect(self.Previewact1)
 
         # 创建场景
         self.graphicsScene = QGraphicsScene()
@@ -29,9 +34,12 @@ class ImageViewer(QGraphicsView):
         # 初始化小部件
         self.__initWidget()
 
-
-    def Previewact(self,imgbase64):
-        print('PreviewImg')
+    def Previewact(self, imgbase64):
+        t = threading.Thread(target=lambda :self.signalShowImg.emit([imgbase64]))
+        t.setDaemon(True)
+        t.start()
+    def Previewact1(self,imgbase64s):
+        imgbase64 = imgbase64s[0]
         # self.close()
         # graphicsScene = QGraphicsScene()
         self.show()
