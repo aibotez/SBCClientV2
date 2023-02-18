@@ -42,6 +42,8 @@ class previewpdf(QObject,previewPDFui.Ui_Dialog):
     def ShowConvertResult(self,res):
         self.label.setText(res)
     def previewnopdf1(self,info):
+        self.label_2.setText(info['fename'])
+        self.label_3.setText('/')
         Waitstate = 1
         ConvertResult = 0
         def RequestConvert():
