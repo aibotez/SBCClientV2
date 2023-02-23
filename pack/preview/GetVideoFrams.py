@@ -1,23 +1,30 @@
 
 # from pyaudio import *
 import wave
-import os
+import os,subprocess
 import cv2
 
-# def GetWav(path):
-#     if os.path.exists(path+'.wav'):
-#         os.remove(path+'.wav')
-#     cmd = 'ffmpeg -i {} -f wav {}.wav'.format(path,os.path.basename(path))
-#     os.system(cmd)
-#
-# path = 'test1.mp4'
-# # GetWav(path)
+def GetWav(path):
+    if os.path.exists(path+'.wav'):
+        os.remove(path+'.wav')
+    cmd = 'ffmpeg -i {} -f wav {}.wav'.format(path,os.path.basename(path))
+    os.system(cmd)
+
+path = 'test1.mp4'
+GetWav(path)
 
 
 class VideoFram():
     def __init__(self):
         pass
 
+    def get_length(self,filename):
+        result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                                 "format=duration", "-of",
+                                 "default=noprint_wrappers=1:nokey=1", filename],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        return {'timeduring':float(result.stdout),'fename':os.path.basename(filename)}
     def CreatWav(self,path):
         if os.path.exists(path + '.wav'):
             os.remove(path + '.wav')

@@ -1,0 +1,102 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'PerVideo.ui'
+#
+# Created by: PyQt5 UI code generator 5.10.1
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+class Ui_MainWindowPerVideo(object):
+    def setupUi(self, MainWindowPerVideo):
+        MainWindowPerVideo.setObjectName("MainWindowPerVideo")
+        MainWindowPerVideo.resize(801, 600)
+        MainWindowPerVideo.setStyleSheet("#MainWindowPerVideo{\n"
+"background:rgb(255, 255, 255);\n"
+"}")
+        self.centralwidget = QtWidgets.QWidget(MainWindowPerVideo)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.frame = QtWidgets.QFrame(self.centralwidget)
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.frame)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.widget = QtWidgets.QWidget(self.frame)
+        self.widget.setObjectName("widget")
+        self.verticalLayout.addWidget(self.widget)
+        self.verticalLayout_2.addWidget(self.frame)
+        self.frame_2 = QtWidgets.QFrame(self.centralwidget)
+        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_2.setObjectName("frame_2")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.frame_2)
+        self.horizontalLayout.setContentsMargins(9, 0, 9, 0)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label = QtWidgets.QLabel(self.frame_2)
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+        self.label_4 = QtWidgets.QLabel(self.frame_2)
+        self.label_4.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout.addWidget(self.label_4)
+        self.label_2 = QtWidgets.QLabel(self.frame_2)
+        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout.addWidget(self.label_2)
+        self.verticalLayout_2.addWidget(self.frame_2)
+        self.frame_3 = QtWidgets.QFrame(self.centralwidget)
+        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_3.setObjectName("frame_3")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.frame_3)
+        self.horizontalLayout_2.setContentsMargins(9, 0, 9, 0)
+        self.horizontalLayout_2.setSpacing(0)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.horizontalSlider = QtWidgets.QSlider(self.frame_3)
+        self.horizontalSlider.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider.setObjectName("horizontalSlider")
+        self.horizontalLayout_2.addWidget(self.horizontalSlider)
+        self.verticalLayout_2.addWidget(self.frame_3)
+        self.frame_4 = QtWidgets.QFrame(self.centralwidget)
+        self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_4.setObjectName("frame_4")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.frame_4)
+        self.horizontalLayout_3.setContentsMargins(9, 6, 0, 9)
+        self.horizontalLayout_3.setSpacing(0)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem)
+        self.label_3 = QtWidgets.QLabel(self.frame_4)
+        self.label_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_3.addWidget(self.label_3)
+        spacerItem1 = QtWidgets.QSpacerItem(365, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
+        self.horizontalLayout_3.setStretch(0, 1)
+        self.horizontalLayout_3.setStretch(2, 1)
+        self.verticalLayout_2.addWidget(self.frame_4)
+        self.verticalLayout_2.setStretch(0, 1)
+        MainWindowPerVideo.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindowPerVideo)
+        QtCore.QMetaObject.connectSlotsByName(MainWindowPerVideo)
+
+    def retranslateUi(self, MainWindowPerVideo):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindowPerVideo.setWindowTitle(_translate("MainWindowPerVideo", "小黑云视频预览"))
+        self.label.setText(_translate("MainWindowPerVideo", "TextLabel"))
+        self.label_4.setText(_translate("MainWindowPerVideo", "TextLabel"))
+        self.label_2.setText(_translate("MainWindowPerVideo", "TextLabel"))
+        self.label_3.setText(_translate("MainWindowPerVideo", "TextLabel"))
+
