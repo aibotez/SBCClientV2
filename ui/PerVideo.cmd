@@ -1,0 +1,1 @@
+pyuic5 -o PerVideoui.py PerVideo.ui
