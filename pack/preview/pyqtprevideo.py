@@ -146,7 +146,7 @@ class PreV():
 
 
 
-        # self.Changeplaystate()
+        self.Changeplaystate()
 
 
 
@@ -170,8 +170,17 @@ class PreV():
             print(self.VideoStock[i])
 
     def change_time1(self):
-        num = self.MainWindowPerVideo.horizontalSlider.value()
-        self.player.setPosition((num / 100) * self.maxProgressvalue)
+        # num = self.MainWindowPerVideo.horizontalSlider.value()
+        # self.player.setPosition((num / 100) * self.maxProgressvalue)
+
+        path = 'tmp/0_10test1.mp4'
+        self._data = self.GetVideo(path)
+        self._buffer.setData(self._data)
+        # self._buffer.open(QtCore.QIODevice.ReadOnly)
+        # self.player.setMedia(QMediaContent(), self._buffer)
+        # self.player.play()
+
+
     def change_time(self,num):
         if self.player.duration():
             self.player.setPosition((num/100)*self.maxProgressvalue)
