@@ -12,6 +12,7 @@ from pack import SBCRequest
 from pack.preview import ImgPreview
 from pack import FileOperClick
 from SubUi import previewPDF
+from SubUi import PreVideo
 
 
 class Thread_LoadImg(QThread):
@@ -188,6 +189,8 @@ class FileUpdate(QThread):
         elif FileInfo['fetype'] == 'folder':
             self.FileShow1(FileInfo['fepath'])
             return
+        elif FileInfo['fetype'] == 'video':
+            PreVideo.PerViewVideo(self.MainWindow,FileInfo)
 
 
     def DelChoseFiles(self,info):

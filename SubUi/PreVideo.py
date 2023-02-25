@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui, QtWidgets
-import cv2
+import cv2,requests,json
 
 class MySlider(QSlider):  # 继承QSlider
     customSliderClicked = pyqtSignal(str)  # 创建信号
@@ -20,11 +20,14 @@ class MySlider(QSlider):  # 继承QSlider
         self.customSliderClicked.emit("mouse Press")  # 发送信号
 
 class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
-    def __init__(self):
+    def __init__(self,ui,info):
         super(PerViewVideo, self).__init__()
-        self.Main = QMainWindow()
-        self.setupUi(self.Main)
-        self.Main.show()
+        self.path = info['fepath']
+        self.ui = ui
+        self.ui.Main = QMainWindow()
+        self.s = requests.Session()
+        self.setupUi(self.ui.Main)
+        self.ui.Main.show()
         self.init()
 
     def init(self):
@@ -42,24 +45,36 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         # self.player.positionChanged.connect(self.setCurrent)
         # self.horizontalSlider.sliderMoved.connect(self.change_time)
         self.horizontalSlider.customSliderClicked.connect(self.change_time)
+        print('PreviewVideo',self.path)
+        self.GetVideoInfo()
 
     def change_time(self):
         pass
 
-    def playvideo(self,frams):
-        for frame in frams:
-            if not self.isPlay:
-                break
-            self.img = frame
-            show = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            showImage = QImage(show.data, show.shape[1], show.shape[0], QImage.Format_RGB888)
-            # showImage=showImage.copy(self.x1, self.y1,self.x2, self.y2)
-            pix = QPixmap.fromImage(showImage)
-            pix = pix.scaled(self.label.width(), self.label.height(), Qt.IgnoreAspectRatio)
-            # # --------------------------------------
-            # # 局部放大
-            # pix = pix.copy(self.x1, self.y1, self.x2, self.y2)
-            self.label.setPixmap(pix)
-            # 进度条
-            # self.jdt()
-            cv2.waitKey(int(1000 / self.fps))
+    def GetVideoInfo(self):
+        url = 'http://'+self.ui.host+'/preview/'
+        data = {
+            'client': 'windows',
+            'filepath': self.path
+        }
+        res = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
+        redata = json.loads(res.text)
+        print(redata)
+
+    # def playvideo(self,frams):
+    #     for frame in frams:
+    #         if not self.isPlay:
+    #             break
+    #         self.img = frame
+    #         show = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #         showImage = QImage(show.data, show.shape[1], show.shape[0], QImage.Format_RGB888)
+    #         # showImage=showImage.copy(self.x1, self.y1,self.x2, self.y2)
+    #         pix = QPixmap.fromImage(showImage)
+    #         pix = pix.scaled(self.label.width(), self.label.height(), Qt.IgnoreAspectRatio)
+    #         # # --------------------------------------
+    #         # # 局部放大
+    #         # pix = pix.copy(self.x1, self.y1, self.x2, self.y2)
+    #         self.label.setPixmap(pix)
+    #         # 进度条
+    #         # self.jdt()
+    #         cv2.waitKey(int(1000 / self.fps))
