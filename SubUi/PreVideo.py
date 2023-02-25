@@ -5,6 +5,32 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2,requests,json
 
+
+def TimeFormat(t0):
+    hour = int(t0/60/60)
+    if hour < 0:
+        hourstr = '00'
+    else:
+        if hour <10:
+            hourstr = '0'+str(int(hour))
+        else:
+            hourstr = str(int(hour))
+    tm0 = t0 - int(hour)*60*60
+    tm = tm0/60
+    if tm < 0:
+        minstr = '00'
+    else:
+        if tm <10:
+            minstr = '0'+str(int(tm))
+        else:
+            minstr = str(int(tm))
+    ts = tm0 - int(tm) * 60
+    if ts < 10:
+        Secstr = '0'+str(int(ts))
+    else:
+        Secstr = str(int(ts))
+
+    return hourstr+':'+minstr+':'+Secstr
 class MySlider(QSlider):  # 继承QSlider
     customSliderClicked = pyqtSignal(str)  # 创建信号
 
@@ -23,12 +49,14 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
     def __init__(self,ui,info):
         super(PerViewVideo, self).__init__()
         self.path = info['fepath']
+        self.FileName = info['fename']
         self.ui = ui
         self.ui.Main = QMainWindow()
         self.s = requests.Session()
         self.setupUi(self.ui.Main)
         self.ui.Main.show()
         self.init()
+        self.CurVIdeotime = 0
 
     def init(self):
         self.horizontalLayout_2.itemAt(0).widget().deleteLater()
@@ -38,7 +66,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSlider.setObjectName("horizontalSlider")
         self.horizontalLayout_2.addWidget(self.horizontalSlider)
-        self.label_4.setText('')
+        self.label_4.setText(self.FileName)
         self.label_2.setText('00:00:00')
         self.label.setText('00:00:00')
         self.label_3.setText('')
@@ -51,6 +79,27 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
     def change_time(self):
         pass
 
+    def LoadVideo(self,StartTime):
+        timespan = 1
+        StartAudioFram = None
+        EndAudioFram = None
+        StartVideoFram = StartTime*self.VideoInfo['VideoFramRate']
+        EndVideoFram = (StartTime+timespan) * self.VideoInfo['VideoFramRate']
+        if self.VideoInfo['AudioFramRate']:
+            StartAudioFram = StartTime * self.VideoInfo['AudioFramRate']
+            EndAudioFram = (StartTime+timespan) * self.VideoInfo['AudioFramRate']
+        url = 'http://'+self.ui.host+'/preview/'
+        data = {
+            'client': 'windows',
+            'VideoFram':[int(StartVideoFram),int(EndVideoFram)],
+            'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
+            'filepath': self.path
+        }
+        res = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
+        print(66,res)
+        redata = json.loads(res.text)
+        print(res)
+
     def GetVideoInfo(self):
         url = 'http://'+self.ui.host+'/preview/'
         data = {
@@ -59,7 +108,12 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         }
         res = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
         redata = json.loads(res.text)
+        self.VideoInfo = redata['VideoFile']
         print(redata)
+        TotalTime = self.VideoInfo['VideoFramsTotal']/self.VideoInfo['VideoFramRate']
+        self.label_2.setText(TimeFormat(TotalTime))
+
+        self.LoadVideo(1)
 
     # def playvideo(self,frams):
     #     for frame in frams:
