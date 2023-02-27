@@ -1,3 +1,5 @@
+import time
+
 from SubUi import PerVideoui
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -80,7 +82,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         pass
 
     def LoadVideo(self,StartTime):
-        timespan = 1
+        timespan = 10
         StartAudioFram = None
         EndAudioFram = None
         StartVideoFram = StartTime*self.VideoInfo['VideoFramRate']
@@ -95,10 +97,10 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
             'filepath': self.path
         }
-        res = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
-        print(66,res)
-        redata = json.loads(res.text)
-        print(res)
+        print(int(StartVideoFram),int(EndVideoFram))
+        r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
+        data = json.loads(r.text)
+        print(data['VideoFrams'])
 
     def GetVideoInfo(self):
         url = 'http://'+self.ui.host+'/preview/'
