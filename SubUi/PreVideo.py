@@ -51,6 +51,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
     def __init__(self,ui,info):
         super(PerViewVideo, self).__init__()
         self.path = info['fepath']
+        self.VideoStock = {}
         self.FileName = info['fename']
         self.ui = ui
         self.ui.Main = QMainWindow()
@@ -80,8 +81,39 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
 
     def change_time(self):
         pass
+    def StructData(self):
+        if self.VideoDuring/1000/10 - int(self.VideoDuring/1000/10) >0:
+            nums = int(self.VideoDuring / 1000 / 10)+1
+        else:
+            nums = int(self.VideoDuring/1000/10)
+        starttime = 0
+        for i in range(nums):
+            endtime = starttime+10
+            if endtime > self.VideoDuring/1000:
+                endtime = self.VideoDuring/1000
+            self.VideoStock[i] = {'name':'{}_{}#'.format(TimeFormat(starttime),TimeFormat(endtime))+self.FileName,'path':self.path,
+                                  'start':TimeFormat(starttime),'end':TimeFormat(endtime)}
+            starttime = endtime
+        # for i in self.VideoStock:
+        #     print(self.VideoStock[i])
+        self.LoadVideo()
 
-    def LoadVideo(self,StartTime):
+    def LoadVideo(self):
+        url = 'http://' + self.ui.host + '/preview/'
+        for i in self.VideoStock:
+            print(self.VideoStock[i])
+            data = {
+            'client': 'windows',
+            'VideoFram':[self.VideoStock[i]['start'],self.VideoStock[i]['end']],
+            # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
+            'filepath': self.path
+            }
+            r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
+            
+            break
+
+
+    def LoadVideo1(self,StartTime):
         timespan = 10
         StartAudioFram = None
         EndAudioFram = None
@@ -94,13 +126,13 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         data = {
             'client': 'windows',
             'VideoFram':[int(StartVideoFram),int(EndVideoFram)],
-            'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
+            # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
             'filepath': self.path
         }
         print(int(StartVideoFram),int(EndVideoFram))
         r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
         data = json.loads(r.text)
-        print(data['VideoFrams'])
+        print(len(data['VideoFrams']))
 
     def GetVideoInfo(self):
         url = 'http://'+self.ui.host+'/preview/'
@@ -110,12 +142,16 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         }
         res = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
         redata = json.loads(res.text)
-        self.VideoInfo = redata['VideoFile']
+        self.VideoDuring = redata['timeduring']
         print(redata)
-        TotalTime = self.VideoInfo['VideoFramsTotal']/self.VideoInfo['VideoFramRate']
-        self.label_2.setText(TimeFormat(TotalTime))
+        self.VideoDuring = self.VideoDuring*1000
+        self.StructData()
 
-        self.LoadVideo(1)
+        # self.VideoInfo = redata['VideoFile']
+        # print(redata)
+        # TotalTime = self.VideoInfo['VideoFramsTotal']/self.VideoInfo['VideoFramRate']
+        # self.label_2.setText(TimeFormat(TotalTime))
+        # self.LoadVideo(1)
 
     # def playvideo(self,frams):
     #     for frame in frams:
