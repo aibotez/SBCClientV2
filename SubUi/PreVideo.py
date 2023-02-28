@@ -1,4 +1,4 @@
-import os,shutil
+import os,shutil,sip
 import time
 
 from SubUi import PerVideoui
@@ -57,6 +57,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.path = info['fepath']
         self.VideoStock = {}
         self.closeact = 0
+        self.numidex = 0
         self.FaPath = 'TEMP/video/'
         self.FileName = info['fename']
         self.ui = ui
@@ -85,6 +86,9 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         # self.verticalLayout.addWidget(self.labelShow)
         self.label_5.setText('')
         self.horizontalLayout_2.itemAt(0).widget().deleteLater()
+        # self.DownLayout[1].removeWidget(infoi['frame'])
+        sip.delete(self.horizontalSlider)
+        # self.frame_3.itemAt(0).widget().deleteLater()
         # self.horizontalLayout_2.removeWidget(self.horizontalSlider)
         self.horizontalSlider = MySlider(self.frame_3)
         self.horizontalSlider.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -102,10 +106,22 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.GetVideoInfo()
 
     def change_time(self):
-        pass
+        curtime = (self.horizontalSlider.value()/100)*self.VideoDuring
+        print(self.horizontalSlider.value())
+        self.numidex = int(curtime / 1000 / 10)
+        modms = (curtime - self.numidex*1000)
+        self.playvideo(1)
+        self.closeact = 0
+        self.playvideo()
 
-    def playvideo(self):
-        for i in self.VideoStock:
+
+
+    def playvideo(self,pause = None):
+        if pause:
+            self.closeact = 1
+            cv2.destroyAllWindows()
+        for i in range(self.numidex,len(self.VideoStock)):
+        # for i in self.VideoStock:
             print(i)
             if self.closeact:
                 cv2.destroyAllWindows()
@@ -117,11 +133,19 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
             # video = cv2.VideoCapture(0)                # 读取视频（视频源为编号0的摄像头）
             fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
-            # image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
-            # image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
+            try:
+                # cap.set(cv2.CAP_PROP_POS_MSEC, timespan[0])
+                image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
+                image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
+                self.label_5.resize(self.label_5.width(), self.label_5.width() * image_height / image_width)
+            except:
+                pass
             # self.label_5.resize(800, 800 * image_height / image_width)
             # 显示视频
             while True:
+                if self.closeact:
+                    cv2.destroyAllWindows()
+                    break
                 ret, frame = video.read()  # 读取一帧视频，一帧就是一张图像
                 if ret == False:
                     break
@@ -148,10 +172,10 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             self.VideoStock[i] = {'name':'{}_{}#'.format(starttime,endtime)+self.FileName,'path':self.path,
                                   'start':starttime,'end':endtime}
             starttime = endtime
-        self.playvideo()
-        # for i in self.VideoStock:
-        #     # print(self.VideoStock[i])
-        #     self.LoadVideo(self.VideoStock[i])
+        # self.playvideo()
+        for i in self.VideoStock:
+            # print(self.VideoStock[i])
+            self.LoadVideo(self.VideoStock[i])
 
     def LoadVideo(self,info):
         videopath = self.FaPath + info['name']
@@ -202,6 +226,8 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.VideoDuring = redata['timeduring']
         self.fename = redata['fename']
         print(redata)
+        self.label_2.setText(TimeFormat(redata['timeduring']))
+        self.label_4.setText(redata['fename'])
         self.VideoDuring = self.VideoDuring*1000
         self.StructData()
 
