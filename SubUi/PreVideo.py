@@ -1,4 +1,4 @@
-import os
+import os,shutil
 import time
 
 from SubUi import PerVideoui
@@ -7,6 +7,9 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2,requests,json
+from PyQt5.QtGui import QImage
+from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 
 
 def TimeFormat(t0):
@@ -53,6 +56,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         super(PerViewVideo, self).__init__()
         self.path = info['fepath']
         self.VideoStock = {}
+        self.closeact = 0
         self.FaPath = 'TEMP/video/'
         self.FileName = info['fename']
         self.ui = ui
@@ -60,12 +64,26 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.s = requests.Session()
         self.setupUi(self.ui.Main)
         self.ui.Main.show()
+        self.ui.Main.closeEvent=self.closeWindw
         self.init()
         self.CurVIdeotime = 0
 
+
+    def closeWindw(self,e):
+        cv2.destroyAllWindows()
+        self.closeact = 1
     def init(self):
+
         if not os.path.isdir(self.FaPath):
             os.makedirs(self.FaPath)
+        else:
+            for f in os.listdir(self.FaPath):
+                os.remove(os.path.join(self.FaPath, f))
+
+        # self.verticalLayout.itemAt(0).widget().deleteLater()
+        # self.labelShow = QtWidgets.QLabel(self.frame)
+        # self.verticalLayout.addWidget(self.labelShow)
+        self.label_5.setText('')
         self.horizontalLayout_2.itemAt(0).widget().deleteLater()
         # self.horizontalLayout_2.removeWidget(self.horizontalSlider)
         self.horizontalSlider = MySlider(self.frame_3)
@@ -85,6 +103,38 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
 
     def change_time(self):
         pass
+
+    def playvideo(self):
+        for i in self.VideoStock:
+            print(i)
+            if self.closeact:
+                cv2.destroyAllWindows()
+                break
+            info = self.VideoStock[i]
+            print(info)
+            self.LoadVideo(info)
+            videopath = self.FaPath + info['name']
+            video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
+            # video = cv2.VideoCapture(0)                # 读取视频（视频源为编号0的摄像头）
+            fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
+            # image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
+            # image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
+            # self.label_5.resize(800, 800 * image_height / image_width)
+            # 显示视频
+            while True:
+                ret, frame = video.read()  # 读取一帧视频，一帧就是一张图像
+                if ret == False:
+                    break
+                show = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                showImage = QImage(show.data, show.shape[1], show.shape[0], QImage.Format_RGB888)
+                # showImage=showImage.copy(self.x1, self.y1,self.x2, self.y2)
+                pix = QtGui.QPixmap.fromImage(showImage)
+                # self.labelShow.resize(image_width,image_height)
+                pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
+                self.label_5.setPixmap(pix)
+                # cv2.imshow("myframe", frame)  # 显示
+                cv2.waitKey(int(1000/fps))  # 用帧率来计算显示帧间隔
+        cv2.destroyAllWindows()
     def StructData(self):
         if self.VideoDuring/1000/10 - int(self.VideoDuring/1000/10) >0:
             nums = int(self.VideoDuring / 1000 / 10)+1
@@ -98,12 +148,12 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             self.VideoStock[i] = {'name':'{}_{}#'.format(starttime,endtime)+self.FileName,'path':self.path,
                                   'start':starttime,'end':endtime}
             starttime = endtime
-        for i in self.VideoStock:
-            # print(self.VideoStock[i])
-            self.LoadVideo(self.VideoStock[i])
+        self.playvideo()
+        # for i in self.VideoStock:
+        #     # print(self.VideoStock[i])
+        #     self.LoadVideo(self.VideoStock[i])
 
     def LoadVideo(self,info):
-        print(info)
         videopath = self.FaPath + info['name']
         if os.path.exists(videopath):
             return
@@ -117,6 +167,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
         with open(videopath , 'wb') as f:
             f.write(r.content)
+
 
 
     def LoadVideo1(self,StartTime):
