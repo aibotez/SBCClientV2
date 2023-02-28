@@ -1,3 +1,4 @@
+import os
 import time
 
 from SubUi import PerVideoui
@@ -52,6 +53,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         super(PerViewVideo, self).__init__()
         self.path = info['fepath']
         self.VideoStock = {}
+        self.FaPath = 'TEMP/video/'
         self.FileName = info['fename']
         self.ui = ui
         self.ui.Main = QMainWindow()
@@ -62,6 +64,8 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.CurVIdeotime = 0
 
     def init(self):
+        if not os.path.isdir(self.FaPath):
+            os.makedirs(self.FaPath)
         self.horizontalLayout_2.itemAt(0).widget().deleteLater()
         # self.horizontalLayout_2.removeWidget(self.horizontalSlider)
         self.horizontalSlider = MySlider(self.frame_3)
@@ -91,26 +95,28 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             endtime = starttime+10
             if endtime > self.VideoDuring/1000:
                 endtime = self.VideoDuring/1000
-            self.VideoStock[i] = {'name':'{}_{}#'.format(TimeFormat(starttime),TimeFormat(endtime))+self.FileName,'path':self.path,
-                                  'start':TimeFormat(starttime),'end':TimeFormat(endtime)}
+            self.VideoStock[i] = {'name':'{}_{}#'.format(starttime,endtime)+self.FileName,'path':self.path,
+                                  'start':starttime,'end':endtime}
             starttime = endtime
-        # for i in self.VideoStock:
-        #     print(self.VideoStock[i])
-        self.LoadVideo()
-
-    def LoadVideo(self):
-        url = 'http://' + self.ui.host + '/preview/'
         for i in self.VideoStock:
-            print(self.VideoStock[i])
-            data = {
+            # print(self.VideoStock[i])
+            self.LoadVideo(self.VideoStock[i])
+
+    def LoadVideo(self,info):
+        print(info)
+        videopath = self.FaPath + info['name']
+        if os.path.exists(videopath):
+            return
+        url = 'http://' + self.ui.host + '/preview/'
+        data = {
             'client': 'windows',
-            'VideoFram':[self.VideoStock[i]['start'],self.VideoStock[i]['end']],
+            'VideoFram': [info['start'], info['end']],
             # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
             'filepath': self.path
-            }
-            r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
-            
-            break
+        }
+        r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
+        with open(videopath , 'wb') as f:
+            f.write(r.content)
 
 
     def LoadVideo1(self,StartTime):
@@ -143,6 +149,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         res = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
         redata = json.loads(res.text)
         self.VideoDuring = redata['timeduring']
+        self.fename = redata['fename']
         print(redata)
         self.VideoDuring = self.VideoDuring*1000
         self.StructData()

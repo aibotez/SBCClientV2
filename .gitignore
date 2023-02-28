@@ -3,6 +3,8 @@ __pycache__
 org
 dist
 build
+TEMP
+SBCErrorlog.txt
 SubUi/__pycache__
 pack/__pycache__
 pack/preview/__pycache__
