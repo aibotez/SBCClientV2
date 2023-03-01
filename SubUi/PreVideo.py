@@ -60,6 +60,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.numidex = 0
         self.modms = 0
         self.curtime = 0
+        self.playstate = 1
         self.playint = -1
         self.FaPath = 'TEMP/video/'
         self.FileName = info['fename']
@@ -102,6 +103,10 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.label_2.setText('00:00:00')
         self.label.setText('00:00:00')
         self.label_3.setText('')
+        self.label_3.setMaximumSize(QtCore.QSize(36, 36))
+        self.label_3.setPixmap(QtGui.QPixmap('img/plause.png'))
+        self.label_3.setScaledContents(True)
+        self.label_3.mousePressEvent = lambda e:self.playstateChange()
         # self.player.positionChanged.connect(self.setCurrent)
         # self.horizontalSlider.sliderMoved.connect(self.change_time)
         self.horizontalSlider.customSliderClicked.connect(self.change_time)
@@ -109,17 +114,34 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.GetVideoInfo()
 
 
+    def playstateChange(self):
+        if self.playstate:
+            self.playvideo(1)
+            self.label_3.setPixmap(QtGui.QPixmap('img/start.png'))
+            self.label_3.setScaledContents(True)
+            self.playstate = 0
+        else:
+            self.numidex = int(self.curtime / 10)
+            self.modms = (self.curtime - self.numidex * 10)*1000
+            print('modms',self.modms,self.curtime)
+            self.closeact = 0
+            self.label_3.setPixmap(QtGui.QPixmap('img/plause.png'))
+            self.label_3.setScaledContents(True)
+            self.playstate = 1
+            self.playvideo()
+
+
     def change_time(self):
         curtime = (self.horizontalSlider.value()/100)*self.VideoDuring
+        self.curtime = curtime/1000
         print(self.horizontalSlider.value())
         self.numidex = int(curtime / 1000 / 10)
-        self.modms = (curtime - self.numidex*1000)
+        self.modms = (curtime/1000 - self.numidex*10)*1000
         self.playvideo(1)
         self.closeact = 0
         self.playvideo()
 
     def moveSide(self):
-        curtime = (self.horizontalSlider.value() / 100) * self.VideoDuring/1000
         progress = (self.curtime*1000/self.VideoDuring)*100
         # print(progress)
         self.horizontalSlider.setValue(progress)
@@ -141,7 +163,8 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         listenpro.start()
 
     def playvideo(self,pause = None):
-        curtime = (self.horizontalSlider.value() / 100) * self.VideoDuring/1000
+        # curtime = (self.horizontalSlider.value() / 100) * self.VideoDuring/1000
+        curtime = self.curtime
         curFrams = 0
         if pause:
             self.closeact = 1
