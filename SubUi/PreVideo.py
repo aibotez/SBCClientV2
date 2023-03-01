@@ -172,10 +172,10 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             self.VideoStock[i] = {'name':'{}_{}#'.format(starttime,endtime)+self.FileName,'path':self.path,
                                   'start':starttime,'end':endtime}
             starttime = endtime
-        # self.playvideo()
-        for i in self.VideoStock:
-            # print(self.VideoStock[i])
-            self.LoadVideo(self.VideoStock[i])
+        self.playvideo()
+        # for i in self.VideoStock:
+        #     # print(self.VideoStock[i])
+        #     self.LoadVideo(self.VideoStock[i])
 
     def LoadVideo(self,info):
         videopath = self.FaPath + info['name']
@@ -185,6 +185,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         data = {
             'client': 'windows',
             'VideoFram': [info['start'], info['end']],
+            'framidexs':[int(self.VideoRate*info['start']),int(self.VideoRate*info['end'])],
             # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
             'filepath': self.path
         }
@@ -229,6 +230,8 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.label_2.setText(TimeFormat(redata['timeduring']))
         self.label_4.setText(redata['fename'])
         self.VideoDuring = self.VideoDuring*1000
+        self.VideoRate = redata['VideoRate']
+
         self.StructData()
 
         # self.VideoInfo = redata['VideoFile']
