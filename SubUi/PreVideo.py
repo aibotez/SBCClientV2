@@ -1,4 +1,4 @@
-import os,shutil,sip
+import os,shutil,sip,threading
 import time
 
 from SubUi import PerVideoui
@@ -58,6 +58,9 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.VideoStock = {}
         self.closeact = 0
         self.numidex = 0
+        self.modms = 0
+        self.curtime = 0
+        self.playint = -1
         self.FaPath = 'TEMP/video/'
         self.FileName = info['fename']
         self.ui = ui
@@ -105,24 +108,48 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         print('PreviewVideo',self.path)
         self.GetVideoInfo()
 
+
     def change_time(self):
         curtime = (self.horizontalSlider.value()/100)*self.VideoDuring
         print(self.horizontalSlider.value())
         self.numidex = int(curtime / 1000 / 10)
-        modms = (curtime - self.numidex*1000)
+        self.modms = (curtime - self.numidex*1000)
         self.playvideo(1)
         self.closeact = 0
         self.playvideo()
 
+    def moveSide(self):
+        curtime = (self.horizontalSlider.value() / 100) * self.VideoDuring/1000
+        progress = (self.curtime*1000/self.VideoDuring)*100
+        # print(progress)
+        self.horizontalSlider.setValue(progress)
+        # print(self.curtime,self.VideoDuring,self.horizontalSlider.value())
+        self.label.setText(TimeFormat(self.curtime))
 
+
+    def ListenProgrressact(self):
+        while True:
+            Nextint = self.playint+1
+            if Nextint >= len(self.VideoStock):
+                pass
+            else:
+                self.LoadVideo(self.VideoStock[Nextint])
+            time.sleep(1)
+    def ListenProgrress(self):
+        listenpro = threading.Thread(target=self.ListenProgrressact)
+        listenpro.setDaemon(True)
+        listenpro.start()
 
     def playvideo(self,pause = None):
+        curtime = (self.horizontalSlider.value() / 100) * self.VideoDuring/1000
+        curFrams = 0
         if pause:
             self.closeact = 1
             cv2.destroyAllWindows()
         for i in range(self.numidex,len(self.VideoStock)):
         # for i in self.VideoStock:
             print(i)
+            self.playint = i
             if self.closeact:
                 cv2.destroyAllWindows()
                 break
@@ -141,6 +168,9 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             except:
                 pass
             # self.label_5.resize(800, 800 * image_height / image_width)
+
+            video.set(cv2.CAP_PROP_POS_MSEC,self.modms)
+            self.modms = 0
             # 显示视频
             while True:
                 if self.closeact:
@@ -156,7 +186,10 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
                 # self.labelShow.resize(image_width,image_height)
                 pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
                 self.label_5.setPixmap(pix)
+                curFrams += 1
+                self.curtime = curtime+curFrams/fps
                 # cv2.imshow("myframe", frame)  # 显示
+                self.moveSide()
                 cv2.waitKey(int(1000/fps))  # 用帧率来计算显示帧间隔
         cv2.destroyAllWindows()
     def StructData(self):
@@ -231,7 +264,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.label_4.setText(redata['fename'])
         self.VideoDuring = self.VideoDuring*1000
         self.VideoRate = redata['VideoRate']
-
+        self.ListenProgrress()
         self.StructData()
 
         # self.VideoInfo = redata['VideoFile']
