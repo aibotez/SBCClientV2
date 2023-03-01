@@ -188,7 +188,6 @@ class FileOperClick(QThread):
                 if FileInfo['Size'] != 0:
                     FileAll.append(self.GetMoreInfo(i['Path'],CurRopath))
 
-
         self.ui.TransFilesManager.AddUpRecord(FileAll)
 
     def UpChose1(self,e):

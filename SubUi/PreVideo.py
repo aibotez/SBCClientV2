@@ -59,6 +59,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.closeact = 0
         self.numidex = 0
         self.modms = 0
+        self.videos = {}
         self.curtime = 0
         self.playstate = 1
         self.playint = -1
@@ -152,7 +153,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
     def ListenProgrressact(self):
         while True:
             Nextint = self.playint+1
-            if Nextint >= len(self.VideoStock):
+            if Nextint >= len(self.VideoStock) or Nextint==0:
                 pass
             else:
                 self.LoadVideo(self.VideoStock[Nextint])
@@ -225,6 +226,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             endtime = starttime+10
             if endtime > self.VideoDuring/1000:
                 endtime = self.VideoDuring/1000
+            self.videos[i] = None
             self.VideoStock[i] = {'name':'{}_{}#'.format(starttime,endtime)+self.FileName,'path':self.path,
                                   'start':starttime,'end':endtime}
             starttime = endtime
