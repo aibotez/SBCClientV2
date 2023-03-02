@@ -59,6 +59,8 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
 
         self.signalUpdateplay.connect(self.updateplayshow)
         self.signalmoveSide.connect(self.moveSide)
+        self.playvideothread = threading.Thread(target=self.playvideo1)
+        self.lock = threading.Lock()
         self.path = info['fepath']
         self.VideoStock = {}
         self.closeact = 0
@@ -123,7 +125,8 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
 
     def playstateChange(self):
         if self.playstate:
-            self.playvideo(1)
+            self.closeact = 1
+            # self.playvideo(1)
             self.label_3.setPixmap(QtGui.QPixmap('img/start.png'))
             self.label_3.setScaledContents(True)
             self.playstate = 0
@@ -141,12 +144,17 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
     def change_time(self):
         curtime = (self.horizontalSlider.value()/100)*self.VideoDuring
         self.curtime = curtime/1000
-        print(self.horizontalSlider.value())
         self.numidex = int(curtime / 1000 / 10)
         self.modms = (curtime/1000 - self.numidex*10)*1000
-        self.playvideo(1)
+        self.closeact = 1
+        # self.playvideo(1)
+        while self.playvideothread.is_alive():
+            pass
         self.closeact = 0
         self.playvideo()
+        if not self.playstate:
+            self.playstate = 1
+            self.playstateChange()
 
     def moveSide(self):
         progress = (self.curtime*1000/self.VideoDuring)*100
@@ -172,9 +180,11 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
     def updateplayshow(self,pixs):
         self.label_5.setPixmap(pixs[0])
     def playvideo(self,pause = None):
-        playvideothread = threading.Thread(target=self.playvideo1,args=(pause,))
-        playvideothread.setDaemon(True)
-        playvideothread.start()
+        self.playvideothread = threading.Thread(target=self.playvideo1,args=(pause,))
+        self.playvideothread.setDaemon(True)
+        self.playvideothread.start()
+
+        # self.playvideothread.join()
     def playvideo1(self,pause = None):
         # curtime = (self.horizontalSlider.value() / 100) * self.VideoDuring/1000
         curtime = self.curtime
