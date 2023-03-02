@@ -59,6 +59,7 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         self.closeact = 0
         self.numidex = 0
         self.modms = 0
+        self.fps = None
         self.videos = {}
         self.curtime = 0
         self.playstate = 1
@@ -182,16 +183,16 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
             self.LoadVideo(info)
             videopath = self.FaPath + info['name']
             video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
-            # video = cv2.VideoCapture(0)                # 读取视频（视频源为编号0的摄像头）
-            fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
-            try:
-                # cap.set(cv2.CAP_PROP_POS_MSEC, timespan[0])
-                image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
-                image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
-                self.label_5.resize(self.label_5.width(), self.label_5.width() * image_height / image_width)
-            except:
-                pass
-            # self.label_5.resize(800, 800 * image_height / image_width)
+
+            if not self.fps:
+                self.fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
+                try:
+                    # cap.set(cv2.CAP_PROP_POS_MSEC, timespan[0])
+                    self.image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
+                    self.image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
+                    self.label_5.resize(self.label_5.width(), self.label_5.width() * self.image_height / self.image_width)
+                except:
+                    pass
 
             video.set(cv2.CAP_PROP_POS_MSEC,self.modms)
             self.modms = 0
@@ -211,10 +212,10 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
                 pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
                 self.label_5.setPixmap(pix)
                 curFrams += 1
-                self.curtime = curtime+curFrams/fps
+                self.curtime = curtime+curFrams/self.fps
                 # cv2.imshow("myframe", frame)  # 显示
                 self.moveSide()
-                cv2.waitKey(int(1000/fps))  # 用帧率来计算显示帧间隔
+                cv2.waitKey(int(1000/self.fps))  # 用帧率来计算显示帧间隔
         cv2.destroyAllWindows()
     def StructData(self):
         if self.VideoDuring/1000/10 - int(self.VideoDuring/1000/10) >0:
