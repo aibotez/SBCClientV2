@@ -51,9 +51,14 @@ class MySlider(QSlider):  # 继承QSlider
         self.setValue(round(pos * (self.maximum() - self.minimum()) + self.minimum()))  # 设定滑动条滑块位置为鼠标点击处
         self.customSliderClicked.emit("mouse Press")  # 发送信号
 
-class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
+class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
+    signalUpdateplay = pyqtSignal(list)
+    signalmoveSide = pyqtSignal()
     def __init__(self,ui,info):
         super(PerViewVideo, self).__init__()
+
+        self.signalUpdateplay.connect(self.updateplayshow)
+        self.signalmoveSide.connect(self.moveSide)
         self.path = info['fepath']
         self.VideoStock = {}
         self.closeact = 0
@@ -164,7 +169,13 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
         listenpro.setDaemon(True)
         listenpro.start()
 
+    def updateplayshow(self,pixs):
+        self.label_5.setPixmap(pixs[0])
     def playvideo(self,pause = None):
+        playvideothread = threading.Thread(target=self.playvideo1,args=(pause,))
+        playvideothread.setDaemon(True)
+        playvideothread.start()
+    def playvideo1(self,pause = None):
         # curtime = (self.horizontalSlider.value() / 100) * self.VideoDuring/1000
         curtime = self.curtime
         curFrams = 0
@@ -210,11 +221,13 @@ class PerViewVideo(PerVideoui.Ui_MainWindowPerVideo):
                 pix = QtGui.QPixmap.fromImage(showImage)
                 # self.labelShow.resize(image_width,image_height)
                 pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
-                self.label_5.setPixmap(pix)
+                self.signalUpdateplay.emit([pix])
+                # self.label_5.setPixmap(pix)
                 curFrams += 1
                 self.curtime = curtime+curFrams/self.fps
                 # cv2.imshow("myframe", frame)  # 显示
-                self.moveSide()
+                # self.moveSide()
+                self.signalmoveSide.emit()
                 cv2.waitKey(int(1000/self.fps))  # 用帧率来计算显示帧间隔
         cv2.destroyAllWindows()
     def StructData(self):
