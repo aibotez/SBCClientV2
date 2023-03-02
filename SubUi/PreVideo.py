@@ -12,6 +12,24 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
 
+
+class MovieShow():
+    def __init__(self,main,label):
+        self.Main = main
+        self.movie_label = label
+        # self.init()
+    def init(self):
+        # self.movie_label = QtWidgets.QLabel(self.Main)
+        # self.movie_label.setGeometry(0, 0, 300, 300)
+        self.movie = QtGui.QMovie("img/loading.gif")
+        self.movie_label.setMovie(self.movie)
+        # self.movie.start()
+    def show(self):
+        self.movie = QtGui.QMovie("img/loading.gif")
+        self.movie_label.setMovie(self.movie)
+        self.movie.start()
+    # def close(self):
+    #     self.movie_label
 def TimeFormat(t0):
     hour = int(t0/60/60)
     if hour < 0:
@@ -78,6 +96,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.s = requests.Session()
         self.setupUi(self.ui.Main)
         self.ui.Main.show()
+        self.movie = MovieShow(self.ui.Main,self.label_5)
         self.ui.Main.closeEvent=self.closeWindw
         self.init()
         self.CurVIdeotime = 0
@@ -97,6 +116,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         # self.verticalLayout.itemAt(0).widget().deleteLater()
         # self.labelShow = QtWidgets.QLabel(self.frame)
         # self.verticalLayout.addWidget(self.labelShow)
+
         self.label_5.setText('')
         self.horizontalLayout_2.itemAt(0).widget().deleteLater()
         # self.DownLayout[1].removeWidget(infoi['frame'])
@@ -180,6 +200,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
     def updateplayshow(self,pixs):
         self.label_5.setPixmap(pixs[0])
     def playvideo(self,pause = None):
+        self.movie.show()
         self.playvideothread = threading.Thread(target=self.playvideo1,args=(pause,))
         self.playvideothread.setDaemon(True)
         self.playvideothread.start()
@@ -214,7 +235,10 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
                     self.label_5.resize(self.label_5.width(), self.label_5.width() * self.image_height / self.image_width)
                 except:
                     pass
-
+            # self.label_movie = QtWidgets.QLabel(self.ui.Main)
+            # self.label_movie.setObjectName("label_movie")
+            # # self.label_movie.resize(200, 200)
+            # self.label_movie.setText('andsh')
             video.set(cv2.CAP_PROP_POS_MSEC,self.modms)
             self.modms = 0
             # 显示视频
