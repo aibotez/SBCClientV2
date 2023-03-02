@@ -329,7 +329,10 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             'filepath': self.path
         }
         res = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
-        redata = json.loads(res.text)
+        try:
+            redata = json.loads(res.text)
+        except:
+            return
         self.VideoDuring = redata['timeduring']
         self.fename = redata['fename']
         print(redata)
