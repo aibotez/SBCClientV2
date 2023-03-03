@@ -210,7 +210,12 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(format=self.p.get_format_from_width(self.wf.getsampwidth()), channels=self.wf.getnchannels(),
                                   rate=self.wf.getframerate(), output=True)
-    def PlayAudioFrams(self,t1,t2):
+
+    def PlayAudioFrams(self, t1, t2):
+        t1 = threading.Thread(target=self.PlayAudioFrams1,args=(t1,t2,))
+        t1.setDaemon(True)
+        t1.start()
+    def PlayAudioFrams1(self,t1,t2):
         idx1 = int(self.Audframerate*t1)
         idx2 = int(self.Audframerate * t2)
         print('psound:',t1,t2,idx1,idx2,self.fps)
