@@ -287,29 +287,28 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
     def LoadVideo(self,info):
         videopath = self.FaPath + info['name']
         audioopath = videopath + '.wav'
-        if os.path.exists(videopath):
-            return
         url = 'http://' + self.ui.host + '/preview/'
         data = {
             'client': 'windows',
             'VideoFram': [info['start'], info['end']],
-            'framidexs':[int(self.VideoRate*info['start']),int(self.VideoRate*info['end'])],
+            'framidexs': [int(self.VideoRate * info['start']), int(self.VideoRate * info['end'])],
             # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
             'filepath': self.path,
-
         }
-        r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
-        with open(videopath , 'wb') as f:
-            f.write(r.content)
-        if self.HveAud:
-            data['HveAud'] = self.HveAud
+        if not os.path.exists(videopath):
             r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
-            wf = wave.open(audioopath, 'wb')
-            wf.setnchannels(self.Audchannels)
-            wf.setsampwidth(self.Audsampwidth)
-            wf.setframerate(self.Audframerate)
-            wf.writeframes(r.content)
-            wf.close()
+            with open(videopath , 'wb') as f:
+                f.write(r.content)
+        if not os.path.exists(audioopath):
+            if self.HveAud:
+                data['HveAud'] = self.HveAud
+                r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
+                wf = wave.open(audioopath, 'wb')
+                wf.setnchannels(self.Audchannels)
+                wf.setsampwidth(self.Audsampwidth)
+                wf.setframerate(self.Audframerate)
+                wf.writeframes(r.content)
+                wf.close()
 
 
 
