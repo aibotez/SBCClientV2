@@ -1,5 +1,5 @@
 import os,shutil,sip,threading
-import time
+import time,wave
 
 from SubUi import PerVideoui
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -82,6 +82,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.path = info['fepath']
         self.VideoStock = {}
         self.closeact = 0
+        self.HveAud = 0
         self.numidex = 0
         self.modms = 0
         self.fps = None
@@ -285,6 +286,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
 
     def LoadVideo(self,info):
         videopath = self.FaPath + info['name']
+        audioopath = videopath + '.wav'
         if os.path.exists(videopath):
             return
         url = 'http://' + self.ui.host + '/preview/'
@@ -293,11 +295,22 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             'VideoFram': [info['start'], info['end']],
             'framidexs':[int(self.VideoRate*info['start']),int(self.VideoRate*info['end'])],
             # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
-            'filepath': self.path
+            'filepath': self.path,
+
         }
         r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
         with open(videopath , 'wb') as f:
             f.write(r.content)
+        if self.HveAud:
+            data['HveAud'] = self.HveAud
+            r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
+            wf = wave.open(audioopath, 'wb')
+            wf.setnchannels(self.Audchannels)
+            wf.setsampwidth(self.Audsampwidth)
+            wf.setframerate(self.Audframerate)
+            wf.writeframes(r.content)
+            wf.close()
+
 
 
 
@@ -315,7 +328,8 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             'client': 'windows',
             'VideoFram':[int(StartVideoFram),int(EndVideoFram)],
             # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
-            'filepath': self.path
+            'filepath': self.path,
+
         }
         print(int(StartVideoFram),int(EndVideoFram))
         r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
@@ -323,6 +337,11 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         print(len(data['VideoFrams']))
 
     def GetVideoInfo(self):
+        self.movie.show()
+        t = threading.Thread(target=self.GetVideoInfoact)
+        t.setDaemon(True)
+        t.start()
+    def GetVideoInfoact(self):
         url = 'http://'+self.ui.host+'/preview/'
         data = {
             'client': 'windows',
@@ -336,10 +355,14 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.VideoDuring = redata['timeduring']
         self.fename = redata['fename']
         print(redata)
+        self.HveAud = redata['HveAud']
         self.label_2.setText(TimeFormat(redata['timeduring']))
         self.label_4.setText(redata['fename'])
         self.VideoDuring = self.VideoDuring*1000
         self.VideoRate = redata['VideoRate']
+        self.Audsampwidth = redata['audsampwidth']
+        self.Audchannels = redata['audchannels']
+        self.Audframerate = redata['audframerate']
         self.ListenProgrress()
         self.StructData()
 
