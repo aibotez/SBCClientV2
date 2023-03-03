@@ -1,5 +1,5 @@
 import os,shutil,sip,threading
-import time,wave
+import time,wave,pyaudio
 
 from SubUi import PerVideoui
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -90,6 +90,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.curtime = 0
         self.playstate = 1
         self.playint = -1
+        self.stream = None
         self.FaPath = 'TEMP/video/'
         self.FileName = info['fename']
         self.ui = ui
@@ -173,9 +174,9 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             pass
         self.closeact = 0
         self.playvideo()
-        if not self.playstate:
-            self.playstate = 1
-            self.playstateChange()
+        # if not self.playstate:
+        #     self.playstate = 1
+        #     self.playstateChange()
 
     def moveSide(self):
         progress = (self.curtime*1000/self.VideoDuring)*100
@@ -200,6 +201,51 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
 
     def updateplayshow(self,pixs):
         self.label_5.setPixmap(pixs[0])
+
+
+    def ReadAudio(self,playint):
+        videopath = self.FaPath + self.VideoStock[playint]['name']
+        audioopath = videopath + '.wav'
+        self.wf = wave.open(audioopath, 'rb')
+        self.p = pyaudio.PyAudio()
+        self.stream = self.p.open(format=self.p.get_format_from_width(self.wf.getsampwidth()), channels=self.wf.getnchannels(),
+                                  rate=self.wf.getframerate(), output=True)
+    def PlayAudioFrams(self,t1,t2):
+        idx1 = int(self.Audframerate*t1)
+        idx2 = int(self.Audframerate * t2)
+        print('psound:',t1,t2,idx1,idx2,self.fps)
+        self.wf.readframes(idx1)  # 读取第n帧数据
+        data = self.wf.readframes(idx2 - idx1)
+        self.stream.write(data)
+
+    def playsound(self, playint):
+        playsoundthread = threading.Thread(target=self.playsound1,args=(playint,))
+        playsoundthread.setDaemon(True)
+        playsoundthread.start()
+
+    def playsound1(self, playint):
+
+        while True:
+            self.playsound2(playint)
+    def playsound2(self,playint):
+        # time.sleep(1)
+        videopath = self.FaPath + self.VideoStock[playint]['name']
+        audioopath = videopath + '.wav'
+        chunk = 1024  # 2014kb
+        wf = wave.open(audioopath, 'rb')
+        if not self.stream:
+            self.p = pyaudio.PyAudio()
+            self.stream = self.p.open(format=self.p.get_format_from_width(wf.getsampwidth()), channels=wf.getnchannels(),
+                            rate=wf.getframerate(), output=True)
+        data = wf.readframes(chunk)  # 读取数据
+        # print(data)
+        while data != b'':  # 播放
+            self.stream.write(data)
+            data = wf.readframes(chunk)
+            # print(data)
+        # self.stream.stop_stream()  # 停止数据流
+        # self.stream.close()
+        # self.p.terminate()  # 关闭 PyAudio
     def playvideo(self,pause = None):
         self.movie.show()
         self.playvideothread = threading.Thread(target=self.playvideo1,args=(pause,))
@@ -221,9 +267,13 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             if self.closeact:
                 cv2.destroyAllWindows()
                 break
+
             info = self.VideoStock[i]
             print(info)
             self.LoadVideo(info)
+            self.ReadAudio(i)
+            # if i==0:
+            #     self.playsound(i)
             videopath = self.FaPath + info['name']
             video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
 
@@ -260,6 +310,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
                 # self.label_5.setPixmap(pix)
                 curFrams += 1
                 self.curtime = curtime+curFrams/self.fps
+                self.PlayAudioFrams((curtime+(curFrams-1)/self.fps),self.curtime)
                 # cv2.imshow("myframe", frame)  # 显示
                 # self.moveSide()
                 self.signalmoveSide.emit()
