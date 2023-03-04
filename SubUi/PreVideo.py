@@ -297,7 +297,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
                 widthint = 0
                 heightint = 0
                 if self.image_width > self.label_5.width():
-                    widthint = self.label_5.width()
+                    widthint = self.ui.Main.width()
                     heightint = widthint*self.image_height/self.image_width
                 else:
                     widthint = self.image_width
