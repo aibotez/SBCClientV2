@@ -251,30 +251,42 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         videopath = self.FaPath + self.VideoStock[playint]['name']
         video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
         rate = video.get(5)
-
         wf = wave.open(audioopath, 'rb')
         chunk = int(wf.getframerate()/rate)  # 2014kb
-        curAudiotime = self.modms*1000
-        self.curAudAllTime = self.curtime
+        curAudiotime = self.modms/1000
+        # self.curAudAllTime = self.curtime
         # self.curtime
         print('rate', wf.getframerate(), 'total', wf.getnframes())
         if not self.stream:
             self.p = pyaudio.PyAudio()
             self.stream = self.p.open(format=self.p.get_format_from_width(wf.getsampwidth()), channels=wf.getnchannels(),
                             rate=wf.getframerate(), output=True)
-        wf.readframes(curAudiotime*wf.getframerate())
+        wf.readframes(int(curAudiotime*wf.getframerate()))
         data = wf.readframes(chunk)  # 读取数据
         # print(data)
-
-
+        print('stri', curAudiotime,curAudiotime*wf.getframerate())
+        print(len(data))
+        video.set(cv2.CAP_PROP_POS_MSEC, self.modms)
+        self.modms = 0
         while data != b'':  # 播放
-            self.stream.write(data)
-            self.curAudAllTime = self.curAudAllTime+chunk/wf.getframerate()
-            # if curAudAllTime - self.curtime >0:
-            #     print('wait Video',curAudAllTime-self.curtime)
-            #     time.sleep(curAudAllTime-self.curtime)
-            #     curAudAllTime = self.curtime
-            data = wf.readframes(chunk)
+            if self.closeact:
+
+                cv2.destroyAllWindows()
+                self.stream.stop_stream()
+                self.stream.close()
+                self.p.terminate()
+                self.stream = None
+                return 0
+            else:
+
+                self.stream.write(data)
+                self.signalmoveSide.emit()
+                self.curtime = self.curtime+chunk/wf.getframerate()
+                # if curAudAllTime - self.curtime >0:
+                #     print('wait Video',curAudAllTime-self.curtime)
+                #     time.sleep(curAudAllTime-self.curtime)
+                #     curAudAllTime = self.curtime
+                data = wf.readframes(chunk)
 
 
             ret, frame = video.read()  # 读取一帧视频，一帧就是一张图像
@@ -309,65 +321,58 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             self.playint = i
             if self.closeact:
                 cv2.destroyAllWindows()
-                break
+                return 0
 
             info = self.VideoStock[i]
             print(info)
             self.LoadVideo(info)
             # self.ReadAudio(i)
-            self.playsound(i)
+            if self.HveAud:
+                self.playsound(i)
+            else:
+                videopath = self.FaPath + info['name']
+                video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
+                # rate = video.get(5)
+                # frame_num = video.get(7)
+                # print('Vraet', rate, 'Vtotal', frame_num)
 
-            # # if i==0:
-            # #     self.playsound(i)
-            # videopath = self.FaPath + info['name']
-            # video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
-            #
-            # rate = video.get(5)
-            # frame_num = video.get(7)
-            # print('Vraet', rate, 'Vtotal', frame_num)
-            #
-            # if not self.fps:
-            #     self.fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
-            #
-            #     try:
-            #         # cap.set(cv2.CAP_PROP_POS_MSEC, timespan[0])
-            #         self.image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
-            #         self.image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
-            #         self.label_5.resize(self.label_5.width(), self.label_5.width() * self.image_height / self.image_width)
-            #     except:
-            #         pass
-            # # self.label_movie = QtWidgets.QLabel(self.ui.Main)
-            # # self.label_movie.setObjectName("label_movie")
-            # # # self.label_movie.resize(200, 200)
-            # # self.label_movie.setText('andsh')
-            # video.set(cv2.CAP_PROP_POS_MSEC,self.modms)
-            # self.modms = 0
-            # # 显示视频
-            # while True:
-            #     if self.closeact:
-            #         cv2.destroyAllWindows()
-            #         break
-            #     ret, frame = video.read()  # 读取一帧视频，一帧就是一张图像
-            #     if ret == False:
-            #         break
-            #     show = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            #     showImage = QImage(show.data, show.shape[1], show.shape[0], QImage.Format_RGB888)
-            #     # showImage=showImage.copy(self.x1, self.y1,self.x2, self.y2)
-            #     pix = QtGui.QPixmap.fromImage(showImage)
-            #     # self.labelShow.resize(image_width,image_height)
-            #     pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
-            #     self.signalUpdateplay.emit([pix])
-            #     # self.label_5.setPixmap(pix)
-            #     curFrams += 1
-            #     self.curtime = curtime + curFrams / self.fps
-            #     if self.curAudAllTime != self.curtime:
-            #         video.set(cv2.CAP_PROP_POS_MSEC, self.curAudAllTime*1000)
-            #         self.curtime = self.curAudAllTime
-            #     # self.PlayAudioFrams((curtime+(curFrams-1)/self.fps),self.curtime)
-            #     # cv2.imshow("myframe", frame)  # 显示
-            #     # self.moveSide()
-            #     self.signalmoveSide.emit()
-            #     # cv2.waitKey(int(1000/self.fps))  # 用帧率来计算显示帧间隔
+                if not self.fps:
+                    self.fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
+
+                    try:
+                        # cap.set(cv2.CAP_PROP_POS_MSEC, timespan[0])
+                        self.image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
+                        self.image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
+                        self.label_5.resize(self.label_5.width(), self.label_5.width() * self.image_height / self.image_width)
+                    except:
+                        pass
+                # self.label_movie = QtWidgets.QLabel(self.ui.Main)
+                # self.label_movie.setObjectName("label_movie")
+                # # self.label_movie.resize(200, 200)
+                # self.label_movie.setText('andsh')
+                video.set(cv2.CAP_PROP_POS_MSEC,self.modms)
+                self.modms = 0
+                # 显示视频
+                while True:
+                    if self.closeact:
+                        cv2.destroyAllWindows()
+                        break
+                    ret, frame = video.read()  # 读取一帧视频，一帧就是一张图像
+                    if ret == False:
+                        break
+                    show = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    showImage = QImage(show.data, show.shape[1], show.shape[0], QImage.Format_RGB888)
+                    # showImage=showImage.copy(self.x1, self.y1,self.x2, self.y2)
+                    pix = QtGui.QPixmap.fromImage(showImage)
+                    # self.labelShow.resize(image_width,image_height)
+                    pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
+                    self.signalUpdateplay.emit([pix])
+                    # self.label_5.setPixmap(pix)
+                    curFrams += 1
+                    self.curtime = curtime + curFrams / self.fps
+                    # self.moveSide()
+                    self.signalmoveSide.emit()
+                    cv2.waitKey(int(1000/self.fps))  # 用帧率来计算显示帧间隔
 
         cv2.destroyAllWindows()
     def StructData(self):
