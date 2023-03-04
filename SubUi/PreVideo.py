@@ -276,7 +276,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         # showImage=showImage.copy(self.x1, self.y1,self.x2, self.y2)
         pix = QtGui.QPixmap.fromImage(showImage)
         # self.labelShow.resize(image_width,image_height)
-        print('Acutual',self.label_5.width(), self.label_5.height())
+        # print('Acutual',self.label_5.width(), self.label_5.height())
         pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
         self.signalUpdateplay.emit([pix])
     def playsound2(self,playint):
@@ -315,7 +315,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         curAudiotime = self.modms/1000
         # self.curAudAllTime = self.curtime
         # self.curtime
-        print('rate', wf.getframerate(), 'total', wf.getnframes())
+        # print('rate', wf.getframerate(), 'total', wf.getnframes())
         if not self.stream:
             self.p = pyaudio.PyAudio()
             self.stream = self.p.open(format=self.p.get_format_from_width(wf.getsampwidth()), channels=wf.getnchannels(),
@@ -323,8 +323,8 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         wf.readframes(int(curAudiotime*wf.getframerate()))
         data = wf.readframes(chunk)  # 读取数据
         # print(data)
-        print('stri', curAudiotime,curAudiotime*wf.getframerate())
-        print(len(data))
+        # print('stri', curAudiotime,curAudiotime*wf.getframerate())
+        # print(len(data))
         video.set(cv2.CAP_PROP_POS_MSEC, self.modms)
         self.modms = 0
         while data != b'':  # 播放
@@ -375,7 +375,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             cv2.destroyAllWindows()
         for i in range(self.numidex,len(self.VideoStock)):
         # for i in self.VideoStock:
-            print(i)
+        #     print(i)
             self.playint = i
             if self.closeact:
                 cv2.destroyAllWindows()
@@ -496,6 +496,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             redata = json.loads(res.text)
         except:
             return
+
         self.VideoDuring = redata['timeduring']
         self.fename = redata['fename']
         print(redata)

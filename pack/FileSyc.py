@@ -118,6 +118,7 @@ class FileSyc(QObject):
         SycUped = 0
         for i in FileWaits:
             try:
+                print(FilesLo[i])
                 # print(FilesLo[i]['filemd5'],FilesRo[i]['filemd5'])
                 info = {}
                 info['LoFilePath'] = FilesLo[i]['fepath']
