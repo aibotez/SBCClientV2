@@ -94,8 +94,12 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.stream = None
         self.FaPath = 'TEMP/video/'
         self.FileName = info['fename']
+        desktop = QApplication.desktop()
+        self.ScreenWidth = desktop.width()
+        self.ScreenHeight = desktop.height()
         self.ui = ui
         self.ui.Main = QMainWindow()
+        self.ui.Main.resizeEvent = self.adjuestSize
         self.s = requests.Session()
         self.setupUi(self.ui.Main)
         self.ui.Main.show()
@@ -131,7 +135,8 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSlider.setObjectName("horizontalSlider")
         self.horizontalLayout_2.addWidget(self.horizontalSlider)
-        self.label_4.setText(self.FileName)
+        # self.label_4.setText(self.FileName)
+        self.ui.Main.setWindowTitle("小黑云视频预览({})".format(self.FileName))
         self.label_2.setText('00:00:00')
         self.label.setText('00:00:00')
         self.label_3.setText('')
@@ -163,6 +168,34 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             self.playstate = 1
             self.playvideo()
 
+    def adjuestSize(self,e):
+        if self.fps:
+        # self.ScreenWidth = desktop.width()
+        # self.ScreenHeight = desktop.height()
+            videoShowWidth = 0
+            VideoShowHeight = 0
+
+            if self.ui.Main.width()<=self.image_width:
+                videoShowWidth = self.ui.Main.width()
+                VideoShowHeight = videoShowWidth * self.image_height / self.image_width
+                if VideoShowHeight > self.ScreenHeight:
+                    VideoShowHeight = self.ScreenHeight
+                    videoShowWidth = VideoShowHeight * self.image_width/self.image_height
+                # self.label_5.setMaximumSize(QtCore.QSize(videoShowWidth, VideoShowHeight))
+                # self.label_5.setMinimumSize(QtCore.QSize(videoShowWidth, VideoShowHeight))
+                # self.label_5.resize(videoShowWidth,VideoShowHeight)
+            else:
+                videoShowWidth = self.image_width
+                VideoShowHeight = videoShowWidth * self.image_height / self.image_width
+                if VideoShowHeight > self.ScreenHeight:
+                    VideoShowHeight = self.ScreenHeight
+                    videoShowWidth = VideoShowHeight * self.image_width/self.image_height
+                self.label_5.setMaximumSize(QtCore.QSize(videoShowWidth, VideoShowHeight))
+                self.label_5.setMinimumSize(QtCore.QSize(videoShowWidth, VideoShowHeight))
+                # print('IMG', self.ui.Main.width(), self.image_width, self.image_height, videoShowWidth, VideoShowHeight)
+                self.label_5.resize(videoShowWidth, VideoShowHeight)
+        # self.image_width
+        # self.image_height
 
     def change_time(self):
         curtime = (self.horizontalSlider.value()/100)*self.VideoDuring
@@ -241,6 +274,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         # showImage=showImage.copy(self.x1, self.y1,self.x2, self.y2)
         pix = QtGui.QPixmap.fromImage(showImage)
         # self.labelShow.resize(image_width,image_height)
+        print('Acutual',self.label_5.width(), self.label_5.height())
         pix = pix.scaled(self.label_5.width(), self.label_5.height(), Qt.IgnoreAspectRatio)
         self.signalUpdateplay.emit([pix])
     def playsound2(self,playint):
@@ -251,6 +285,14 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         videopath = self.FaPath + self.VideoStock[playint]['name']
         video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
         rate = video.get(5)
+        if not self.fps:
+            self.fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
+            try:
+                self.image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
+                self.image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
+                self.label_5.resize(self.label_5.width(), self.label_5.width() * self.image_height / self.image_width)
+            except:
+                pass
         wf = wave.open(audioopath, 'rb')
         chunk = int(wf.getframerate()/rate)  # 2014kb
         curAudiotime = self.modms/1000
@@ -278,7 +320,6 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
                 self.stream = None
                 return 0
             else:
-
                 self.stream.write(data)
                 self.signalmoveSide.emit()
                 self.curtime = self.curtime+chunk/wf.getframerate()
@@ -338,7 +379,6 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
 
                 if not self.fps:
                     self.fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
-
                     try:
                         # cap.set(cv2.CAP_PROP_POS_MSEC, timespan[0])
                         self.image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
@@ -405,10 +445,12 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
             'filepath': self.path,
         }
+        # print('LoadingVideo')
         if not os.path.exists(videopath):
             r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
             with open(videopath , 'wb') as f:
                 f.write(r.content)
+        # print('LoadingAudio')
         if not os.path.exists(audioopath):
             if self.HveAud:
                 data['HveAud'] = self.HveAud
@@ -420,30 +462,6 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
                 wf.writeframes(r.content)
                 wf.close()
 
-
-
-
-    def LoadVideo1(self,StartTime):
-        timespan = 10
-        StartAudioFram = None
-        EndAudioFram = None
-        StartVideoFram = StartTime*self.VideoInfo['VideoFramRate']
-        EndVideoFram = (StartTime+timespan) * self.VideoInfo['VideoFramRate']
-        if self.VideoInfo['AudioFramRate']:
-            StartAudioFram = StartTime * self.VideoInfo['AudioFramRate']
-            EndAudioFram = (StartTime+timespan) * self.VideoInfo['AudioFramRate']
-        url = 'http://'+self.ui.host+'/preview/'
-        data = {
-            'client': 'windows',
-            'VideoFram':[int(StartVideoFram),int(EndVideoFram)],
-            # 'AudioFram':[int(StartAudioFram),int(EndAudioFram)],
-            'filepath': self.path,
-
-        }
-        print(int(StartVideoFram),int(EndVideoFram))
-        r = self.s.post(url, data=json.dumps(data), headers=self.ui.SBCRe.headers)
-        data = json.loads(r.text)
-        print(len(data['VideoFrams']))
 
     def GetVideoInfo(self):
         self.movie.show()
@@ -466,7 +484,8 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         print(redata)
         self.HveAud = redata['HveAud']
         self.label_2.setText(TimeFormat(redata['timeduring']))
-        self.label_4.setText(redata['fename'])
+        self.ui.Main.setWindowTitle("小黑云视频预览({})".format(redata['fename']))
+        # self.label_4.setText(redata['fename'])
         self.VideoDuring = self.VideoDuring*1000
         self.VideoRate = redata['VideoRate']
         self.Audsampwidth = redata['audsampwidth']
