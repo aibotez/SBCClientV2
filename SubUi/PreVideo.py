@@ -292,7 +292,22 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             try:
                 self.image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
                 self.image_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 视频帧高度
-                self.label_5.resize(self.label_5.width(), self.label_5.width() * self.image_height / self.image_width)
+                # self.ScreenWidth = desktop.width()
+                # self.ScreenHeight = desktop.height()
+                widthint = 0
+                heightint = 0
+                if self.image_width > self.label_5.width():
+                    widthint = self.label_5.width()
+                    heightint = widthint*self.image_height/self.image_width
+                else:
+                    widthint = self.image_width
+                    heightint = widthint * self.image_height / self.image_width
+                # self.frame.setMaximumSize(QtCore.QSize(widthint,heightint))
+                # self.frame.setMinimumSize(QtCore.QSize(widthint,heightint))
+                self.label_5.setMaximumSize(QtCore.QSize(widthint,heightint))
+                self.label_5.setMinimumSize(QtCore.QSize(widthint,heightint))
+                # self.frame.resize(widthint,heightint)
+                # self.label_5.resize(widthint,heightint)
             except:
                 pass
         wf = wave.open(audioopath, 'rb')
