@@ -224,7 +224,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.stream.write(data)
 
     def playsound(self, playint):
-        playsoundthread = threading.Thread(target=self.playsound1,args=(playint,))
+        playsoundthread = threading.Thread(target=self.playsound2,args=(playint,))
         playsoundthread.setDaemon(True)
         playsoundthread.start()
 
@@ -236,16 +236,26 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         # time.sleep(1)
         videopath = self.FaPath + self.VideoStock[playint]['name']
         audioopath = videopath + '.wav'
-        chunk = 1024  # 2014kb
         wf = wave.open(audioopath, 'rb')
+        chunk = int(wf.getframerate()*0.5)  # 2014kb
+        curAudiotime = self.modms*1000
+        curAudAllTime = self.curtime
+        # self.curtime
+        print('rate', wf.getframerate(), 'total', wf.getnframes())
         if not self.stream:
             self.p = pyaudio.PyAudio()
             self.stream = self.p.open(format=self.p.get_format_from_width(wf.getsampwidth()), channels=wf.getnchannels(),
                             rate=wf.getframerate(), output=True)
+        wf.readframes(curAudiotime*wf.getframerate())
         data = wf.readframes(chunk)  # 读取数据
         # print(data)
         while data != b'':  # 播放
             self.stream.write(data)
+            curAudAllTime = curAudAllTime+chunk/wf.getframerate()
+            if curAudAllTime - self.curtime >0:
+                print('wait Video',curAudAllTime-self.curtime)
+                time.sleep(curAudAllTime-self.curtime)
+                curAudAllTime = self.curtime
             data = wf.readframes(chunk)
             # print(data)
         # self.stream.stop_stream()  # 停止数据流
@@ -276,14 +286,20 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
             info = self.VideoStock[i]
             print(info)
             self.LoadVideo(info)
-            self.ReadAudio(i)
+            # self.ReadAudio(i)
+            self.playsound(i)
             # if i==0:
             #     self.playsound(i)
             videopath = self.FaPath + info['name']
             video = cv2.VideoCapture(videopath)  # 读取视频（视频源为视频文件）
 
+            rate = video.get(5)
+            frame_num = video.get(7)
+            print('Vraet', rate, 'Vtotal', frame_num)
+
             if not self.fps:
                 self.fps = video.get(cv2.CAP_PROP_FPS)  # 读取视频帧速率
+
                 try:
                     # cap.set(cv2.CAP_PROP_POS_MSEC, timespan[0])
                     self.image_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))  # 视频帧宽度
@@ -315,7 +331,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
                 # self.label_5.setPixmap(pix)
                 curFrams += 1
                 self.curtime = curtime+curFrams/self.fps
-                self.PlayAudioFrams((curtime+(curFrams-1)/self.fps),self.curtime)
+                # self.PlayAudioFrams((curtime+(curFrams-1)/self.fps),self.curtime)
                 # cv2.imshow("myframe", frame)  # 显示
                 # self.moveSide()
                 self.signalmoveSide.emit()
