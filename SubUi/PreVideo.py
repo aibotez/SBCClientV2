@@ -181,9 +181,11 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
                 if VideoShowHeight > self.ScreenHeight:
                     VideoShowHeight = self.ScreenHeight
                     videoShowWidth = VideoShowHeight * self.image_width/self.image_height
-                # self.label_5.setMaximumSize(QtCore.QSize(videoShowWidth, VideoShowHeight))
-                # self.label_5.setMinimumSize(QtCore.QSize(videoShowWidth, VideoShowHeight))
-                # self.label_5.resize(videoShowWidth,VideoShowHeight)
+                # self.frame.setMaximumSize(QtCore.QSize(videoShowWidth-2, VideoShowHeight-2))
+                # self.frame.setMinimumSize(QtCore.QSize(videoShowWidth-2, VideoShowHeight-2))
+                self.label_5.setMaximumSize(QtCore.QSize(videoShowWidth-2, VideoShowHeight-2))
+                self.label_5.setMinimumSize(QtCore.QSize(videoShowWidth-2, VideoShowHeight-2))
+                # self.label_5.resize(videoShowWidth-5,VideoShowHeight-5)
             else:
                 videoShowWidth = self.image_width
                 VideoShowHeight = videoShowWidth * self.image_height / self.image_width
