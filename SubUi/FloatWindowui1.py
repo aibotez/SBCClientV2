@@ -23,6 +23,13 @@ class FloatWd(FloatWindowui.Ui_Dialog):
         self.Dialog.setCursor(Qt.PointingHandCursor)
         # self.Dialog.setWindowFlags(Qt.FramelessWindowHint|Qt.Tool)
         self.Dialog.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.shadow = QtWidgets.QGraphicsDropShadowEffect()  # 设定一个阴影,半径为10,颜色为#444444,定位为0,0
+        self.shadow.setBlurRadius(10)
+        self.shadow.setColor(QtGui.QColor("#444444"))
+        self.shadow.setOffset(0, 0)
+        self.frame_3.setGraphicsEffect(self.shadow)  # 为frame设定阴影效果
+
         self.Dialog.mousePressEvent = self.mousePressEvent
         self.Dialog.mouseMoveEvent = self.mouseMoveEvent
         self.Dialog.mouseMoveEvent = self.mouseMoveEvent
