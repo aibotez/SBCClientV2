@@ -155,6 +155,8 @@ class FileUpdate(QThread):
             return 'img/filecon/wordcon.jpg'
         if fetype == 'html':
             return 'img/filecon/htmlcon.jpg'
+        if fetype == 'video':
+            return 'img/filecon/video.jpg'
         else:
             return 'img/filecon/wj.jfif'
 
