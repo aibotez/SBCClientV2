@@ -86,21 +86,23 @@ class FileSyc(QObject):
             fapath = root.replace(path, '')
             if '__pycache__' not in fapath and '~$' not in fapath:
                 for i in files:
-                    try:
-                        fepath = path + fapath + i
-                        FileInfo = {}
-                        FileInfo['rofapath'] = self.ClientInfo['BackupRoPath'][0:-1] + os.path.dirname(fepath).replace(path[0:-1],'/')
-                        FileInfo['fename'] = os.path.basename(fepath)
-                        FileInfo['fepath'] = fepath
-                        FileInfo['rofepath'] = self.ClientInfo['BackupRoPath'][0:-1] + fepath.replace(path,'/')
-                        FileInfo['size'] = os.path.getsize(fepath)
-                        FileInfo['date'] = os.stat(fepath).st_mtime
-                        FileInfo['filemd5'] = getfileMd5(fepath)
-                        # FileInfo['fepath1'] = fepath.replace(path,'/')
-                        Files[str_trans_to_md5(FileInfo['rofepath'])] = FileInfo
-                    except Exception as e:
-                        print(e)
-                        continue
+                    fepath = path + fapath + i
+                    if os.path.getsize(fepath)>0 and '~$' not in i:
+                        try:
+
+                            FileInfo = {}
+                            FileInfo['rofapath'] = self.ClientInfo['BackupRoPath'][0:-1] + os.path.dirname(fepath).replace(path[0:-1],'/')
+                            FileInfo['fename'] = os.path.basename(fepath)
+                            FileInfo['fepath'] = fepath
+                            FileInfo['rofepath'] = self.ClientInfo['BackupRoPath'][0:-1] + fepath.replace(path,'/')
+                            FileInfo['size'] = os.path.getsize(fepath)
+                            FileInfo['date'] = os.stat(fepath).st_mtime
+                            FileInfo['filemd5'] = getfileMd5(fepath)
+                            # FileInfo['fepath1'] = fepath.replace(path,'/')
+                            Files[str_trans_to_md5(FileInfo['rofepath'])] = FileInfo
+                        except Exception as e:
+                            print(e)
+                            continue
         return Files
 
 
@@ -109,16 +111,28 @@ class FileSyc(QObject):
         # FilesRo = loFilesdb
         # dbFilesWaitDel = [loFilesdb[i] for i in loFilesdb if i not in FilesLo]
         # self.dbManager.DelSycRecords(dbFilesWaitDel)
+
         FilesLo_ = [i for i in FilesLo if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
-        FileWaits = [i for i in FilesLo_ if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']]
+        FileWaits = [i for i in FilesLo_ if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5'] or FilesLo[i]['date'] > FilesRo[i]['date']]
         # dbFilesWaitUpdate = []
         # dbFilesWaitAdd = []
         self.signalUpdateProgress.emit([0,len(FileWaits)])
         self.signalUpDow.emit(1)
+
+        # print('len(FileWaits)：',len(FileWaits))
+        # print(FilesLo[FilesLo_[0]])
+        # for i in FilesLo:
+        #     if i not in FilesRo:
+        #         print('NotContain',FilesLo[i],FilesLo[i]['filemd5'])
+        #     elif FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']:
+        #         print('MD5',FilesLo[i], FilesRo[i])
+        #         print(FilesLo[i]['filemd5'], FilesRo[i]['filemd5'])
+        # return 0
+
         SycUped = 0
         for i in FileWaits:
             try:
-                print(FilesLo[i])
+                # print(FilesLo[i]['fename'])
                 # print(FilesLo[i]['filemd5'],FilesRo[i]['filemd5'])
                 info = {}
                 info['LoFilePath'] = FilesLo[i]['fepath']

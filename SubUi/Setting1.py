@@ -21,6 +21,7 @@ class SettingShow(Settingui.Ui_Dialog,QObject):
         self.signalexit.connect(lambda :sys.exit())
         self.update = Update.Update(self.ui)
         self.Dialog = Dialog
+        self.Dialog.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.Tool)
         self.dbManager = DBManager.DBManager()
         self.init()
 

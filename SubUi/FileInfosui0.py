@@ -41,6 +41,7 @@ class FileInfosUi(FileInfosui.Ui_Dialog):
         self.ui = ui
         self.ChosedFile = ChosedFile
         self.Dialog = Dialog
+        self.Dialog.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.Tool)
         self.init()
     def init(self):
         self.setupUi(self.Dialog)

@@ -99,6 +99,7 @@ class PerViewVideo(QObject,PerVideoui.Ui_MainWindowPerVideo):
         self.ScreenHeight = desktop.height()
         self.ui = ui
         self.ui.Main = QMainWindow()
+        self.ui.Main.setWindowFlags(Qt.Tool)
         self.ui.Main.resizeEvent = self.adjuestSize
         self.s = requests.Session()
         self.setupUi(self.ui.Main)

@@ -321,6 +321,7 @@ class FileOperClick(QThread):
         if ChosedFiles:
             self.ui.SBCShareWindow = Shareui.Ui_Dialog()
             self.ui.SBCShareWindowDialog = QDialog()
+            self.ui.SBCShareWindowDialog.setWindowFlags(Qt.Tool)
             self.ui.SBCShareWindow.setupUi(self.ui.SBCShareWindowDialog)
             self.ui.SBCShareWindow.label_5.setPixmap(QtGui.QPixmap('img/filecon/drop.jpg'))
             self.ui.SBCShareWindow.label_5.setScaledContents(True)
@@ -365,6 +366,7 @@ class FileOperClick(QThread):
 
         self.ui.SBCNewWindow = ReNameui.Ui_Dialog()
         self.ui.SBCNewWindowDialog = QDialog()
+        self.ui.SBCNewWindowDialog.setWindowFlags(Qt.Tool)
         self.ui.SBCNewWindow.setupUi(self.ui.SBCNewWindowDialog)
         self.ui.SBCNewWindowDialog.setWindowTitle("新建文件夹")
         self.ui.SBCNewWindow.lineEdit.setText(NewFolderName)
@@ -392,6 +394,7 @@ class FileOperClick(QThread):
             ChosedFile = ChosedFiles[0]
             self.ui.SBCReNameWindow = ReNameui.Ui_Dialog()
             self.ui.SBCReNameWindowDialog = QDialog()
+            self.ui.SBCReNameWindowDialog.setWindowFlags(Qt.Tool)
             self.ui.SBCReNameWindow.setupUi(self.ui.SBCReNameWindowDialog)
             self.ui.SBCReNameWindow.lineEdit.setText(ChosedFile['fename'])
             self.ui.SBCReNameWindow.lineEdit.selectAll()

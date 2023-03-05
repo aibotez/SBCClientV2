@@ -18,6 +18,7 @@ class MoveUi(Moveui.Ui_Dialog):
         self.ui = ui
         self.ChosedFiles = ChosedFiles
         self.Dialog = Dialog
+        self.Dialog.setWindowFlags(Qt.Tool)
         self.init()
 
     def init(self):

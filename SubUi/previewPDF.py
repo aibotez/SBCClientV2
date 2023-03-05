@@ -18,6 +18,7 @@ class previewpdf(QObject,previewPDFui.Ui_Dialog):
         super().__init__()
         self.ui = ui
         self.Dialog = Dialog
+        self.Dialog.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.Tool)
         self.pixSize = None
         self.init()
         self.resize0 = 0
