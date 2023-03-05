@@ -120,7 +120,7 @@ class FileSyc(QObject):
         self.signalUpDow.emit(1)
 
         # print('len(FileWaits)：',len(FileWaits))
-        # print(FilesLo[FilesLo_[0]])
+        # # print(FilesLo[FilesLo_[0]])
         # for i in FilesLo:
         #     if i not in FilesRo:
         #         print('NotContain',FilesLo[i],FilesLo[i]['filemd5'])
