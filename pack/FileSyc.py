@@ -113,7 +113,7 @@ class FileSyc(QObject):
         # self.dbManager.DelSycRecords(dbFilesWaitDel)
 
         FilesLo_ = [i for i in FilesLo if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5']]
-        FileWaits = [i for i in FilesLo_ if i not in FilesRo or FilesLo[i]['filemd5'] != FilesRo[i]['filemd5'] or FilesLo[i]['date'] > FilesRo[i]['date']]
+        FileWaits = [i for i in FilesLo_ if i not in FilesRo or FilesLo[i]['date'] > FilesRo[i]['date']]
         # dbFilesWaitUpdate = []
         # dbFilesWaitAdd = []
         self.signalUpdateProgress.emit([0,len(FileWaits)])
