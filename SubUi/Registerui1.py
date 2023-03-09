@@ -42,6 +42,7 @@ class RegisterUi(Registerui.Ui_Dialog):
         RegRes = self.ui.SBCRe.Register(data)
         if RegRes == 1:
             self.ui.SBCRegiWindowDialog.hide()
+            self.ui.SBCLoginWindowDialog.show()
             Loginui = Loginui1.LoginUi(self.ui)
             Loginui.Login()
         else:
@@ -59,6 +60,7 @@ class RegisterUi(Registerui.Ui_Dialog):
     def HaveCount(self,e):
         # self.ui.SBCLoginWindowDialog.show()
         self.ui.SBCRegiWindowDialog.hide()
+        self.ui.SBCLoginWindowDialog.show()
         Loginui = Loginui1.LoginUi(self.ui)
         Loginui.Login()
     def Regi(self,e):

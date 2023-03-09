@@ -34,6 +34,7 @@ class ForPassUi(ForPassui.Ui_Dialog):
     def Lgin(self,e):
         # self.ui.SBCLoginWindowDialog.show()
         self.ui.SBCForPassWindowDialog.hide()
+        self.ui.SBCLoginWindowDialog.show()
         Loginui = Loginui1.LoginUi(self.ui)
         Loginui.Login()
     def ForPassact(self):
