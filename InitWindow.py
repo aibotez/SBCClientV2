@@ -360,6 +360,8 @@ class initWindow(QObject):
         # self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down
 
     def choseNet(self,chosed):
+        self.ClickEventDeal.HideFrames()
+        self.SBCMain.frame_14.show()
         self.SBCMain.CurNetChosed = chosed
         self.SBCMain.frameandscroll[chosed]['File']['frame'].show()
         self.FileUpdates.start()
@@ -375,6 +377,7 @@ class initWindow(QObject):
                                         "    font-size:18px;\n"
                                         "}\n")
         self.actionBDC.triggered.connect(lambda :self.choseNet('BDC'))
+        self.actionSBC.triggered.connect(lambda: self.choseNet('SBC'))
     def creat_Moremenu(self,e):
         self.groupBox_Moremenu = QMenu()
         self.actionShare = self.groupBox_Moremenu.addAction(u'分享')
@@ -439,6 +442,7 @@ class initWindow(QObject):
         self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['refreshbutton'].mousePressEvent = partial(self.FileUpdates.Refresh)
         # self.SBCMain.label_18.mousePressEvent = self.SBCMain.creat_ChoseNetmenu
         CED = ClickEventDeals(self.SBCMain,self.FileUpdates)
+        self.ClickEventDeal = CED
         self.SBCMain.frame_13.deleteLater()
         self.SBCMain.frame_2.mousePressEvent = partial(CED.NavChoose,'File')
         self.SBCMain.frame_3.mousePressEvent = partial(CED.NavChoose, 'Photo')
