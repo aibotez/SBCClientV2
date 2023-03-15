@@ -359,11 +359,12 @@ class initWindow(QObject):
         self.actionUpfolder.triggered.connect(self.fileoperclick.UpFolder)
         # self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down
 
-    def choseNet(self,chosed):
+    def choseNet(self,chosed,chosedname):
         self.ClickEventDeal.HideFrames()
         self.SBCMain.frame_14.show()
         self.SBCMain.CurNetChosed = chosed
         self.SBCMain.frameandscroll[chosed]['File']['frame'].show()
+        self.SBCMain.label.setText(chosedname)
         self.FileUpdates.start()
     def creat_ChoseNetmenu(self,e):
         self.groupBox_ChoseNetmenu = QMenu()
@@ -376,8 +377,8 @@ class initWindow(QObject):
                                         "    color:blue;\n"
                                         "    font-size:18px;\n"
                                         "}\n")
-        self.actionBDC.triggered.connect(lambda :self.choseNet('BDC'))
-        self.actionSBC.triggered.connect(lambda: self.choseNet('SBC'))
+        self.actionBDC.triggered.connect(lambda :self.choseNet('BDC','百度云'))
+        self.actionSBC.triggered.connect(lambda: self.choseNet('SBC','小黑云'))
     def creat_Moremenu(self,e):
         self.groupBox_Moremenu = QMenu()
         self.actionShare = self.groupBox_Moremenu.addAction(u'分享')
