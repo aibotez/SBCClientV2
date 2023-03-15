@@ -13,6 +13,7 @@ from pack.preview import ImgPreview
 from pack import FileOperClick
 from SubUi import previewPDF
 from SubUi import PreVideo
+from pack import GetBaiduNet
 
 
 class Thread_LoadImg(QThread):
@@ -132,6 +133,7 @@ class FileUpdate(QThread):
         self.CurFileList = []
         self.Thread_LoadImgs = Thread_LoadImg(self.MainWindow)
         self.fileoperclick = FileOperClick.FileOperClick(ui)
+        self.GetBaidunet = GetBaiduNet.GetBaiduNet(self.MainWindow)
 
     def Refreshshow(self):
         self.UpdateUseract()
@@ -492,7 +494,6 @@ class FileUpdate(QThread):
         t.setDaemon(True)
         t.start()
     def run(self):
-
         self.SBCRe = self.MainWindow.SBCRe
         # if self.isRunning():
         #     return
@@ -508,6 +509,14 @@ class FileUpdate(QThread):
                     self.MainWindow.CurFileListOld[CurNetChosed][
                         CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
+            elif CurNetChosed == 'BDC':
+                self.GetBaidunet.GetUserinfo()
+                FileLists = self.GetBaidunet.getFilesFromPath('/')
+                self.CurFileList = FileLists['Filelist']
+                self.MainWindow.nav[CurNetChosed] = FileLists['navlist']
+                self.MainWindow.CurFileListOld[CurNetChosed][
+                    CurNavChosed] = FileLists['Filelist']
+                self.signal.emit()
 
             # self.CurFileListOld = self.SBCRe.CurFileList
             # self.CurFileList = self.SBCRe.CurFileList
