@@ -130,6 +130,7 @@ class FileUpdate(QThread):
         self.MainWindow.signalRefresh = self.signalRefresh
         self.MainWindow.signalRefresh.connect(self.Refreshshow)
         self.path = '/home/'
+        self.initpath = 1
         self.CurFileList = []
         self.Thread_LoadImgs = Thread_LoadImg(self.MainWindow)
         self.fileoperclick = FileOperClick.FileOperClick(ui)
@@ -260,6 +261,7 @@ class FileUpdate(QThread):
                 return
             self.FileShow1(nav[idx]['path'])
     def FileShow1(self,path):
+        self.initpath = 0
         self.path = path
         if self.isRunning():
             self.wait()
@@ -502,7 +504,11 @@ class FileUpdate(QThread):
 
         if CurNavChosed == 'File':
             if CurNetChosed == 'SBC':
-                self.SBCRe.GetFileList(self.path)
+                if self.initpath:
+                    path = '/home/'
+                else:
+                    path = self.path
+                self.SBCRe.GetFileList(path)
                 if self.MainWindow.CurFileListOld[CurNetChosed][CurNavChosed] != self.SBCRe.CurFileList or not self.SBCRe.CurFileList:
                     self.CurFileList = self.SBCRe.CurFileList
                     self.MainWindow.nav[CurNetChosed] = self.SBCRe.Nav
@@ -510,8 +516,13 @@ class FileUpdate(QThread):
                         CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
             elif CurNetChosed == 'BDC':
-                self.GetBaidunet.GetUserinfo()
-                FileLists = self.GetBaidunet.getFilesFromPath('/')
+                # self.GetBaidunet.GetUserinfo()
+                if self.initpath:
+                    path = '/'
+                else:
+                    path = self.path
+                print('self.path',self.path)
+                FileLists = self.GetBaidunet.getFilesFromPath(path)
                 self.CurFileList = FileLists['Filelist']
                 self.MainWindow.nav[CurNetChosed] = FileLists['navlist']
                 self.MainWindow.CurFileListOld[CurNetChosed][

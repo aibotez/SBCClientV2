@@ -365,6 +365,7 @@ class initWindow(QObject):
         self.SBCMain.CurNetChosed = chosed
         self.SBCMain.frameandscroll[chosed]['File']['frame'].show()
         self.SBCMain.label.setText(chosedname)
+        self.FileUpdates.initpath = 1
         self.FileUpdates.start()
     def creat_ChoseNetmenu(self,e):
         self.groupBox_ChoseNetmenu = QMenu()

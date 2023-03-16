@@ -45,8 +45,8 @@ class GetBaiduNet():
             file['date'] = i['server_mtime']
             file['filename'] = i['server_filename']
             filelist.append(file)
-        print(res['navlist'])
-        print(res['navlastpath'])
-        for i in res['list']:
-            print(i)
+        # print(res['navlist'])
+        # print(res['navlastpath'])
+        # for i in res['list']:
+        #     print(i)
         return {'navlist':res['navlist'],'navlastpath':res['navlastpath'],'Filelist':filelist}
