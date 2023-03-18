@@ -280,9 +280,9 @@ class FileOperClick(QThread):
 
     def CopyLink(self,sharelink):
         pyperclip.copy(sharelink)
-        self.ui.SBCShowShareLinkuiWindowDialog.destroy()
+        self.ui.SBCShowShareLinkuiWindowDialog.close()
     def SBCShareact(self,ChosedFiles):
-        self.ui.SBCShareWindowDialog.destroy()
+        self.ui.SBCShareWindowDialog.close()
         DuringTime = self.ui.SBCShareWindow.label_4.text()
         Password = self.ui.SBCShareWindow.lineEdit.text()
         ShareFile = {
