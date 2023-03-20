@@ -6,14 +6,14 @@ from PyQt5.QtCore import *
 sys.path.append('..')
 
 class FileOperClick(QThread):
-    Signal = pyqtSignal(dict, str)
-    SignalTranspan = pyqtSignal()
+    # Signal = pyqtSignal(dict, str)
+    # SignalTranspan = pyqtSignal()
     def __init__(self,ui):
         self.ui = ui
         super().__init__()
-        self.Signal.connect(self.Downact)
-        self.SignalTranspan.connect(self.Transpanim)
-        self.SBCRe = self.ui.SBCRe
+        # self.Signal.connect(self.Downact)
+        # self.SignalTranspan.connect(self.Transpanim)
+        # self.SBCRe = self.ui.SBCRe
 
     def GetChoseFiles(self):
         ChosedFiles = []
@@ -26,6 +26,8 @@ class FileOperClick(QThread):
                 ChosedFiles.append({'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'isdir':Filei['isdir'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
         return ChosedFiles
     def Down(self):
+        print('downbdc')
         ChosedFiles = self.GetChoseFiles()
-        if ChosedFiles:
-            self.SignalTranspan.emit()
+        # if ChosedFiles:
+        #     self.SignalTranspan.emit()
+        print(ChosedFiles)

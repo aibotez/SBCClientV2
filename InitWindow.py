@@ -17,6 +17,7 @@ from pack import TransFileManager
 from pack import FileType
 from pack import DBManager
 from pack import FileOperClick
+from pack import FileOperBDC
 from pack.preview import ImgPreview
 
 from SubUi import SBCMainWindow
@@ -211,6 +212,7 @@ class initWindow(QObject):
         # self.Navshows = NavShow.Ui_PhotoShow(self.SBCMain)
         self.FileUpdates = FileUpdate.FileUpdate(self.SBCMain)
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
+        self.fileoperclickBDC = FileOperBDC.FileOperClick(self.SBCMain)
         self.FileSycs = FileSyc.FileSyc(self.SBCMain)
         self.SBCMain.OutErrorInfo = self.OutErrorInfo
         self.FloatShow()
@@ -438,6 +440,11 @@ class initWindow(QObject):
         # self.Main.resizeEvent = self.MainWindowSizeChange
         return self.SBCMain
 
+    def downfile(self,e):
+        if self.SBCMain.CurNetChosed == 'SBC':
+            self.fileoperclick.Down(1)
+        elif self.SBCMain.CurNetChosed == 'BDC':
+            self.fileoperclickBDC.Down()
     def initBindSignal(self):
         # print(self.SBCMain.NetOper)
         self.SBCMain.NetOper[self.SBCMain.CurNetChosed]['backbutton'].mousePressEvent = partial(self.FileUpdates.navBackClick)  # back
@@ -456,9 +463,10 @@ class initWindow(QObject):
         self.SBCMain.label_15.mousePressEvent = self.creat_Upmenu  # 上传
         self.SBCMain.label_16.mousePressEvent = self.fileoperclick.ReName  # 重命名
         self.fileoperclick = FileOperClick.FileOperClick(self.SBCMain)
-        self.SBCMain.label_14.mousePressEvent = self.fileoperclick.Down  # 下载
+        self.SBCMain.label_14.mousePressEvent = self.downfile  # 下载
 
         self.SBCMain.label_9.mousePressEvent = self.creat_Usermenu  # 用户
+        self.SBCMain.label_usercon.mousePressEvent = self.creat_Usermenu  # 用户
 
         framw_14_width = self.SBCMain.frame_14.size().width()
         MainWindow_height = self.SBCMain.MainWindow.size().height()
