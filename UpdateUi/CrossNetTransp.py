@@ -229,7 +229,7 @@ class CrossTransShowUpdate(QThread):
         except Exception as e:
             print('UpdateProgessError',e)
     def Downact(self,info):
-        chunk_size = 400 * 1024
+        chunk_size = 4000 * 1024
         heades = {'User-Agent': 'netdisk;P2SP;3.0.0.127',
                   # 'Connection': 'Keep - Alive',
                   # 'Host': 'bdcm01.baidupcs.com'
@@ -237,11 +237,31 @@ class CrossTransShowUpdate(QThread):
         SizeOffet = -1
         LoFileSize = 0
         t0 = time.time()
+        # s = requests.Session()
+        print('start')
         while True:
-            if SizeOffet>ReSize(info['size']):
+            if SizeOffet>info['sizeint']:
+                print('break')
                 break
             else:
                 heades['Range'] = 'bytes={}-{}'.format(str(SizeOffet+1),str(SizeOffet+chunk_size))
+                print(9)
+                with requests.get(info['url'],headers=heades,stream=True) as req:
+                    print(7)
+                    for chunk in req.iter_content(chunk_size=400*1024):
+                        print(8)
+                        if chunk:
+                            print(6,len(chunk))
+                        else:
+                            print(chunk)
+                            break
+
+
+
+
+
+
+                # res = s.get(info['url'],headers=heades).content
                 res = requests.get(info['url'],headers=heades).content
                 print(len(res))
                 SizeOffet = SizeOffet + chunk_size

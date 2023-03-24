@@ -127,6 +127,10 @@ class DBManager():
         sql = "create table ClientSetting(DownPath,BackupLoPath,host,BackupRoPath,DowNum,UpNum,SycOpen,SycFre,MSK,AutoUpdate,SycMode)"
         self.cur.execute(sql)
         self.conn.commit()
+    def creatCrossTranspform(self):
+        sql = "create table CrossTransp(LoFilePath,RoFilePath,isdir,isTransp,from,to)"
+        self.cur.execute(sql)
+        self.conn.commit()
     def creatUserDownRecordform(self):
         sql = "create table UserDown(FileMd5,FileName,Size,FilePath,RoFilePath,isDown,fetype,shareinfo)"
         self.cur.execute(sql)
@@ -162,6 +166,17 @@ class DBManager():
         self.cur.execute(sql, data)
         self.conn.commit()
         return 1
+    def AddTranspRecords(self,Info):
+        # sql = "create table CrossTransp(LoFilePath,RoFilePath,isTransp,from,to)"
+        # DownInfo = {'FileMd5':'abcd','FileName':'record.txt','FilePath':'/home/p','RoFilePath':'Ro/home'}
+        sql = "insert into CrossTransp(LoFilePath,RoFilePath,isdir,isTransp,from,to) values (?,?,?,?,?,?)"
+        data = (Info['LoFilePath'],Info['RoFilePath'],Info['isdir'],Info['isTransp'],Info['from'],Info['to'])
+        self.lock.acquire(True)
+        self.cur.execute(sql, data)
+        # self.conn.commit()
+        self.lock.release()
+        return 1
+
     def AddUserTranspFinshRecord(self,DownInfo):
         if self.GetUserTranspFinshRecord(DownInfo['FilePath'],DownInfo['FileName']):
             return 'Have'
