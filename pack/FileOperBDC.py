@@ -42,6 +42,8 @@ class FileOperClick(QThread):
                 TranspFile.append(i)
 
             else:
+                info = i
+                info['tranto'] = 0
                 TranspDirs.append(i)
         if TranspDirs:
             pass

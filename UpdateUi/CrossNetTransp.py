@@ -24,11 +24,13 @@ def str_trans_to_md5(src):
     myMd5_Digest = myMd5.hexdigest()
     return myMd5_Digest
 class CrossTransShowUpdate(QThread):
+    signaladdTran = pyqtSignal(list)
     def __init__(self,ui):
         super().__init__()
         self.MaxTranspNums = 2
         self.TranspInfosUpdateLabs = {}
         self.ui = ui
+        self.signaladdTran.connect(self.AddTransping1)
     def FileConChose(self,fetype):
         if fetype == 'folder':
             return 'img/filecon/foldersm.png'
@@ -199,12 +201,12 @@ class CrossTransShowUpdate(QThread):
 
         if not TranspInfos:
             TranspInfos = self.dbManager.GetUserDownRecordAll()
-        self.signaladdDown.emit(TranspInfos)
+        self.signaladdTran.emit(TranspInfos)
 
-    def AddTransping1(self,DownInfos):
+    def AddTransping1(self,TranspInfos):
 
         FilesSQL = []
-        for DownInfo in DownInfos:
+        for DownInfo in TranspInfos:
             DownInfoExist = self.dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
             if not DownInfoExist or 'statusButon' not in DownInfo:
                 DownInfo['size'] = DownInfo['Size']
@@ -212,8 +214,8 @@ class CrossTransShowUpdate(QThread):
                 scrollAreaWidgetContents_Down = self.DownLayout[2]
                 if 'isDown' not in DownInfo:
                     DownInfo['isDown'] = 2
-                DownInfos = self.dbManager.GetUserDownRecordAll()
-                self.DownLayout[3].setText(str(len(DownInfos)))
+                TranspInfos = self.dbManager.GetUserDownRecordAll()
+                self.DownLayout[3].setText(str(len(TranspInfos)))
                 Downinginfoi = self.add(scrollAreaWidgetContents_Down,DownInfo)
                 form = Downinginfoi['frame']
                 DownverticalLayout.addWidget(form)
