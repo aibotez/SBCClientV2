@@ -16,7 +16,26 @@ import threading
 
 
 
-
+def size_format(size):
+    if size < 1024:
+        return '%i' % size + 'size'
+    elif 1024 <= size < 1024 * 1024:
+        return '%.1f' % float(size / 1024) + 'KB'
+    elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
+        return '%.1f' % float(size / (1024 * 1024)) + 'MB'
+    elif 1024 * 1024 * 1024 <= size < 1024 * 1024 * 1024 * 1024:
+        return '%.1f' % float(size / (1024 * 1024 * 1024)) + 'GB'
+    elif 1024 * 1024 * 1024 * 1024 <= size:
+        return '%.1f' % float(size / (1024 * 1024 * 1024 * 1024)) + 'TB'
+def ReSize(sizestr):
+    if 'M' in sizestr:
+        return float(sizestr.split('M')[0])*1024*1024
+    elif 'K' in sizestr:
+        return float(sizestr.split('K')[0]) * 1024
+    elif 'G' in sizestr:
+        return float(sizestr.split('K')[0]) * 1024*1024*1024
+    else:
+        return float(sizestr.split('B')[0])
 def str_trans_to_md5(src):
     src = src.encode("utf-8")
     myMd5 = hashlib.md5()
@@ -25,6 +44,7 @@ def str_trans_to_md5(src):
     return myMd5_Digest
 class CrossTransShowUpdate(QThread):
     signaladdTran = pyqtSignal(list)
+    signalaUpdateDownProgress = pyqtSignal(dict, dict)
     def __init__(self,ui):
         super().__init__()
         self.MaxTranspNums = 2
@@ -32,6 +52,8 @@ class CrossTransShowUpdate(QThread):
         self.ui = ui
         self.TranLayout = ui.TranspscrollArea['CrossTran']
         self.signaladdTran.connect(self.AddTransping1)
+        self.signalaUpdateDownProgress.connect(self.UpdateDownProgress)
+
     def FileConChose(self,fetype):
         if fetype == 'folder':
             return 'img/filecon/foldersm.png'
@@ -196,20 +218,46 @@ class CrossTransShowUpdate(QThread):
         return Downinginfoi
 
 
-
+    def UpdateDownProgress(self,Labelinfo,info):
+        # return
+        try:
+            # Labelinfo['statusButon'].setEnabled(False)
+            Labelinfo['progressBar'].setProperty("value",info['bar'])
+            Labelinfo['DownSizeLabel'].setText(
+                "{}/{}".format(size_format(info['CurFileSize']),info['FileTotSize']))
+            Labelinfo['statusLabel'].setText("{}/S".format(info['Speed']))
+        except Exception as e:
+            print('UpdateProgessError',e)
     def Downact(self,info):
         chunk_size = 400 * 1024
-        heades = {'User-Agent': 'netdisk;P2SP;3.0.0.127','Connection': 'Keep - Alive','Host': 'bdcm01.baidupcs.com'}
+        heades = {'User-Agent': 'netdisk;P2SP;3.0.0.127',
+                  # 'Connection': 'Keep - Alive',
+                  # 'Host': 'bdcm01.baidupcs.com'
+                  }
+        SizeOffet = -1
 
-        heades['Range'] = 'bytes={}-{}'.format(str(0), str(1024))
-        with requests.get(FileInfo['url'],headers=heades,stream=True) as req:
-            for chunk in req.iter_content(chunk_size=chunk_size):
-                if chunk:
-                    print(len(chunk))
-                    yield chunk
-                else:
-                    print(chunk)
-                    break
+        LoFileSize = 0
+        t0 = time.time()
+        while True:
+            if SizeOffet>ReSize(info['size']):
+                break
+            else:
+                heades['Range'] = 'bytes={}-{}'.format(str(SizeOffet+1),str(SizeOffet+chunk_size))
+                res = requests.get(info['url'],headers=heades).content
+                print(len(res))
+                SizeOffet = SizeOffet + chunk_size
+
+                LoFileSize += len(res)
+                deltat = time.time() - t0
+                t0 = time.time()
+                if deltat == 0:
+                    deltat = 0.001
+                DownSpeed = len(res) / deltat
+                progressinfo = {'bar': (LoFileSize / info['sizeint']) * 100, 'CurFileSize': LoFileSize,
+                                'FileTotSize': info['size'], 'Speed': size_format(DownSpeed)}
+                self.signalaUpdateDownProgress.emit(info, progressinfo)
+
+                # yield res
     def Downact1(self,info):
         dbManager = DBManager.DBManager()
         DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
@@ -266,20 +314,27 @@ class CrossTransShowUpdate(QThread):
                     self.DownFinsh(info)
         dbManager.close()
     def Down(self,info):
-        Path = info['LoPath']
-        LoFileSatus = info['LoFileSatus']
-        LoFileSize = LoFileSatus['size']
-        LoFileExist = LoFileSatus['exist']
-        # print(info)
-        if not os.path.isdir(info['FilePath']):
-            os.makedirs(info['FilePath'])
-        # qmut_1.lock()
+
+
         t = threading.Thread(target=self.run1, args=(info,))
         t.setDaemon(True)
         t.start()
-        self.info = info
-            # self.start()
-            # qmut_1.unlock()
+
+
+        # Path = info['LoPath']
+        # LoFileSatus = info['LoFileSatus']
+        # LoFileSize = LoFileSatus['size']
+        # LoFileExist = LoFileSatus['exist']
+        # # print(info)
+        # if not os.path.isdir(info['FilePath']):
+        #     os.makedirs(info['FilePath'])
+        # # qmut_1.lock()
+        # t = threading.Thread(target=self.run1, args=(info,))
+        # t.setDaemon(True)
+        # t.start()
+        # self.info = info
+        #     # self.start()
+        #     # qmut_1.unlock()
     def run1(self,info):
         # return
         self.Downact(info)
@@ -319,6 +374,11 @@ class CrossTransShowUpdate(QThread):
                 self.TranspInfosUpdateLabs[str_trans_to_md5(TranInfo['FilePath'] + TranInfo['FileName'])]['line'] = line_3
                 if not TranInfoExist:
                     FilesSQL.append(TranInfo)
+
+                DownLinks = self.ui.GetBaidunet.GetBDDownLink(Traninginfoi['fepath'])
+                Traninginfoi['url'] = DownLinks['DownLink']
+                Traninginfoi['sizeint'] = DownLinks['size']
+                self.Down(Traninginfoi)
             # QApplication.processEvents()
             # print(TranInfo)
 

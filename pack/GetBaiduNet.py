@@ -313,6 +313,12 @@ class GetBaiduNet():
             Npath = Npath.replace('\n', '')
             navpaths.append({'navname': i, 'path': s, 'pathId': Npath})
         return navpaths
+
+    def GetBDDownLink(self,path):
+        bdnOp = baidunet(self.cookie)
+        DownLink = bdnOp.GetDownLink(path)
+        FileSize = int(re.findall(".*size=(\d+)&.*", DownLink)[0])
+        return {'DownLink':DownLink,'size':FileSize}
     def getFilesFromPath(self,path):
 
         bdnOp = baidunet(self.cookie)

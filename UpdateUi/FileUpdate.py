@@ -134,7 +134,7 @@ class FileUpdate(QThread):
         self.CurFileList = []
         self.Thread_LoadImgs = Thread_LoadImg(self.MainWindow)
         self.fileoperclick = FileOperClick.FileOperClick(ui)
-        self.GetBaidunet = GetBaiduNet.GetBaiduNet(self.MainWindow)
+        # self.GetBaidunet = GetBaiduNet.GetBaiduNet(self.MainWindow)
 
     def Refreshshow(self):
         self.UpdateUseract()
@@ -516,6 +516,8 @@ class FileUpdate(QThread):
                         CurNavChosed] = self.SBCRe.CurFileList
                     self.signal.emit()
             elif CurNetChosed == 'BDC':
+                self.GetBaidunet = GetBaiduNet.GetBaiduNet(self.MainWindow)
+                self.MainWindow.GetBaidunet = self.GetBaidunet
                 # self.GetBaidunet.GetUserinfo()
                 if self.initpath:
                     path = '/'
