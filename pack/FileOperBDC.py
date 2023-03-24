@@ -4,6 +4,9 @@ from PyQt5.QtCore import *
 
 
 sys.path.append('..')
+from UpdateUi import CrossNetTransp
+
+
 
 class FileOperClick(QThread):
     # Signal = pyqtSignal(dict, str)
@@ -14,6 +17,7 @@ class FileOperClick(QThread):
         # self.Signal.connect(self.Downact)
         # self.SignalTranspan.connect(self.Transpanim)
         # self.SBCRe = self.ui.SBCRe
+        self.CrossNetTransp = CrossNetTransp.CrossTransShowUpdate(ui)
 
     def GetChoseFiles(self):
         ChosedFiles = []
@@ -31,31 +35,15 @@ class FileOperClick(QThread):
         ChosedFiles = self.GetChoseFiles()
         # if ChosedFiles:
         #     self.SignalTranspan.emit()
+        TranspDirs = []
+        TranspFile = []
         for i in ChosedFiles:
             if i['fetype'] != 'folder':
-                DownFaPath = self.ui.DownPath
-                DownInfos.append([i,DownFaPath])
-                # self.Downact(i,DownFaPath)
-            else:
-                # FatherPath0 = self.ui.DownPath+i['fename']+'/'
-                CurPath = i['fepath']
-                queinfo = {}
-                if share:
-                    queinfo = i
-                else:
-                    queinfo = {'path': CurPath}
-                Files = self.ui.SBCRe.GetAllFilesfromFolder(json.dumps(queinfo))
-                if Files['Files']:
-                    for fei in Files['Files']:
-                        if share:
-                            fei['shareinfo'] = i['shareinfo']
-                        # print(fei)
-                        DownFaPath = self.ui.DownPath + i['fename']+'/'+fei['fapath']+'/'
-                        DownFaPath = DownFaPath.replace('//','/')
-                        # DownFaPath = DownFaPath.replace('//','/')
+                TranspFile.append(i)
 
-                        # t = threading.Thread(target=self.Downact, args=(fei, DownFaPath,))
-                        # t.setDaemon(True)
-                        # t.start()
-                        DownInfos.append([fei, DownFaPath])
-        print(DownInfos)
+            else:
+                TranspDirs.append(i)
+        if TranspDirs:
+            pass
+        if TranspFile:
+            self.CrossNetTransp.AddTransping(TranspFile)

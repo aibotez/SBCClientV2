@@ -137,10 +137,10 @@ class CrossTransShowUpdate(QThread):
         self.horizontalLayout_11.setStretch(6, 5)
         self.horizontalLayout_11.setStretch(7, 1)
 
-        LoFile = CheckLoFile(DownInfo)
-        LoSize = size_format(LoFile['size'])
+        # LoFile = CheckLoFile(DownInfo)
+        # LoSize = size_format(LoFile['size'])
 
-        progressBar_4.setProperty("value", (LoFile['size']/DownInfo['size'])*100)
+        # progressBar_4.setProperty("value", (LoFile['size']/DownInfo['size'])*100)
 
 
         self.label_33.setText("")
@@ -183,9 +183,9 @@ class CrossTransShowUpdate(QThread):
         Downinginfoi['statusLabel'] = label_21
         Downinginfoi['progressBar'] = progressBar_4
         Downinginfoi['DownSizeLabel'] = label_20
-        Downinginfoi['LoFileSatus'] = LoFile
+        # Downinginfoi['LoFileSatus'] = LoFile
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
-        self.DownInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
+        self.TranspInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
 
         label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
         label_23.mousePressEvent = partial(self.DelDown,Downinginfoi)
@@ -195,9 +195,11 @@ class CrossTransShowUpdate(QThread):
 
 
     def AddTransping(self,TranspInfos=None):
+        print(TranspInfos)
+
         if not TranspInfos:
-            DownInfos = self.dbManager.GetUserDownRecordAll()
-        self.signaladdDown.emit(DownInfos)
+            TranspInfos = self.dbManager.GetUserDownRecordAll()
+        self.signaladdDown.emit(TranspInfos)
 
     def AddTransping1(self,DownInfos):
 
