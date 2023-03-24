@@ -235,7 +235,6 @@ class CrossTransShowUpdate(QThread):
                   # 'Host': 'bdcm01.baidupcs.com'
                   }
         SizeOffet = -1
-
         LoFileSize = 0
         t0 = time.time()
         while True:
