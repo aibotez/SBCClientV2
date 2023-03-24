@@ -336,6 +336,13 @@ class Ui_PhotoShow(QThread):
             'Down': [transmitui.formLayout_3, transmitui.verticalLayout_9, transmitui.scrollAreaWidgetContents_7, transmitui.label_18,transmitui.pushButton_7,transmitui.pushButton_8,transmitui.pushButton_9]}
         TranspscrollAreaformLayout['Down'][1].itemAt(1).widget().deleteLater()
         TranspscrollAreaformLayout['Down'][1].itemAt(0).widget().deleteLater()
+
+        TranspscrollAreaformLayout['CrossTran'] = [0, transmitui.verticalLayout_17,
+                                                     transmitui.scrollAreaWidgetContents_9, transmitui.label_37,
+                                                     transmitui.pushButton_13, transmitui.pushButton_14,transmitui.pushButton_15]
+        TranspscrollAreaformLayout['CrossTran'][1].itemAt(1).widget().deleteLater()
+        TranspscrollAreaformLayout['CrossTran'][1].itemAt(0).widget().deleteLater()
+
         TranspscrollAreaformLayout['TranspFinsh'] = [0,transmitui.verticalLayout_4, transmitui.scrollAreaWidgetContents_6,transmitui.label_10,transmitui.pushButton_6,transmitui.label_13]
         TranspscrollAreaformLayout['Up'] = [0, transmitui.verticalLayout_13,
                                             transmitui.scrollAreaWidgetContents_8,

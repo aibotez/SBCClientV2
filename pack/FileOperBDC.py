@@ -27,7 +27,10 @@ class FileOperClick(QThread):
             if Filei['checkBox'].isChecked():
                 Filei['checkBox'].setChecked(False)
                 # print('InitWind',Filei)
-                ChosedFiles.append({'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'isdir':Filei['isdir'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']})
+                info = {'size':Filei['size'],'fepath':Filei['fepath'],'fename':Filei['fename'],'isdir':Filei['isdir'],'fepath_base64':Filei['fepath_base64'],'fetype':Filei['fetype']}
+                info['FileName'] = Filei['fename']
+                info['FilePath'] = Filei['fepath']
+                ChosedFiles.append(info)
         return ChosedFiles
     def Down(self,share=None):
         DownInfos = []

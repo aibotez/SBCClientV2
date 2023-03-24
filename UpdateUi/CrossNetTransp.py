@@ -30,6 +30,7 @@ class CrossTransShowUpdate(QThread):
         self.MaxTranspNums = 2
         self.TranspInfosUpdateLabs = {}
         self.ui = ui
+        self.TranLayout = ui.TranspscrollArea['CrossTran']
         self.signaladdTran.connect(self.AddTransping1)
     def FileConChose(self,fetype):
         if fetype == 'folder':
@@ -159,7 +160,7 @@ class CrossTransShowUpdate(QThread):
 
         label_21.setText("--")
         # print(66,DownInfo)
-        if int(DownInfo['isDown']) == 2:
+        if int(DownInfo['isTran']) == 2:
             label_21.setText("等待下载")
 
         label_22.setText(">")
@@ -189,11 +190,99 @@ class CrossTransShowUpdate(QThread):
         Downinginfoi['LoPath'] = DownInfo['FilePath']+DownInfo['FileName']
         self.TranspInfosUpdateLabs[str_trans_to_md5(Downinginfoi['LoPath'])] = Downinginfoi
 
-        label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
-        label_23.mousePressEvent = partial(self.DelDown,Downinginfoi)
-        label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
+        # label_22.mousePressEvent = partial(self.DownSatusChange,Downinginfoi)
+        # label_23.mousePressEvent = partial(self.DelDown,Downinginfoi)
+        # label_24.mousePressEvent = partial(self.OpenDownFile, Downinginfoi)
         return Downinginfoi
 
+
+
+    def Downact(self,info):
+        chunk_size = 400 * 1024
+        heades = {'User-Agent': 'netdisk;P2SP;3.0.0.127','Connection': 'Keep - Alive','Host': 'bdcm01.baidupcs.com'}
+
+        heades['Range'] = 'bytes={}-{}'.format(str(0), str(1024))
+        with requests.get(FileInfo['url'],headers=heades,stream=True) as req:
+            for chunk in req.iter_content(chunk_size=chunk_size):
+                if chunk:
+                    print(len(chunk))
+                    yield chunk
+                else:
+                    print(chunk)
+                    break
+    def Downact1(self,info):
+        dbManager = DBManager.DBManager()
+        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'], info['FileName'])
+        if DownInfoi and int(DownInfoi['isDown'])==1:
+        # if int(info['isDown']):
+            info['statusButon'].setText("||")
+            LoFileSatus = CheckLoFile(info)
+            # LoFileSatus = info['LoFileSatus']
+            LoFileSize = LoFileSatus['size']
+            RoFileSize = info['Size']
+            shareinfo = None
+            if LoFileSize >= RoFileSize:
+                self.DownFinsh(info)
+            else:
+                if 'shareinfo' in info:
+                    shareinfo = info['shareinfo']
+                downinfo = {
+                    'fename':info['FileName'],
+                    'fepath':info['RoFilePath'],
+                    'feseek':LoFileSize,
+                    'shareinfo': shareinfo
+                }
+                # {'fename': 'Surface_ne1.m', 'fepath': 'D:/SBC/SBCUsers/2290227486@qq.com/Surface_ne1.m', 'feseek': 0}
+                data = {
+                    'downinfo':downinfo
+                }
+                url_fileDown = 'http://'+self.ui.host+'/FileDown1/'
+                # dbManager = DBManager.DBManager()
+                r = requests.post(url_fileDown,data=json.dumps(data),headers=self.ui.SBCRe.headers,stream=True)
+                with open(info['LoPath'], 'ab') as f:
+                    t0 = time.time()
+                    # for chunk1 in r.iter_content(chunk_size=1*1024*1024):
+                    #     print(66,len(chunk1))
+                    for chunk in r.iter_content(chunk_size=1024*1024):
+                        DownInfoi = dbManager.GetUserDownRecord(info['FilePath'],info['FileName'])
+                        if DownInfoi and int(DownInfoi['isDown'])==1:
+                            DownSpeed = 0
+                            if chunk:
+
+                                f.write(chunk)
+                                LoFileSize += len(chunk)
+                                deltat = time.time()-t0
+                                t0 = time.time()
+                                if deltat ==0:
+                                    deltat = 0.001
+                                DownSpeed = len(chunk)/deltat
+                                progressinfo = {'bar': (LoFileSize/RoFileSize)*100, 'CurFileSize': LoFileSize,
+                                                'FileTotSize': RoFileSize, 'Speed': size_format(DownSpeed)}
+                                self.signalaDowndateUpProgress.emit(info, progressinfo)
+                        else:
+                            # self.DownCancel(info)
+                            break
+                if LoFileSize >= RoFileSize:
+                    self.DownFinsh(info)
+        dbManager.close()
+    def Down(self,info):
+        Path = info['LoPath']
+        LoFileSatus = info['LoFileSatus']
+        LoFileSize = LoFileSatus['size']
+        LoFileExist = LoFileSatus['exist']
+        # print(info)
+        if not os.path.isdir(info['FilePath']):
+            os.makedirs(info['FilePath'])
+        # qmut_1.lock()
+        t = threading.Thread(target=self.run1, args=(info,))
+        t.setDaemon(True)
+        t.start()
+        self.info = info
+            # self.start()
+            # qmut_1.unlock()
+    def run1(self,info):
+        # return
+        self.Downact(info)
 
 
     def AddTransping(self,TranspInfos=None):
@@ -206,41 +295,43 @@ class CrossTransShowUpdate(QThread):
     def AddTransping1(self,TranspInfos):
 
         FilesSQL = []
-        for DownInfo in TranspInfos:
-            DownInfoExist = self.dbManager.GetUserDownRecord(DownInfo['FilePath'],DownInfo['FileName'])
-            if not DownInfoExist or 'statusButon' not in DownInfo:
-                DownInfo['size'] = DownInfo['Size']
-                DownverticalLayout = self.DownLayout[1]
-                scrollAreaWidgetContents_Down = self.DownLayout[2]
-                if 'isDown' not in DownInfo:
-                    DownInfo['isDown'] = 2
-                TranspInfos = self.dbManager.GetUserDownRecordAll()
-                self.DownLayout[3].setText(str(len(TranspInfos)))
-                Downinginfoi = self.add(scrollAreaWidgetContents_Down,DownInfo)
-                form = Downinginfoi['frame']
-                DownverticalLayout.addWidget(form)
-                line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_Down)
+        for TranInfo in TranspInfos:
+            TranInfoExist =0
+            # TranInfoExist = self.dbManager.GetUserDownRecord(TranInfo['FilePath'],TranInfo['FileName'])
+            if not TranInfoExist or 'statusButon' not in TranInfo:
+                if 'size' not in TranInfo:
+                    TranInfo['size'] = TranInfo['Size']
+                TranverticalLayout = self.TranLayout[1]
+                scrollAreaWidgetContents_Tran = self.TranLayout[2]
+                if 'isTran' not in TranInfo:
+                    TranInfo['isTran'] = 2
+                # TranspInfos = self.dbManager.GetUserDownRecordAll()
+                # self.TranLayout[3].setText(str(len(TranspInfos)))
+                Traninginfoi = self.add(scrollAreaWidgetContents_Tran,TranInfo)
+                form = Traninginfoi['frame']
+                TranverticalLayout.addWidget(form)
+                line_3 = QtWidgets.QFrame(scrollAreaWidgetContents_Tran)
                 line_3.setMinimumSize(QtCore.QSize(649, 0))
                 line_3.setFrameShape(QtWidgets.QFrame.HLine)
                 line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
                 line_3.setObjectName("line_3")
-                DownverticalLayout.addWidget(line_3)
-                self.DownInfosUpdateLabs[str_trans_to_md5(DownInfo['FilePath'] + DownInfo['FileName'])]['line'] = line_3
-                if not DownInfoExist:
-                    FilesSQL.append(DownInfo)
+                TranverticalLayout.addWidget(line_3)
+                self.TranspInfosUpdateLabs[str_trans_to_md5(TranInfo['FilePath'] + TranInfo['FileName'])]['line'] = line_3
+                if not TranInfoExist:
+                    FilesSQL.append(TranInfo)
             # QApplication.processEvents()
-            # print(DownInfo)
+            # print(TranInfo)
 
-        if FilesSQL:
-            # pass
-
-            self.WSQLDownThread = threading.Thread(target=self.WSQL,args=(FilesSQL,))
-            self.WSQLDownThread.setDaemon(True)
-            self.WSQLDownThread.start()
+        # if FilesSQL:
+        #     # pass
+        #
+        #     self.WSQLDownThread = threading.Thread(target=self.WSQL,args=(FilesSQL,))
+        #     self.WSQLDownThread.setDaemon(True)
+        #     self.WSQLDownThread.start()
 
             # self.ui.MainWindow.WSQLDownThread = WSQLThread(self.ui,FilesSQL,self.dbManager1)
             # self.ui.MainWindow.WSQLDownThread.Signal.connect(self.DowndateDOwnNums)
             # # self.ui.MainWindow.WSQLDownThread.Signal.connect(self.DownManger)
             # self.ui.MainWindow.WSQLDownThread.start()
-        else:
-            self.DownManger()
+        # else:
+        #     self.DownManger()
