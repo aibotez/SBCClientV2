@@ -229,7 +229,7 @@ class CrossTransShowUpdate(QThread):
         except Exception as e:
             print('UpdateProgessError',e)
     def Downact(self,info):
-        chunk_size = 4000 * 1024
+        chunk_size = 400 * 1024
         heades = {'User-Agent': 'netdisk;P2SP;3.0.0.127',
                   # 'Connection': 'Keep - Alive',
                   # 'Host': 'bdcm01.baidupcs.com'

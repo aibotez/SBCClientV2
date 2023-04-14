@@ -168,6 +168,7 @@ class SBCRe():
         res = requests.post(url, data=data,headers=self.headers)
         # print(res)
         FileDatas = json.loads(res.text)
+        # print(self.headers,FileDatas)
         # print(FileDatas['FileList'])
         # for i in FileDatas['FileList']:
         #     print(i)
@@ -179,7 +180,7 @@ class SBCRe():
     def DelFile(self,fileinfo):
         url = 'http://' + self.host + '/DelFiles/'
         fileinfo['client'] = 'Windows'
-        print(fileinfo)
+        # print(fileinfo)
         res = requests.post(url, data=json.dumps(fileinfo),headers=self.headers)
 
     def GetFileCon(self,Files):
